@@ -56,6 +56,7 @@ import net.minecraft.world.storage.WorldInfo;
 
 import com.google.common.collect.ImmutableSetMultimap;
 
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeDummyContainer;
@@ -226,7 +227,7 @@ public abstract class World implements IBlockAccess
         this.provider = par3WorldProvider;
         perWorldStorage = new MapStorage((ISaveHandler)null);
         this.worldLogAgent = par6ILogAgent;
-        
+
     }
 
     // Broken up so that the WorldClient gets the chance to set the mapstorage object before the dimension initializes
@@ -288,6 +289,14 @@ public abstract class World implements IBlockAccess
 
         this.provider.registerWorld(this);
         this.chunkProvider = this.createChunkProvider();
+        if (this instanceof WorldServer)
+        {
+            this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer)this, par1ISaveHandler));
+        }
+        else
+        {
+            this.perWorldStorage = new MapStorage((ISaveHandler)null);
+        }
 
         if (!this.worldInfo.isInitialized())
         {
@@ -314,14 +323,6 @@ public abstract class World implements IBlockAccess
             this.worldInfo.setServerInitialized(true);
         }
 
-        if (this instanceof WorldServer)
-        {
-            this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer)this, par1ISaveHandler));
-        }
-        else
-        {
-            this.perWorldStorage = new MapStorage((ISaveHandler)null);
-        }
         VillageCollection villagecollection = (VillageCollection)perWorldStorage.loadData(VillageCollection.class, "villages");
 
         if (villagecollection == null)
@@ -345,7 +346,8 @@ public abstract class World implements IBlockAccess
     //Buildcraft has suffered from the issue this fixes.  If you load the same data from two different worlds they can get two different copies of the same object, thus the last saved gets final say.
     private MapStorage getMapStorage(ISaveHandler savehandler)
     {
-        if (s_savehandler != savehandler || s_mapStorage == null) {
+        if (s_savehandler != savehandler || s_mapStorage == null)
+        {
             s_mapStorage = new MapStorage(savehandler);
             s_savehandler = savehandler;
         }
@@ -858,7 +860,7 @@ public abstract class World implements IBlockAccess
                     }
 
                     crashreportcategory.addCrashSectionCallable("Source block type", new CallableLvl1(this, par4));
-                    CrashReportCategory.func_85068_a(crashreportcategory, par1, par2, par3, i1, j1);
+                    CrashReportCategory.addBlockCrashInfo(crashreportcategory, par1, par2, par3, i1, j1);
                     throw new ReportedException(crashreport);
                 }
             }
@@ -913,6 +915,10 @@ public abstract class World implements IBlockAccess
      * Gets the light value of a block location. This is the actual function that gets the value and has a bool flag
      * that indicates if its a half step block to get the maximum light value of a direct neighboring block (left,
      * right, forward, back, and up)
+     * 
+     * Modified to only look at the blocks expected light, and not colors
+     * 
+     * CptSpaceToaster
      */
     public int getBlockLightValue_do(int par1, int par2, int par3, boolean par4)
     {
@@ -930,22 +936,22 @@ public abstract class World implements IBlockAccess
                     int l1 = this.getBlockLightValue_do(par1, par2, par3 + 1, false);
                     int i2 = this.getBlockLightValue_do(par1, par2, par3 - 1, false);
 
-                    if (j1%15 > i1%15)
+                    if ((j1&15) > (i1&15))
                     {
                         i1 = j1;
                     }
 
-                    if (k1%15 > i1%15)
+                    if ((k1&15) > (i1&15))
                     {
                         i1 = k1;
                     }
 
-                    if (l1%15 > i1%15)
+                    if ((l1&15) > (i1&15))
                     {
                         i1 = l1;
                     }
 
-                    if (i2%15 > i1%15)
+                    if ((i2&15) > (i1&15))
                     {
                         i1 = i2;
                     }
@@ -1027,7 +1033,7 @@ public abstract class World implements IBlockAccess
     @SideOnly(Side.CLIENT)
 
     /**
-     * Brightness for SkyBlock.Sky is clear white and (through coloring it is assumed) DEPENDENT ON DAYTIME.
+     * Brightness for SkyBlock.Sky is clear white and (through color computing it is assumed) DEPENDENT ON DAYTIME.
      * Brightness for SkyBlock.Block is yellowish and independent.
      */
     public int getSkyBlockTypeBrightness(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
@@ -1208,6 +1214,10 @@ public abstract class World implements IBlockAccess
     /**
      * Returns how bright the block is shown as which is the block's light value looked up in a lookup table (light
      * values aren't linear for brightness). Args: x, y, z
+     * 
+     * Truncated to only use regular light, not colored
+     * 
+     * CptSpaceToaster
      */
     public float getLightBrightness(int par1, int par2, int par3)
     {
@@ -1548,7 +1558,7 @@ public abstract class World implements IBlockAccess
     {
         int i = MathHelper.floor_double(par1Entity.posX / 16.0D);
         int j = MathHelper.floor_double(par1Entity.posZ / 16.0D);
-        boolean flag = par1Entity.field_98038_p;
+        boolean flag = par1Entity.forceSpawn;
 
         if (par1Entity instanceof EntityPlayer)
         {
@@ -1830,15 +1840,15 @@ public abstract class World implements IBlockAccess
         {
             f2 = 1.0F;
         }
-
+        
         int i = MathHelper.floor_double(par1Entity.posX);
         int j = MathHelper.floor_double(par1Entity.posZ);
-        BiomeGenBase biomegenbase = this.getBiomeGenForCoords(i, j);
-        float f3 = biomegenbase.getFloatTemperature();
-        int k = biomegenbase.getSkyColorByTemp(f3);
-        float f4 = (float)(k >> 16 & 255) / 255.0F;
-        float f5 = (float)(k >> 8 & 255) / 255.0F;
-        float f6 = (float)(k & 255) / 255.0F;
+        
+        int multiplier = ForgeHooksClient.getSkyBlendColour(this, i, j);
+
+        float f4 = (float)(multiplier >> 16 & 255) / 255.0F;
+        float f5 = (float)(multiplier >> 8 & 255) / 255.0F;
+        float f6 = (float)(multiplier & 255) / 255.0F;
         f4 *= f2;
         f5 *= f2;
         f6 *= f2;
@@ -1898,9 +1908,12 @@ public abstract class World implements IBlockAccess
         return this.provider.getMoonPhase(this.worldInfo.getWorldTime());
     }
 
-    public float func_130001_d()
+    /**
+     * gets the current fullness of the moon expressed as a float between 1.0 and 0.0, in steps of .25
+     */
+    public float getCurrentMoonPhaseFactor()
     {
-        return WorldProvider.field_111203_a[this.provider.getMoonPhase(this.worldInfo.getWorldTime())];
+        return WorldProvider.moonPhaseFactors[this.provider.getMoonPhase(this.worldInfo.getWorldTime())];
     }
 
     /**
@@ -2083,7 +2096,7 @@ public abstract class World implements IBlockAccess
                 }
                 else
                 {
-                    entity.func_85029_a(crashreportcategory);
+                    entity.addEntityCrashInfo(crashreportcategory);
                 }
 
                 if (ForgeDummyContainer.removeErroringEntities)
@@ -2155,7 +2168,7 @@ public abstract class World implements IBlockAccess
                 {
                     crashreport = CrashReport.makeCrashReport(throwable1, "Ticking entity");
                     crashreportcategory = crashreport.makeCategory("Entity being ticked");
-                    entity.func_85029_a(crashreportcategory);
+                    entity.addEntityCrashInfo(crashreportcategory);
 
                     if (ForgeDummyContainer.removeErroringEntities)
                     {
@@ -2617,7 +2630,7 @@ public abstract class World implements IBlockAccess
                 }
             }
 
-            if (vec3.lengthVector() > 0.0D && par3Entity.func_96092_aw())
+            if (vec3.lengthVector() > 0.0D && par3Entity.isPushedByWater())
             {
                 vec3 = vec3.normalize();
                 double d1 = 0.014D;
@@ -2921,6 +2934,8 @@ public abstract class World implements IBlockAccess
         {
             chunk.setChunkBlockTileEntity(par1 & 15, par2, par3 & 15, par4TileEntity);
         }
+        //notify tile changes
+        func_96440_m(par1, par2, par3, 0);
     }
 
     /**
@@ -2933,6 +2948,8 @@ public abstract class World implements IBlockAccess
         {
             chunk.removeChunkBlockTileEntity(par1 & 15, par2, par3 & 15);
         }
+        //notify tile changes
+        func_96440_m(par1, par2, par3, 0);
     }
 
     /**
@@ -3393,8 +3410,16 @@ public abstract class World implements IBlockAccess
         this.updateLightByType(EnumSkyBlock.Block, par1, par2, par3);
     }
 
-    
-    
+    /**
+     * Modded to work with colored light
+     * 
+     * CptSpaceToaster
+     * @param par1
+     * @param par2
+     * @param par3
+     * @param par4EnumSkyBlock
+     * @return
+     */
     private int computeLightValue(int par1, int par2, int par3, EnumSkyBlock par4EnumSkyBlock)
     {
         if (par4EnumSkyBlock == EnumSkyBlock.Sky && this.canBlockSeeTheSky(par1, par2, par3))
@@ -3423,7 +3448,7 @@ public abstract class World implements IBlockAccess
             {
                 return 0;
             }
-            else if ((currentLight%15) >= 14)
+            else if ((currentLight&15) >= 14)
             {
                 return currentLight;
             }
@@ -3434,7 +3459,6 @@ public abstract class World implements IBlockAccess
                     int l1 = par1 + Facing.offsetsXForSide[k1];
                     int i2 = par2 + Facing.offsetsYForSide[k1];
                     int j2 = par3 + Facing.offsetsZForSide[k1];
-                    
                     int neighboorLight = this.getSavedLightValue(par4EnumSkyBlock, l1, i2, j2);
                     
                     if((neighboorLight >= 0) && ((neighboorLight&15)>=opacity))
@@ -3450,26 +3474,12 @@ public abstract class World implements IBlockAccess
 	                    if((neighboorLight&65520) == 65520)
 	                    	neighboorLight-=65520;
                     }
-                    
-                    
                     if ((neighboorLight&15) > (currentLight&15))
                     {
-                        currentLight = (currentLight&65520)+(neighboorLight&15);	
-                    }
-                    if ((neighboorLight&240) < (currentLight&240))
-                    {
-                        currentLight = (currentLight&65295)+(neighboorLight&240);	
-                    }
-                    if ((neighboorLight&3840) < (currentLight&3840))
-                    {
-                        currentLight &= (currentLight&61695)+(neighboorLight&3840);	
-                    }
-                    if ((neighboorLight&61440) < (currentLight&61440))
-                    {
-                        currentLight &= (currentLight&4095)+(neighboorLight&61440);
+                        currentLight = neighboorLight;
                     }
 
-                    if ((currentLight%15) >= 14)
+                    if ((currentLight&15) >= 14)
                     {
                         return currentLight;
                     }
@@ -3480,6 +3490,15 @@ public abstract class World implements IBlockAccess
         }
     }
 
+    /**
+     * Was touched slightly to correct for large light values
+     * 
+     * CptSpaceToaster
+     * @param par1EnumSkyBlock
+     * @param par2
+     * @param par3
+     * @param par4
+     */
     public void updateLightByType(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
     {
         if (this.doChunksNearChunkExist(par2, par3, par4, 17))
@@ -3728,9 +3747,10 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * marks the chunk that contains this tilentity as modified and then calls worldAccesses.doNothingWithTileEntity
+     * Args: X, Y, Z, tile entity Marks the chunk the tile entity is in as modified. This is essential as chunks that
+     * are not marked as modified may be rolled back when exiting the game.
      */
-    public void updateTileEntityChunkAndDoNothing(int par1, int par2, int par3, TileEntity par4TileEntity)
+    public void markTileEntityChunkModified(int par1, int par2, int par3, TileEntity par4TileEntity)
     {
         if (this.blockExists(par1, par2, par3))
         {
@@ -3749,7 +3769,7 @@ public abstract class World implements IBlockAccess
         {
             Entity entity = (Entity)this.loadedEntityList.get(j);
 
-            if ((!(entity instanceof EntityLiving) || !((EntityLiving)entity).func_104002_bU()) && par1Class.isAssignableFrom(entity.getClass()))
+            if ((!(entity instanceof EntityLiving) || !((EntityLiving)entity).isNoDespawnRequired()) && par1Class.isAssignableFrom(entity.getClass()))
             {
                 ++i;
             }
@@ -4040,7 +4060,7 @@ public abstract class World implements IBlockAccess
 
                 if (entityplayer1.isInvisible())
                 {
-                    float f = entityplayer1.func_82243_bO();
+                    float f = entityplayer1.getArmorVisibility();
 
                     if (f < 0.1F)
                     {
@@ -4381,7 +4401,7 @@ public abstract class World implements IBlockAccess
         return provider.getActualHeight();
     }
 
-    public IUpdatePlayerListBox func_82735_a(EntityMinecart par1EntityMinecart)
+    public IUpdatePlayerListBox getMinecartSoundUpdater(EntityMinecart par1EntityMinecart)
     {
         return null;
     }
@@ -4472,9 +4492,9 @@ public abstract class World implements IBlockAccess
      */
     public Calendar getCurrentDate()
     {
-        if (this.getTotalWorldTime() % 600L == 0L)
+        if ((this.getTotalWorldTime() & 600L) == 0L)
         {
-            this.theCalendar.setTimeInMillis(MinecraftServer.func_130071_aq());
+            this.theCalendar.setTimeInMillis(MinecraftServer.getSystemTimeMillis());
         }
 
         return this.theCalendar;
@@ -4490,30 +4510,28 @@ public abstract class World implements IBlockAccess
 
     public void func_96440_m(int par1, int par2, int par3, int par4)
     {
-        for (int i1 = 0; i1 < 4; ++i1)
+        for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS)
         {
-            int j1 = par1 + Direction.offsetX[i1];
-            int k1 = par3 + Direction.offsetZ[i1];
-            int l1 = this.getBlockId(j1, par2, k1);
+            int j1 = par1 + dir.offsetX;
+            int y = par2 + dir.offsetY;
+            int k1 = par3 + dir.offsetZ;
+            int l1 = getBlockId(j1, y, k1);
+            Block block = Block.blocksList[l1];
 
-            if (l1 != 0)
+            if(block != null)
             {
-                Block block = Block.blocksList[l1];
+                block.onNeighborTileChange(this, j1, y, k1, par1, par2, par3);
 
-                if (Block.redstoneComparatorIdle.func_94487_f(l1))
+                if(Block.isNormalCube(l1))
                 {
-                    block.onNeighborBlockChange(this, j1, par2, k1, par4);
-                }
-                else if (Block.isNormalCube(l1))
-                {
-                    j1 += Direction.offsetX[i1];
-                    k1 += Direction.offsetZ[i1];
-                    l1 = this.getBlockId(j1, par2, k1);
+                    j1 += dir.offsetX;
+                    y += dir.offsetY;
+                    k1 += dir.offsetZ;
+                    l1 = getBlockId(j1, y, k1);
                     block = Block.blocksList[l1];
-
-                    if (Block.redstoneComparatorIdle.func_94487_f(l1))
+                    if(block != null && block.weakTileChanges())
                     {
-                        block.onNeighborBlockChange(this, j1, par2, k1, par4);
+                        block.onNeighborTileChange(this, j1, y, k1, par1, par2, par3);
                     }
                 }
             }
@@ -4525,20 +4543,30 @@ public abstract class World implements IBlockAccess
         return this.worldLogAgent;
     }
 
-    public float func_110746_b(double par1, double par3, double par5)
+    /**
+     * returns a float value that can be used to determine how likely something is to go awry in the area. It increases
+     * based on how long the player is within the vicinity, the lunar phase, and game difficulty. The value can be up to
+     * 1.5 on the highest difficulty, 1.0 otherwise.
+     */
+    public float getLocationTensionFactor(double par1, double par3, double par5)
     {
-        return this.func_110750_I(MathHelper.floor_double(par1), MathHelper.floor_double(par3), MathHelper.floor_double(par5));
+        return this.getTensionFactorForBlock(MathHelper.floor_double(par1), MathHelper.floor_double(par3), MathHelper.floor_double(par5));
     }
 
-    public float func_110750_I(int par1, int par2, int par3)
+    /**
+     * returns a float value that can be used to determine how likely something is to go awry in the area. It increases
+     * based on how long the player is within the vicinity, the lunar phase, and game difficulty. The value can be up to
+     * 1.5 on the highest difficulty, 1.0 otherwise.
+     */
+    public float getTensionFactorForBlock(int par1, int par2, int par3)
     {
         float f = 0.0F;
         boolean flag = this.difficultySetting == 3;
 
         if (this.blockExists(par1, par2, par3))
         {
-            float f1 = this.func_130001_d();
-            f += MathHelper.clamp_float((float)this.getChunkFromBlockCoords(par1, par3).field_111204_q / 3600000.0F, 0.0F, 1.0F) * (flag ? 1.0F : 0.75F);
+            float f1 = this.getCurrentMoonPhaseFactor();
+            f += MathHelper.clamp_float((float)this.getChunkFromBlockCoords(par1, par3).inhabitedTime / 3600000.0F, 0.0F, 1.0F) * (flag ? 1.0F : 0.75F);
             f += f1 * 0.25F;
         }
 

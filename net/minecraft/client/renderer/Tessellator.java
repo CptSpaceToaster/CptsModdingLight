@@ -372,6 +372,8 @@ public class Tessellator
         /** 
          * Takes the lightValue in the Form 	0000 SSSS 0000 BBBB GGGG RRRR LLLL 0000
          * and formats it to the expected form: 0000 SSSS 0000 0000 0000 0000 LLLL 0000
+         * 
+         * CptSpaceToaster
          */
         this.brightness = par1 & 15728880;
     }

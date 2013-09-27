@@ -44,6 +44,10 @@ public class ExtendedBlockStorage
     /** The NibbleArray containing a block of Sky-light data. */
     private NibbleArray skylightArray;
 
+    /** 
+     * We need these to store colored light
+     * CptSpaceToaster   
+     */
     private NibbleArray rColorArray;
     private NibbleArray gColorArray;
     private NibbleArray bColorArray;
@@ -191,16 +195,10 @@ public class ExtendedBlockStorage
 
     /**
      * Sets the saved Block-light value in the extended block storage structure.
-     * 
-     * 
-     * if (par4>255) {
-    		System.out.println(par4 + ", " + blocklightArray.get(par1, par2, par3) + ", " + rColorArray.get(par1, par2, par3) + ", " + gColorArray.get(par1, par2, par3)  + ", " + bColorArray.get(par1, par2, par3));
-    	}
      */
     public void setExtBlocklightValue(int par1, int par2, int par3, int par4)
     {
-
-        this.blocklightArray.set(par1, par2, par3, (par4)&15);
+        this.blocklightArray.set(par1, par2, par3, par4);
         this.rColorArray.set(par1, par2, par3, (par4>>4) &15);
         this.gColorArray.set(par1, par2, par3, (par4>>8) &15);
         this.bColorArray.set(par1, par2, par3, (par4>>12)&15);
@@ -208,15 +206,17 @@ public class ExtendedBlockStorage
 
     /**
      * Gets the saved Block-light value in the extended block storage structure.
+     * 
+     * Modded to return the stored colored light value
+     * CptSpaceToaster 
      */
     public int getExtBlocklightValue(int par1, int par2, int par3)
     {
-        return 	(this.blocklightArray.get(par1, par2, par3)) | 
+        //return this.blocklightArray.get(par1, par2, par3);
+    	return 	(this.blocklightArray.get(par1, par2, par3)) | 
         		(this.rColorArray.get(par1, par2, par3)<<4) |
         		(this.gColorArray.get(par1, par2, par3)<<8) |
         		(this.bColorArray.get(par1, par2, par3)<<12) ;
-    	
-//    	return this.blocklightArray.get(par1, par2, par3);
     }
 
     public void removeInvalidBlocks()

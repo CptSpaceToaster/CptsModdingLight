@@ -779,14 +779,14 @@ public class RenderBlocks
         this.renderFaceXNeg(par1BlockCauldron, (double)((float)par2 + 1.0F - f4), (double)par3, (double)par4, icon);
         this.renderFaceZPos(par1BlockCauldron, (double)par2, (double)par3, (double)((float)par4 - 1.0F + f4), icon);
         this.renderFaceZNeg(par1BlockCauldron, (double)par2, (double)par3, (double)((float)par4 + 1.0F - f4), icon);
-        Icon icon1 = BlockCauldron.func_94375_b("inner");
+        Icon icon1 = BlockCauldron.getCauldronIcon("inner");
         this.renderFaceYPos(par1BlockCauldron, (double)par2, (double)((float)par3 - 1.0F + 0.25F), (double)par4, icon1);
         this.renderFaceYNeg(par1BlockCauldron, (double)par2, (double)((float)par3 + 1.0F - 0.75F), (double)par4, icon1);
         int i1 = this.blockAccess.getBlockMetadata(par2, par3, par4);
 
         if (i1 > 0)
         {
-            Icon icon2 = BlockFluid.func_94424_b("water_still");
+            Icon icon2 = BlockFluid.getFluidIcon("water_still");
 
             if (i1 > 3)
             {
@@ -1409,7 +1409,7 @@ public class RenderBlocks
      */
     public void renderPistonRodUD(double par1, double par3, double par5, double par7, double par9, double par11, float par13, double par14)
     {
-        Icon icon = BlockPistonBase.func_94496_b("piston_side");
+        Icon icon = BlockPistonBase.getPistonBaseIcon("piston_side");
 
         if (this.hasOverrideBlockTexture())
         {
@@ -1433,7 +1433,7 @@ public class RenderBlocks
      */
     public void renderPistonRodSN(double par1, double par3, double par5, double par7, double par9, double par11, float par13, double par14)
     {
-        Icon icon = BlockPistonBase.func_94496_b("piston_side");
+        Icon icon = BlockPistonBase.getPistonBaseIcon("piston_side");
 
         if (this.hasOverrideBlockTexture())
         {
@@ -1457,7 +1457,7 @@ public class RenderBlocks
      */
     public void renderPistonRodEW(double par1, double par3, double par5, double par7, double par9, double par11, float par13, double par14)
     {
-        Icon icon = BlockPistonBase.func_94496_b("piston_side");
+        Icon icon = BlockPistonBase.getPistonBaseIcon("piston_side");
 
         if (this.hasOverrideBlockTexture())
         {
@@ -2337,8 +2337,8 @@ public class RenderBlocks
     public boolean renderBlockFire(BlockFire par1BlockFire, int par2, int par3, int par4)
     {
         Tessellator tessellator = Tessellator.instance;
-        Icon icon = par1BlockFire.func_94438_c(0);
-        Icon icon1 = par1BlockFire.func_94438_c(1);
+        Icon icon = par1BlockFire.getFireIcon(0);
+        Icon icon1 = par1BlockFire.getFireIcon(1);
         Icon icon2 = icon;
 
         if (this.hasOverrideBlockTexture())
@@ -2548,10 +2548,10 @@ public class RenderBlocks
     {
         Tessellator tessellator = Tessellator.instance;
         int l = this.blockAccess.getBlockMetadata(par2, par3, par4);
-        Icon icon = BlockRedstoneWire.func_94409_b("cross");
-        Icon icon1 = BlockRedstoneWire.func_94409_b("line");
-        Icon icon2 = BlockRedstoneWire.func_94409_b("cross_overlay");
-        Icon icon3 = BlockRedstoneWire.func_94409_b("line_overlay");
+        Icon icon = BlockRedstoneWire.getRedstoneWireIcon("cross");
+        Icon icon1 = BlockRedstoneWire.getRedstoneWireIcon("line");
+        Icon icon2 = BlockRedstoneWire.getRedstoneWireIcon("cross_overlay");
+        Icon icon3 = BlockRedstoneWire.getRedstoneWireIcon("line_overlay");
         tessellator.setBrightness(par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4));
         float f = 1.0F;
         float f1 = (float)l / 15.0F;
@@ -3719,7 +3719,7 @@ public class RenderBlocks
     public void renderBlockStemBig(BlockStem par1BlockStem, int par2, int par3, double par4, double par6, double par8, double par10)
     {
         Tessellator tessellator = Tessellator.instance;
-        Icon icon = par1BlockStem.func_94368_p();
+        Icon icon = par1BlockStem.getStemIcon();
 
         if (this.hasOverrideBlockTexture())
         {
@@ -4157,7 +4157,6 @@ public class RenderBlocks
     public boolean renderStandardBlock(Block par1Block, int par2, int par3, int par4)
     {
         int l = par1Block.colorMultiplier(this.blockAccess, par2, par3, par4);
-        
         float f = (float)(l >> 16 & 255) / 255.0F;
         float f1 = (float)(l >> 8 & 255) / 255.0F;
         float f2 = (float)(l & 255) / 255.0F;
@@ -4171,8 +4170,8 @@ public class RenderBlocks
             f1 = f4;
             f2 = f5;
         }
-        
-        return Minecraft.isAmbientOcclusionEnabled() && ((Block.lightValue[par1Block.blockID] & 15) == 0) ? (this.partialRenderBounds ? this.renderBlockWithAmbientOcclusion(par1Block, par2, par3, par4, f, f1, f2) : this.renderStandardBlockWithAmbientOcclusion(par1Block, par2, par3, par4, f, f1, f2)) : this.renderStandardBlockWithColorMultiplier(par1Block, par2, par3, par4, f, f1, f2);
+
+        return Minecraft.isAmbientOcclusionEnabled() && Block.lightValue[par1Block.blockID] == 0 ? (this.partialRenderBounds ? this.renderStandardBlockWithAmbientOcclusionPartial(par1Block, par2, par3, par4, f, f1, f2) : this.renderStandardBlockWithAmbientOcclusion(par1Block, par2, par3, par4, f, f1, f2)) : this.renderStandardBlockWithColorMultiplier(par1Block, par2, par3, par4, f, f1, f2);
     }
 
     /**
@@ -4233,821 +4232,16 @@ public class RenderBlocks
         return flag;
     }
 
-    public boolean renderStandardBlockWithAmbientOcclusion(Block par1Block, int par2, int par3, int par4, float pr, float pg, float pb)
+    public boolean renderStandardBlockWithAmbientOcclusion(Block par1Block, int par2, int par3, int par4, float par5, float par6, float par7)
     {
         this.enableAO = true;
         boolean flag = false;
-        
-        float r = pr;
-        float g = pg;
-        float b = pb;
-        int l = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4);
-        
-        float f3 = 0.0F;
-        float f4 = 0.0F;
-        float f5 = 0.0F;
-        float f6 = 0.0F;
-        boolean notGrassOrOverrideTexture = true;
-        
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.setBrightness(983055);
-
-        if (this.getBlockIcon(par1Block).getIconName().equals("grass_top"))
-        {
-            notGrassOrOverrideTexture = false;
-        }
-        else if (this.hasOverrideBlockTexture())
-        {
-            notGrassOrOverrideTexture = false;
-        }
-
-        boolean flag2;
-        boolean flag3;
-        boolean flag4;
-        boolean flag5;
-        float f7;
-        int i1;
-
-        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2, par3 - 1, par4, 0))
-        {
-            if (this.renderMinY <= 0.0D)
-            {
-                --par3;
-            }
-
-            this.aoBrightnessXYNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
-            this.aoBrightnessYZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
-            this.aoBrightnessYZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
-            this.aoBrightnessXYPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
-            this.aoLightValueScratchXYNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
-            this.aoLightValueScratchYZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
-            this.aoLightValueScratchYZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
-            this.aoLightValueScratchXYPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)];
-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)];
-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)];
-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)];
-
-            if (!flag4 && !flag2)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXYNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXYNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4 - 1);
-                this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4 - 1);
-            }
-
-            if (!flag5 && !flag2)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXYNN;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXYNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4 + 1);
-                this.aoBrightnessXYZNNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4 + 1);
-            }
-
-            if (!flag4 && !flag3)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXYPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXYPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4 - 1);
-                this.aoBrightnessXYZPNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4 - 1);
-            }
-
-            if (!flag5 && !flag3)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXYPN;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXYPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4 + 1);
-                this.aoBrightnessXYZPNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4 + 1);
-            }
-
-            if (this.renderMinY <= 0.0D)
-            {
-                ++par3;
-            }
-
-            i1 = l;
-
-            if (this.renderMinY <= 0.0D || !this.blockAccess.isBlockOpaqueCube(par2, par3 - 1, par4))
-            {
-                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
-            }
-
-            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
-            f3 = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXYNN + this.aoLightValueScratchYZNP + f7) / 4.0F;
-            f6 = (this.aoLightValueScratchYZNP + f7 + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXYPN) / 4.0F;
-            f5 = (f7 + this.aoLightValueScratchYZNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNN) / 4.0F;
-            f4 = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNN + f7 + this.aoLightValueScratchYZNN) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXYNN, this.aoBrightnessYZNP, i1);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXYPN, i1);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYPN, this.aoBrightnessXYZPNN, i1);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNN, this.aoBrightnessYZNN, i1);
-
-            if (notGrassOrOverrideTexture)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.5F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.5F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.5F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.5F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.5F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.5F;
-            }
-
-            this.colorRedTopLeft *= f3;
-            this.colorGreenTopLeft *= f3;
-            this.colorBlueTopLeft *= f3;
-            this.colorRedBottomLeft *= f4;
-            this.colorGreenBottomLeft *= f4;
-            this.colorBlueBottomLeft *= f4;
-            this.colorRedBottomRight *= f5;
-            this.colorGreenBottomRight *= f5;
-            this.colorBlueBottomRight *= f5;
-            this.colorRedTopRight *= f6;
-            this.colorGreenTopRight *= f6;
-            this.colorBlueTopRight *= f6;
-            this.renderFaceYNeg(par1Block, (double)par2, (double)par3, (double)par4, this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 0));
-            flag = true;
-        }
-
-        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2, par3 + 1, par4, 1))
-        {
-            if (this.renderMaxY >= 1.0D)
-            {
-                ++par3;
-            }
-
-            this.aoBrightnessXYNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
-            this.aoBrightnessXYPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
-            this.aoBrightnessYZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
-            this.aoBrightnessYZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
-            this.aoLightValueScratchXYNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
-            this.aoLightValueScratchXYPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
-            this.aoLightValueScratchYZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
-            this.aoLightValueScratchYZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)];
-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)];
-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)];
-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)];
-
-            if (!flag4 && !flag2)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXYNP;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXYNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4 - 1);
-                this.aoBrightnessXYZNPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4 - 1);
-            }
-
-            if (!flag4 && !flag3)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXYPP;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXYPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4 - 1);
-                this.aoBrightnessXYZPPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4 - 1);
-            }
-
-            if (!flag5 && !flag2)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXYNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXYNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4 + 1);
-                this.aoBrightnessXYZNPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4 + 1);
-            }
-
-            if (!flag5 && !flag3)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXYPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXYPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4 + 1);
-                this.aoBrightnessXYZPPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4 + 1);
-            }
-
-            if (this.renderMaxY >= 1.0D)
-            {
-                --par3;
-            }
-
-            i1 = l;
-
-            if (this.renderMaxY >= 1.0D || !this.blockAccess.isBlockOpaqueCube(par2, par3 + 1, par4))
-            {
-                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
-            }
-
-            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
-            f6 = (this.aoLightValueScratchXYZNPP + this.aoLightValueScratchXYNP + this.aoLightValueScratchYZPP + f7) / 4.0F;
-            f3 = (this.aoLightValueScratchYZPP + f7 + this.aoLightValueScratchXYZPPP + this.aoLightValueScratchXYPP) / 4.0F;
-            f4 = (f7 + this.aoLightValueScratchYZPN + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPN) / 4.0F;
-            f5 = (this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPN + f7 + this.aoLightValueScratchYZPN) / 4.0F;
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNPP, this.aoBrightnessXYNP, this.aoBrightnessYZPP, i1);
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXYZPPP, this.aoBrightnessXYPP, i1);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXYPP, this.aoBrightnessXYZPPN, i1);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYNP, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1);
-            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r;
-            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g;
-            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b;
-            this.colorRedTopLeft *= f3;
-            this.colorGreenTopLeft *= f3;
-            this.colorBlueTopLeft *= f3;
-            this.colorRedBottomLeft *= f4;
-            this.colorGreenBottomLeft *= f4;
-            this.colorBlueBottomLeft *= f4;
-            this.colorRedBottomRight *= f5;
-            this.colorGreenBottomRight *= f5;
-            this.colorBlueBottomRight *= f5;
-            this.colorRedTopRight *= f6;
-            this.colorGreenTopRight *= f6;
-            this.colorBlueTopRight *= f6;
-            this.renderFaceYPos(par1Block, (double)par2, (double)par3, (double)par4, this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 1));
-            flag = true;
-        }
-
-        Icon icon;
-
-        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2, par3, par4 - 1, 2))
-        {
-            if (this.renderMinZ <= 0.0D)
-            {
-                --par4;
-            }
-
-            this.aoLightValueScratchXZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
-            this.aoLightValueScratchYZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
-            this.aoLightValueScratchYZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
-            this.aoLightValueScratchXZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
-            this.aoBrightnessXZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
-            this.aoBrightnessYZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
-            this.aoBrightnessYZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
-            this.aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)];
-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)];
-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)];
-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)];
-
-            if (!flag2 && !flag4)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3 - 1, par4);
-                this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3 - 1, par4);
-            }
-
-            if (!flag2 && !flag5)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3 + 1, par4);
-                this.aoBrightnessXYZNPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3 + 1, par4);
-            }
-
-            if (!flag3 && !flag4)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3 - 1, par4);
-                this.aoBrightnessXYZPNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3 - 1, par4);
-            }
-
-            if (!flag3 && !flag5)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3 + 1, par4);
-                this.aoBrightnessXYZPPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3 + 1, par4);
-            }
-
-            if (this.renderMinZ <= 0.0D)
-            {
-                ++par4;
-            }
-
-            i1 = l;
-
-            if (this.renderMinZ <= 0.0D || !this.blockAccess.isBlockOpaqueCube(par2, par3, par4 - 1))
-            {
-                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
-            }
-
-            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
-            f3 = (this.aoLightValueScratchXZNN + this.aoLightValueScratchXYZNPN + f7 + this.aoLightValueScratchYZPN) / 4.0F;
-            f4 = (f7 + this.aoLightValueScratchYZPN + this.aoLightValueScratchXZPN + this.aoLightValueScratchXYZPPN) / 4.0F;
-            f5 = (this.aoLightValueScratchYZNN + f7 + this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXZPN) / 4.0F;
-            f6 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXZNN + this.aoLightValueScratchYZNN + f7) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, i1);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYZPNN, this.aoBrightnessXZPN, i1);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXZNN, this.aoBrightnessYZNN, i1);
-
-            if (notGrassOrOverrideTexture)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.8F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
-            }
-
-            this.colorRedTopLeft *= f3;
-            this.colorGreenTopLeft *= f3;
-            this.colorBlueTopLeft *= f3;
-            this.colorRedBottomLeft *= f4;
-            this.colorGreenBottomLeft *= f4;
-            this.colorBlueBottomLeft *= f4;
-            this.colorRedBottomRight *= f5;
-            this.colorGreenBottomRight *= f5;
-            this.colorBlueBottomRight *= f5;
-            this.colorRedTopRight *= f6;
-            this.colorGreenTopRight *= f6;
-            this.colorBlueTopRight *= f6;
-            icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 2);
-            this.renderFaceZNeg(par1Block, (double)par2, (double)par3, (double)par4, icon);
-
-            if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= r;
-                this.colorRedBottomLeft *= r;
-                this.colorRedBottomRight *= r;
-                this.colorRedTopRight *= r;
-                this.colorGreenTopLeft *= g;
-                this.colorGreenBottomLeft *= g;
-                this.colorGreenBottomRight *= g;
-                this.colorGreenTopRight *= g;
-                this.colorBlueTopLeft *= b;
-                this.colorBlueBottomLeft *= b;
-                this.colorBlueBottomRight *= b;
-                this.colorBlueTopRight *= b;
-                this.renderFaceZNeg(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
-            }
-
-            flag = true;
-        }
-
-        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2, par3, par4 + 1, 3))
-        {
-            if (this.renderMaxZ >= 1.0D)
-            {
-                ++par4;
-            }
-
-            this.aoLightValueScratchXZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
-            this.aoLightValueScratchXZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
-            this.aoLightValueScratchYZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
-            this.aoLightValueScratchYZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
-            this.aoBrightnessXZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
-            this.aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
-            this.aoBrightnessYZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
-            this.aoBrightnessYZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)];
-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)];
-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)];
-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)];
-
-            if (!flag2 && !flag4)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3 - 1, par4);
-                this.aoBrightnessXYZNNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3 - 1, par4);
-            }
-
-            if (!flag2 && !flag5)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3 + 1, par4);
-                this.aoBrightnessXYZNPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3 + 1, par4);
-            }
-
-            if (!flag3 && !flag4)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3 - 1, par4);
-                this.aoBrightnessXYZPNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3 - 1, par4);
-            }
-
-            if (!flag3 && !flag5)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3 + 1, par4);
-                this.aoBrightnessXYZPPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3 + 1, par4);
-            }
-
-            if (this.renderMaxZ >= 1.0D)
-            {
-                --par4;
-            }
-
-            i1 = l;
-
-            if (this.renderMaxZ >= 1.0D || !this.blockAccess.isBlockOpaqueCube(par2, par3, par4 + 1))
-            {
-                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
-            }
-
-            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
-            f3 = (this.aoLightValueScratchXZNP + this.aoLightValueScratchXYZNPP + f7 + this.aoLightValueScratchYZPP) / 4.0F;
-            f6 = (f7 + this.aoLightValueScratchYZPP + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYZPPP) / 4.0F;
-            f5 = (this.aoLightValueScratchYZNP + f7 + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXZPP) / 4.0F;
-            f4 = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXZNP + this.aoLightValueScratchYZNP + f7) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYZNPP, this.aoBrightnessYZPP, i1);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXZPP, this.aoBrightnessXYZPPP, i1);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, this.aoBrightnessYZNP, i1);
-
-            if (notGrassOrOverrideTexture)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.8F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
-            }
-
-            this.colorRedTopLeft *= f3;
-            this.colorGreenTopLeft *= f3;
-            this.colorBlueTopLeft *= f3;
-            this.colorRedBottomLeft *= f4;
-            this.colorGreenBottomLeft *= f4;
-            this.colorBlueBottomLeft *= f4;
-            this.colorRedBottomRight *= f5;
-            this.colorGreenBottomRight *= f5;
-            this.colorBlueBottomRight *= f5;
-            this.colorRedTopRight *= f6;
-            this.colorGreenTopRight *= f6;
-            this.colorBlueTopRight *= f6;
-            icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 3);
-            this.renderFaceZPos(par1Block, (double)par2, (double)par3, (double)par4, this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 3));
-
-            if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= r;
-                this.colorRedBottomLeft *= r;
-                this.colorRedBottomRight *= r;
-                this.colorRedTopRight *= r;
-                this.colorGreenTopLeft *= g;
-                this.colorGreenBottomLeft *= g;
-                this.colorGreenBottomRight *= g;
-                this.colorGreenTopRight *= g;
-                this.colorBlueTopLeft *= b;
-                this.colorBlueBottomLeft *= b;
-                this.colorBlueBottomRight *= b;
-                this.colorBlueTopRight *= b;
-                this.renderFaceZPos(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
-            }
-
-            flag = true;
-        }
-
-        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2 - 1, par3, par4, 4))
-        {
-            if (this.renderMinX <= 0.0D)
-            {
-                --par2;
-            }
-
-            this.aoLightValueScratchXYNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
-            this.aoLightValueScratchXZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
-            this.aoLightValueScratchXZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
-            this.aoLightValueScratchXYNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
-            this.aoBrightnessXYNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
-            this.aoBrightnessXZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
-            this.aoBrightnessXZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
-            this.aoBrightnessXYNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)];
-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)];
-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)];
-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)];
-
-            if (!flag5 && !flag2)
-            {
-                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4 - 1);
-                this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4 - 1);
-            }
-
-            if (!flag4 && !flag2)
-            {
-                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4 + 1);
-                this.aoBrightnessXYZNNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4 + 1);
-            }
-
-            if (!flag5 && !flag3)
-            {
-                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
-                this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4 - 1);
-                this.aoBrightnessXYZNPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4 - 1);
-            }
-
-            if (!flag4 && !flag3)
-            {
-                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
-                this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZNPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4 + 1);
-                this.aoBrightnessXYZNPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4 + 1);
-            }
-
-            if (this.renderMinX <= 0.0D)
-            {
-                ++par2;
-            }
-
-            i1 = l;
-
-            if (this.renderMinX <= 0.0D || !this.blockAccess.isBlockOpaqueCube(par2 - 1, par3, par4))
-            {
-                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
-            }
-
-            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
-            f6 = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNP + f7 + this.aoLightValueScratchXZNP) / 4.0F;
-            f3 = (f7 + this.aoLightValueScratchXZNP + this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPP) / 4.0F;
-            f4 = (this.aoLightValueScratchXZNN + f7 + this.aoLightValueScratchXYZNPN + this.aoLightValueScratchXYNP) / 4.0F;
-            f5 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXYNN + this.aoLightValueScratchXZNN + f7) / 4.0F;
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, i1);
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYNP, this.aoBrightnessXYZNPP, i1);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessXYNP, i1);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXYNN, this.aoBrightnessXZNN, i1);
-
-            if (notGrassOrOverrideTexture)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.6F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
-            }
-
-            this.colorRedTopLeft *= f3;
-            this.colorGreenTopLeft *= f3;
-            this.colorBlueTopLeft *= f3;
-            this.colorRedBottomLeft *= f4;
-            this.colorGreenBottomLeft *= f4;
-            this.colorBlueBottomLeft *= f4;
-            this.colorRedBottomRight *= f5;
-            this.colorGreenBottomRight *= f5;
-            this.colorBlueBottomRight *= f5;
-            this.colorRedTopRight *= f6;
-            this.colorGreenTopRight *= f6;
-            this.colorBlueTopRight *= f6;
-            icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 4);
-            this.renderFaceXNeg(par1Block, (double)par2, (double)par3, (double)par4, icon);
-
-            if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= r;
-                this.colorRedBottomLeft *= r;
-                this.colorRedBottomRight *= r;
-                this.colorRedTopRight *= r;
-                this.colorGreenTopLeft *= g;
-                this.colorGreenBottomLeft *= g;
-                this.colorGreenBottomRight *= g;
-                this.colorGreenTopRight *= g;
-                this.colorBlueTopLeft *= b;
-                this.colorBlueBottomLeft *= b;
-                this.colorBlueBottomRight *= b;
-                this.colorBlueTopRight *= b;
-                this.renderFaceXNeg(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
-            }
-
-            flag = true;
-        }
-
-        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2 + 1, par3, par4, 5))
-        {
-            if (this.renderMaxX >= 1.0D)
-            {
-                ++par2;
-            }
-
-            this.aoLightValueScratchXYPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
-            this.aoLightValueScratchXZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
-            this.aoLightValueScratchXZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
-            this.aoLightValueScratchXYPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
-            this.aoBrightnessXYPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
-            this.aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
-            this.aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
-            this.aoBrightnessXYPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
-            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)];
-            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)];
-            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)];
-            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)];
-
-            if (!flag2 && !flag4)
-            {
-                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4 - 1);
-                this.aoBrightnessXYZPNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4 - 1);
-            }
-
-            if (!flag2 && !flag5)
-            {
-                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4 + 1);
-                this.aoBrightnessXYZPNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4 + 1);
-            }
-
-            if (!flag3 && !flag4)
-            {
-                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
-                this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4 - 1);
-                this.aoBrightnessXYZPPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4 - 1);
-            }
-
-            if (!flag3 && !flag5)
-            {
-                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
-                this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
-            }
-            else
-            {
-                this.aoLightValueScratchXYZPPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4 + 1);
-                this.aoBrightnessXYZPPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4 + 1);
-            }
-
-            if (this.renderMaxX >= 1.0D)
-            {
-                --par2;
-            }
-
-            i1 = l;
-
-            if (this.renderMaxX >= 1.0D || !this.blockAccess.isBlockOpaqueCube(par2 + 1, par3, par4))
-            {
-                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
-            }
-
-            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
-            f3 = (this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNP + f7 + this.aoLightValueScratchXZPP) / 4.0F;
-            f4 = (this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXZPN + f7) / 4.0F;
-            f5 = (this.aoLightValueScratchXZPN + f7 + this.aoLightValueScratchXYZPPN + this.aoLightValueScratchXYPP) / 4.0F;
-            f6 = (f7 + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPP) / 4.0F;
-            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYPN, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1);
-            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXZPP, this.aoBrightnessXYPP, this.aoBrightnessXYZPPP, i1);
-            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, this.aoBrightnessXYPP, i1);
-            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYZPNN, this.aoBrightnessXYPN, this.aoBrightnessXZPN, i1);
-
-            if (notGrassOrOverrideTexture)
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.6F;
-            }
-            else
-            {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
-            }
-
-            this.colorRedTopLeft *= f3;
-            this.colorGreenTopLeft *= f3;
-            this.colorBlueTopLeft *= f3;
-            this.colorRedBottomLeft *= f4;
-            this.colorGreenBottomLeft *= f4;
-            this.colorBlueBottomLeft *= f4;
-            this.colorRedBottomRight *= f5;
-            this.colorGreenBottomRight *= f5;
-            this.colorBlueBottomRight *= f5;
-            this.colorRedTopRight *= f6;
-            this.colorGreenTopRight *= f6;
-            this.colorBlueTopRight *= f6;
-            icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 5);
-            this.renderFaceXPos(par1Block, (double)par2, (double)par3, (double)par4, icon);
-
-            if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
-            {
-                this.colorRedTopLeft *= r;
-                this.colorRedBottomLeft *= r;
-                this.colorRedBottomRight *= r;
-                this.colorRedTopRight *= r;
-                this.colorGreenTopLeft *= g;
-                this.colorGreenBottomLeft *= g;
-                this.colorGreenBottomRight *= g;
-                this.colorGreenTopRight *= g;
-                this.colorBlueTopLeft *= b;
-                this.colorBlueBottomLeft *= b;
-                this.colorBlueBottomRight *= b;
-                this.colorBlueTopRight *= b;
-                this.renderFaceXPos(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
-            }
-
-            flag = true;
-        }
-
-        this.enableAO = false;
-        return flag;
-    }
-
-    /**
-     * Renders non-full-cube block with ambient occusion.  Args: block, x, y, z, red, green, blue (lighting)
-     */
-    public boolean renderBlockWithAmbientOcclusion(Block par1Block, int par2, int par3, int par4, float pr, float pg, float pb)
-    {
-        this.enableAO = true;
-        boolean flag = false;
-        
-        float r = pr;
-        float g = pg;
-        float b = pb;
-        int l = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4);
-        
-        
         float f3 = 0.0F;
         float f4 = 0.0F;
         float f5 = 0.0F;
         float f6 = 0.0F;
         boolean flag1 = true;
+        int l = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4);
         Tessellator tessellator = Tessellator.instance;
         tessellator.setBrightness(983055);
 
@@ -5155,9 +4349,9 @@ public class RenderBlocks
 
             if (flag1)
             {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.5F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.5F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.5F;
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.5F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.5F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.5F;
             }
             else
             {
@@ -5267,9 +4461,802 @@ public class RenderBlocks
             this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXYZPPP, this.aoBrightnessXYPP, i1);
             this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXYPP, this.aoBrightnessXYZPPN, i1);
             this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYNP, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1);
-            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r;
-            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g;
-            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b;
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7;
+            this.colorRedTopLeft *= f3;
+            this.colorGreenTopLeft *= f3;
+            this.colorBlueTopLeft *= f3;
+            this.colorRedBottomLeft *= f4;
+            this.colorGreenBottomLeft *= f4;
+            this.colorBlueBottomLeft *= f4;
+            this.colorRedBottomRight *= f5;
+            this.colorGreenBottomRight *= f5;
+            this.colorBlueBottomRight *= f5;
+            this.colorRedTopRight *= f6;
+            this.colorGreenTopRight *= f6;
+            this.colorBlueTopRight *= f6;
+            this.renderFaceYPos(par1Block, (double)par2, (double)par3, (double)par4, this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 1));
+            flag = true;
+        }
+
+        Icon icon;
+
+        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2, par3, par4 - 1, 2))
+        {
+            if (this.renderMinZ <= 0.0D)
+            {
+                --par4;
+            }
+
+            this.aoLightValueScratchXZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
+            this.aoLightValueScratchYZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
+            this.aoLightValueScratchYZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
+            this.aoLightValueScratchXZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
+            this.aoBrightnessXZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
+            this.aoBrightnessYZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+            this.aoBrightnessYZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+            this.aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)];
+            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)];
+            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)];
+            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)];
+
+            if (!flag2 && !flag4)
+            {
+                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
+                this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3 - 1, par4);
+                this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3 - 1, par4);
+            }
+
+            if (!flag2 && !flag5)
+            {
+                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
+                this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3 + 1, par4);
+                this.aoBrightnessXYZNPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3 + 1, par4);
+            }
+
+            if (!flag3 && !flag4)
+            {
+                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
+                this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3 - 1, par4);
+                this.aoBrightnessXYZPNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3 - 1, par4);
+            }
+
+            if (!flag3 && !flag5)
+            {
+                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
+                this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3 + 1, par4);
+                this.aoBrightnessXYZPPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3 + 1, par4);
+            }
+
+            if (this.renderMinZ <= 0.0D)
+            {
+                ++par4;
+            }
+
+            i1 = l;
+
+            if (this.renderMinZ <= 0.0D || !this.blockAccess.isBlockOpaqueCube(par2, par3, par4 - 1))
+            {
+                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+            }
+
+            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
+            f3 = (this.aoLightValueScratchXZNN + this.aoLightValueScratchXYZNPN + f7 + this.aoLightValueScratchYZPN) / 4.0F;
+            f4 = (f7 + this.aoLightValueScratchYZPN + this.aoLightValueScratchXZPN + this.aoLightValueScratchXYZPPN) / 4.0F;
+            f5 = (this.aoLightValueScratchYZNN + f7 + this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXZPN) / 4.0F;
+            f6 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXZNN + this.aoLightValueScratchYZNN + f7) / 4.0F;
+            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1);
+            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, i1);
+            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYZPNN, this.aoBrightnessXZPN, i1);
+            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXZNN, this.aoBrightnessYZNN, i1);
+
+            if (flag1)
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.8F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.8F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.8F;
+            }
+            else
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
+            }
+
+            this.colorRedTopLeft *= f3;
+            this.colorGreenTopLeft *= f3;
+            this.colorBlueTopLeft *= f3;
+            this.colorRedBottomLeft *= f4;
+            this.colorGreenBottomLeft *= f4;
+            this.colorBlueBottomLeft *= f4;
+            this.colorRedBottomRight *= f5;
+            this.colorGreenBottomRight *= f5;
+            this.colorBlueBottomRight *= f5;
+            this.colorRedTopRight *= f6;
+            this.colorGreenTopRight *= f6;
+            this.colorBlueTopRight *= f6;
+            icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 2);
+            this.renderFaceZNeg(par1Block, (double)par2, (double)par3, (double)par4, icon);
+
+            if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+            {
+                this.colorRedTopLeft *= par5;
+                this.colorRedBottomLeft *= par5;
+                this.colorRedBottomRight *= par5;
+                this.colorRedTopRight *= par5;
+                this.colorGreenTopLeft *= par6;
+                this.colorGreenBottomLeft *= par6;
+                this.colorGreenBottomRight *= par6;
+                this.colorGreenTopRight *= par6;
+                this.colorBlueTopLeft *= par7;
+                this.colorBlueBottomLeft *= par7;
+                this.colorBlueBottomRight *= par7;
+                this.colorBlueTopRight *= par7;
+                this.renderFaceZNeg(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
+            }
+
+            flag = true;
+        }
+
+        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2, par3, par4 + 1, 3))
+        {
+            if (this.renderMaxZ >= 1.0D)
+            {
+                ++par4;
+            }
+
+            this.aoLightValueScratchXZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
+            this.aoLightValueScratchXZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
+            this.aoLightValueScratchYZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
+            this.aoLightValueScratchYZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
+            this.aoBrightnessXZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
+            this.aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+            this.aoBrightnessYZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+            this.aoBrightnessYZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)];
+            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)];
+            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)];
+            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)];
+
+            if (!flag2 && !flag4)
+            {
+                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
+                this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3 - 1, par4);
+                this.aoBrightnessXYZNNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3 - 1, par4);
+            }
+
+            if (!flag2 && !flag5)
+            {
+                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
+                this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3 + 1, par4);
+                this.aoBrightnessXYZNPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3 + 1, par4);
+            }
+
+            if (!flag3 && !flag4)
+            {
+                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
+                this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3 - 1, par4);
+                this.aoBrightnessXYZPNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3 - 1, par4);
+            }
+
+            if (!flag3 && !flag5)
+            {
+                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
+                this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3 + 1, par4);
+                this.aoBrightnessXYZPPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3 + 1, par4);
+            }
+
+            if (this.renderMaxZ >= 1.0D)
+            {
+                --par4;
+            }
+
+            i1 = l;
+
+            if (this.renderMaxZ >= 1.0D || !this.blockAccess.isBlockOpaqueCube(par2, par3, par4 + 1))
+            {
+                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+            }
+
+            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
+            f3 = (this.aoLightValueScratchXZNP + this.aoLightValueScratchXYZNPP + f7 + this.aoLightValueScratchYZPP) / 4.0F;
+            f6 = (f7 + this.aoLightValueScratchYZPP + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYZPPP) / 4.0F;
+            f5 = (this.aoLightValueScratchYZNP + f7 + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXZPP) / 4.0F;
+            f4 = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXZNP + this.aoLightValueScratchYZNP + f7) / 4.0F;
+            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYZNPP, this.aoBrightnessYZPP, i1);
+            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXZPP, this.aoBrightnessXYZPPP, i1);
+            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1);
+            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, this.aoBrightnessYZNP, i1);
+
+            if (flag1)
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.8F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.8F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.8F;
+            }
+            else
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.8F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.8F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.8F;
+            }
+
+            this.colorRedTopLeft *= f3;
+            this.colorGreenTopLeft *= f3;
+            this.colorBlueTopLeft *= f3;
+            this.colorRedBottomLeft *= f4;
+            this.colorGreenBottomLeft *= f4;
+            this.colorBlueBottomLeft *= f4;
+            this.colorRedBottomRight *= f5;
+            this.colorGreenBottomRight *= f5;
+            this.colorBlueBottomRight *= f5;
+            this.colorRedTopRight *= f6;
+            this.colorGreenTopRight *= f6;
+            this.colorBlueTopRight *= f6;
+            icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 3);
+            this.renderFaceZPos(par1Block, (double)par2, (double)par3, (double)par4, this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 3));
+
+            if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+            {
+                this.colorRedTopLeft *= par5;
+                this.colorRedBottomLeft *= par5;
+                this.colorRedBottomRight *= par5;
+                this.colorRedTopRight *= par5;
+                this.colorGreenTopLeft *= par6;
+                this.colorGreenBottomLeft *= par6;
+                this.colorGreenBottomRight *= par6;
+                this.colorGreenTopRight *= par6;
+                this.colorBlueTopLeft *= par7;
+                this.colorBlueBottomLeft *= par7;
+                this.colorBlueBottomRight *= par7;
+                this.colorBlueTopRight *= par7;
+                this.renderFaceZPos(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
+            }
+
+            flag = true;
+        }
+
+        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2 - 1, par3, par4, 4))
+        {
+            if (this.renderMinX <= 0.0D)
+            {
+                --par2;
+            }
+
+            this.aoLightValueScratchXYNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
+            this.aoLightValueScratchXZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
+            this.aoLightValueScratchXZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
+            this.aoLightValueScratchXYNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
+            this.aoBrightnessXYNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+            this.aoBrightnessXZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+            this.aoBrightnessXZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+            this.aoBrightnessXYNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)];
+            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)];
+            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 - 1)];
+            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3, par4 + 1)];
+
+            if (!flag5 && !flag2)
+            {
+                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
+                this.aoBrightnessXYZNNN = this.aoBrightnessXZNN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4 - 1);
+                this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4 - 1);
+            }
+
+            if (!flag4 && !flag2)
+            {
+                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
+                this.aoBrightnessXYZNNP = this.aoBrightnessXZNP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4 + 1);
+                this.aoBrightnessXYZNNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4 + 1);
+            }
+
+            if (!flag5 && !flag3)
+            {
+                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
+                this.aoBrightnessXYZNPN = this.aoBrightnessXZNN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4 - 1);
+                this.aoBrightnessXYZNPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4 - 1);
+            }
+
+            if (!flag4 && !flag3)
+            {
+                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
+                this.aoBrightnessXYZNPP = this.aoBrightnessXZNP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4 + 1);
+                this.aoBrightnessXYZNPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4 + 1);
+            }
+
+            if (this.renderMinX <= 0.0D)
+            {
+                ++par2;
+            }
+
+            i1 = l;
+
+            if (this.renderMinX <= 0.0D || !this.blockAccess.isBlockOpaqueCube(par2 - 1, par3, par4))
+            {
+                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
+            }
+
+            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
+            f6 = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNP + f7 + this.aoLightValueScratchXZNP) / 4.0F;
+            f3 = (f7 + this.aoLightValueScratchXZNP + this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPP) / 4.0F;
+            f4 = (this.aoLightValueScratchXZNN + f7 + this.aoLightValueScratchXYZNPN + this.aoLightValueScratchXYNP) / 4.0F;
+            f5 = (this.aoLightValueScratchXYZNNN + this.aoLightValueScratchXYNN + this.aoLightValueScratchXZNN + f7) / 4.0F;
+            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNP, this.aoBrightnessXZNP, i1);
+            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXZNP, this.aoBrightnessXYNP, this.aoBrightnessXYZNPP, i1);
+            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXZNN, this.aoBrightnessXYZNPN, this.aoBrightnessXYNP, i1);
+            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYZNNN, this.aoBrightnessXYNN, this.aoBrightnessXZNN, i1);
+
+            if (flag1)
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.6F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.6F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.6F;
+            }
+            else
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
+            }
+
+            this.colorRedTopLeft *= f3;
+            this.colorGreenTopLeft *= f3;
+            this.colorBlueTopLeft *= f3;
+            this.colorRedBottomLeft *= f4;
+            this.colorGreenBottomLeft *= f4;
+            this.colorBlueBottomLeft *= f4;
+            this.colorRedBottomRight *= f5;
+            this.colorGreenBottomRight *= f5;
+            this.colorBlueBottomRight *= f5;
+            this.colorRedTopRight *= f6;
+            this.colorGreenTopRight *= f6;
+            this.colorBlueTopRight *= f6;
+            icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 4);
+            this.renderFaceXNeg(par1Block, (double)par2, (double)par3, (double)par4, icon);
+
+            if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+            {
+                this.colorRedTopLeft *= par5;
+                this.colorRedBottomLeft *= par5;
+                this.colorRedBottomRight *= par5;
+                this.colorRedTopRight *= par5;
+                this.colorGreenTopLeft *= par6;
+                this.colorGreenBottomLeft *= par6;
+                this.colorGreenBottomRight *= par6;
+                this.colorGreenTopRight *= par6;
+                this.colorBlueTopLeft *= par7;
+                this.colorBlueBottomLeft *= par7;
+                this.colorBlueBottomRight *= par7;
+                this.colorBlueTopRight *= par7;
+                this.renderFaceXNeg(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
+            }
+
+            flag = true;
+        }
+
+        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2 + 1, par3, par4, 5))
+        {
+            if (this.renderMaxX >= 1.0D)
+            {
+                ++par2;
+            }
+
+            this.aoLightValueScratchXYPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
+            this.aoLightValueScratchXZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
+            this.aoLightValueScratchXZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
+            this.aoLightValueScratchXYPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
+            this.aoBrightnessXYPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+            this.aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+            this.aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+            this.aoBrightnessXYPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)];
+            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)];
+            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 + 1)];
+            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3, par4 - 1)];
+
+            if (!flag2 && !flag4)
+            {
+                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
+                this.aoBrightnessXYZPNN = this.aoBrightnessXZPN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4 - 1);
+                this.aoBrightnessXYZPNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4 - 1);
+            }
+
+            if (!flag2 && !flag5)
+            {
+                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
+                this.aoBrightnessXYZPNP = this.aoBrightnessXZPP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4 + 1);
+                this.aoBrightnessXYZPNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4 + 1);
+            }
+
+            if (!flag3 && !flag4)
+            {
+                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
+                this.aoBrightnessXYZPPN = this.aoBrightnessXZPN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4 - 1);
+                this.aoBrightnessXYZPPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4 - 1);
+            }
+
+            if (!flag3 && !flag5)
+            {
+                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
+                this.aoBrightnessXYZPPP = this.aoBrightnessXZPP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4 + 1);
+                this.aoBrightnessXYZPPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4 + 1);
+            }
+
+            if (this.renderMaxX >= 1.0D)
+            {
+                --par2;
+            }
+
+            i1 = l;
+
+            if (this.renderMaxX >= 1.0D || !this.blockAccess.isBlockOpaqueCube(par2 + 1, par3, par4))
+            {
+                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+            }
+
+            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
+            f3 = (this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNP + f7 + this.aoLightValueScratchXZPP) / 4.0F;
+            f4 = (this.aoLightValueScratchXYZPNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXZPN + f7) / 4.0F;
+            f5 = (this.aoLightValueScratchXZPN + f7 + this.aoLightValueScratchXYZPPN + this.aoLightValueScratchXYPP) / 4.0F;
+            f6 = (f7 + this.aoLightValueScratchXZPP + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPP) / 4.0F;
+            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYPN, this.aoBrightnessXYZPNP, this.aoBrightnessXZPP, i1);
+            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXZPP, this.aoBrightnessXYPP, this.aoBrightnessXYZPPP, i1);
+            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXZPN, this.aoBrightnessXYZPPN, this.aoBrightnessXYPP, i1);
+            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYZPNN, this.aoBrightnessXYPN, this.aoBrightnessXZPN, i1);
+
+            if (flag1)
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.6F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.6F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.6F;
+            }
+            else
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.6F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.6F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.6F;
+            }
+
+            this.colorRedTopLeft *= f3;
+            this.colorGreenTopLeft *= f3;
+            this.colorBlueTopLeft *= f3;
+            this.colorRedBottomLeft *= f4;
+            this.colorGreenBottomLeft *= f4;
+            this.colorBlueBottomLeft *= f4;
+            this.colorRedBottomRight *= f5;
+            this.colorGreenBottomRight *= f5;
+            this.colorBlueBottomRight *= f5;
+            this.colorRedTopRight *= f6;
+            this.colorGreenTopRight *= f6;
+            this.colorBlueTopRight *= f6;
+            icon = this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 5);
+            this.renderFaceXPos(par1Block, (double)par2, (double)par3, (double)par4, icon);
+
+            if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
+            {
+                this.colorRedTopLeft *= par5;
+                this.colorRedBottomLeft *= par5;
+                this.colorRedBottomRight *= par5;
+                this.colorRedTopRight *= par5;
+                this.colorGreenTopLeft *= par6;
+                this.colorGreenBottomLeft *= par6;
+                this.colorGreenBottomRight *= par6;
+                this.colorGreenTopRight *= par6;
+                this.colorBlueTopLeft *= par7;
+                this.colorBlueBottomLeft *= par7;
+                this.colorBlueBottomRight *= par7;
+                this.colorBlueTopRight *= par7;
+                this.renderFaceXPos(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
+            }
+
+            flag = true;
+        }
+
+        this.enableAO = false;
+        return flag;
+    }
+
+    /**
+     * Renders non-full-cube block with ambient occusion.  Args: block, x, y, z, red, green, blue (lighting)
+     */
+    public boolean renderStandardBlockWithAmbientOcclusionPartial(Block par1Block, int par2, int par3, int par4, float par5, float par6, float par7)
+    {
+        this.enableAO = true;
+        boolean flag = false;
+        float f3 = 0.0F;
+        float f4 = 0.0F;
+        float f5 = 0.0F;
+        float f6 = 0.0F;
+        boolean flag1 = true;
+        int l = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.setBrightness(983055);
+
+        if (this.getBlockIcon(par1Block).getIconName().equals("grass_top"))
+        {
+            flag1 = false;
+        }
+        else if (this.hasOverrideBlockTexture())
+        {
+            flag1 = false;
+        }
+
+        boolean flag2;
+        boolean flag3;
+        boolean flag4;
+        boolean flag5;
+        float f7;
+        int i1;
+
+        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2, par3 - 1, par4, 0))
+        {
+            if (this.renderMinY <= 0.0D)
+            {
+                --par3;
+            }
+
+            this.aoBrightnessXYNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
+            this.aoBrightnessYZNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+            this.aoBrightnessYZNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+            this.aoBrightnessXYPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+            this.aoLightValueScratchXYNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
+            this.aoLightValueScratchYZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
+            this.aoLightValueScratchYZNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
+            this.aoLightValueScratchXYPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
+            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 - 1, par4)];
+            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 - 1, par4)];
+            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 + 1)];
+            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 - 1, par4 - 1)];
+
+            if (!flag4 && !flag2)
+            {
+                this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXYNN;
+                this.aoBrightnessXYZNNN = this.aoBrightnessXYNN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4 - 1);
+                this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4 - 1);
+            }
+
+            if (!flag5 && !flag2)
+            {
+                this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXYNN;
+                this.aoBrightnessXYZNNP = this.aoBrightnessXYNN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4 + 1);
+                this.aoBrightnessXYZNNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4 + 1);
+            }
+
+            if (!flag4 && !flag3)
+            {
+                this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXYPN;
+                this.aoBrightnessXYZPNN = this.aoBrightnessXYPN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4 - 1);
+                this.aoBrightnessXYZPNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4 - 1);
+            }
+
+            if (!flag5 && !flag3)
+            {
+                this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXYPN;
+                this.aoBrightnessXYZPNP = this.aoBrightnessXYPN;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4 + 1);
+                this.aoBrightnessXYZPNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4 + 1);
+            }
+
+            if (this.renderMinY <= 0.0D)
+            {
+                ++par3;
+            }
+
+            i1 = l;
+
+            if (this.renderMinY <= 0.0D || !this.blockAccess.isBlockOpaqueCube(par2, par3 - 1, par4))
+            {
+                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 - 1, par4);
+            }
+
+            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 - 1, par4);
+            f3 = (this.aoLightValueScratchXYZNNP + this.aoLightValueScratchXYNN + this.aoLightValueScratchYZNP + f7) / 4.0F;
+            f6 = (this.aoLightValueScratchYZNP + f7 + this.aoLightValueScratchXYZPNP + this.aoLightValueScratchXYPN) / 4.0F;
+            f5 = (f7 + this.aoLightValueScratchYZNN + this.aoLightValueScratchXYPN + this.aoLightValueScratchXYZPNN) / 4.0F;
+            f4 = (this.aoLightValueScratchXYNN + this.aoLightValueScratchXYZNNN + f7 + this.aoLightValueScratchYZNN) / 4.0F;
+            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessXYZNNP, this.aoBrightnessXYNN, this.aoBrightnessYZNP, i1);
+            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXYPN, i1);
+            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessYZNN, this.aoBrightnessXYPN, this.aoBrightnessXYZPNN, i1);
+            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessXYNN, this.aoBrightnessXYZNNN, this.aoBrightnessYZNN, i1);
+
+            if (flag1)
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.5F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.5F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.5F;
+            }
+            else
+            {
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = 0.5F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = 0.5F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = 0.5F;
+            }
+
+            this.colorRedTopLeft *= f3;
+            this.colorGreenTopLeft *= f3;
+            this.colorBlueTopLeft *= f3;
+            this.colorRedBottomLeft *= f4;
+            this.colorGreenBottomLeft *= f4;
+            this.colorBlueBottomLeft *= f4;
+            this.colorRedBottomRight *= f5;
+            this.colorGreenBottomRight *= f5;
+            this.colorBlueBottomRight *= f5;
+            this.colorRedTopRight *= f6;
+            this.colorGreenTopRight *= f6;
+            this.colorBlueTopRight *= f6;
+            this.renderFaceYNeg(par1Block, (double)par2, (double)par3, (double)par4, this.getBlockIcon(par1Block, this.blockAccess, par2, par3, par4, 0));
+            flag = true;
+        }
+
+        if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, par2, par3 + 1, par4, 1))
+        {
+            if (this.renderMaxY >= 1.0D)
+            {
+                ++par3;
+            }
+
+            this.aoBrightnessXYNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4);
+            this.aoBrightnessXYPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4);
+            this.aoBrightnessYZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 - 1);
+            this.aoBrightnessYZPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3, par4 + 1);
+            this.aoLightValueScratchXYNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4);
+            this.aoLightValueScratchXYPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4);
+            this.aoLightValueScratchYZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 - 1);
+            this.aoLightValueScratchYZPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3, par4 + 1);
+            flag3 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 + 1, par3 + 1, par4)];
+            flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(par2 - 1, par3 + 1, par4)];
+            flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 + 1)];
+            flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(par2, par3 + 1, par4 - 1)];
+
+            if (!flag4 && !flag2)
+            {
+                this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXYNP;
+                this.aoBrightnessXYZNPN = this.aoBrightnessXYNP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4 - 1);
+                this.aoBrightnessXYZNPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4 - 1);
+            }
+
+            if (!flag4 && !flag3)
+            {
+                this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXYPP;
+                this.aoBrightnessXYZPPN = this.aoBrightnessXYPP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4 - 1);
+                this.aoBrightnessXYZPPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4 - 1);
+            }
+
+            if (!flag5 && !flag2)
+            {
+                this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXYNP;
+                this.aoBrightnessXYZNPP = this.aoBrightnessXYNP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZNPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 - 1, par3, par4 + 1);
+                this.aoBrightnessXYZNPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 - 1, par3, par4 + 1);
+            }
+
+            if (!flag5 && !flag3)
+            {
+                this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXYPP;
+                this.aoBrightnessXYZPPP = this.aoBrightnessXYPP;
+            }
+            else
+            {
+                this.aoLightValueScratchXYZPPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2 + 1, par3, par4 + 1);
+                this.aoBrightnessXYZPPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2 + 1, par3, par4 + 1);
+            }
+
+            if (this.renderMaxY >= 1.0D)
+            {
+                --par3;
+            }
+
+            i1 = l;
+
+            if (this.renderMaxY >= 1.0D || !this.blockAccess.isBlockOpaqueCube(par2, par3 + 1, par4))
+            {
+                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, par2, par3 + 1, par4);
+            }
+
+            f7 = par1Block.getAmbientOcclusionLightValue(this.blockAccess, par2, par3 + 1, par4);
+            f6 = (this.aoLightValueScratchXYZNPP + this.aoLightValueScratchXYNP + this.aoLightValueScratchYZPP + f7) / 4.0F;
+            f3 = (this.aoLightValueScratchYZPP + f7 + this.aoLightValueScratchXYZPPP + this.aoLightValueScratchXYPP) / 4.0F;
+            f4 = (f7 + this.aoLightValueScratchYZPN + this.aoLightValueScratchXYPP + this.aoLightValueScratchXYZPPN) / 4.0F;
+            f5 = (this.aoLightValueScratchXYNP + this.aoLightValueScratchXYZNPN + f7 + this.aoLightValueScratchYZPN) / 4.0F;
+            this.brightnessTopRight = this.getAoBrightness(this.aoBrightnessXYZNPP, this.aoBrightnessXYNP, this.aoBrightnessYZPP, i1);
+            this.brightnessTopLeft = this.getAoBrightness(this.aoBrightnessYZPP, this.aoBrightnessXYZPPP, this.aoBrightnessXYPP, i1);
+            this.brightnessBottomLeft = this.getAoBrightness(this.aoBrightnessYZPN, this.aoBrightnessXYPP, this.aoBrightnessXYZPPN, i1);
+            this.brightnessBottomRight = this.getAoBrightness(this.aoBrightnessXYNP, this.aoBrightnessXYZNPN, this.aoBrightnessYZPN, i1);
+            this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5;
+            this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6;
+            this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7;
             this.colorRedTopLeft *= f3;
             this.colorGreenTopLeft *= f3;
             this.colorBlueTopLeft *= f3;
@@ -5392,9 +5379,9 @@ public class RenderBlocks
 
             if (flag1)
             {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.8F;
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.8F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.8F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.8F;
             }
             else
             {
@@ -5420,18 +5407,18 @@ public class RenderBlocks
 
             if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
-                this.colorRedTopLeft *= r;
-                this.colorRedBottomLeft *= r;
-                this.colorRedBottomRight *= r;
-                this.colorRedTopRight *= r;
-                this.colorGreenTopLeft *= g;
-                this.colorGreenBottomLeft *= g;
-                this.colorGreenBottomRight *= g;
-                this.colorGreenTopRight *= g;
-                this.colorBlueTopLeft *= b;
-                this.colorBlueBottomLeft *= b;
-                this.colorBlueBottomRight *= b;
-                this.colorBlueTopRight *= b;
+                this.colorRedTopLeft *= par5;
+                this.colorRedBottomLeft *= par5;
+                this.colorRedBottomRight *= par5;
+                this.colorRedTopRight *= par5;
+                this.colorGreenTopLeft *= par6;
+                this.colorGreenBottomLeft *= par6;
+                this.colorGreenBottomRight *= par6;
+                this.colorGreenTopRight *= par6;
+                this.colorBlueTopLeft *= par7;
+                this.colorBlueBottomLeft *= par7;
+                this.colorBlueBottomRight *= par7;
+                this.colorBlueTopRight *= par7;
                 this.renderFaceZNeg(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
             }
 
@@ -5534,9 +5521,9 @@ public class RenderBlocks
 
             if (flag1)
             {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.8F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.8F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.8F;
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.8F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.8F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.8F;
             }
             else
             {
@@ -5562,18 +5549,18 @@ public class RenderBlocks
 
             if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
-                this.colorRedTopLeft *= r;
-                this.colorRedBottomLeft *= r;
-                this.colorRedBottomRight *= r;
-                this.colorRedTopRight *= r;
-                this.colorGreenTopLeft *= g;
-                this.colorGreenBottomLeft *= g;
-                this.colorGreenBottomRight *= g;
-                this.colorGreenTopRight *= g;
-                this.colorBlueTopLeft *= b;
-                this.colorBlueBottomLeft *= b;
-                this.colorBlueBottomRight *= b;
-                this.colorBlueTopRight *= b;
+                this.colorRedTopLeft *= par5;
+                this.colorRedBottomLeft *= par5;
+                this.colorRedBottomRight *= par5;
+                this.colorRedTopRight *= par5;
+                this.colorGreenTopLeft *= par6;
+                this.colorGreenBottomLeft *= par6;
+                this.colorGreenBottomRight *= par6;
+                this.colorGreenTopRight *= par6;
+                this.colorBlueTopLeft *= par7;
+                this.colorBlueBottomLeft *= par7;
+                this.colorBlueBottomRight *= par7;
+                this.colorBlueTopRight *= par7;
                 this.renderFaceZPos(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
             }
 
@@ -5676,9 +5663,9 @@ public class RenderBlocks
 
             if (flag1)
             {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.6F;
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.6F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.6F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.6F;
             }
             else
             {
@@ -5704,18 +5691,18 @@ public class RenderBlocks
 
             if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
-                this.colorRedTopLeft *= r;
-                this.colorRedBottomLeft *= r;
-                this.colorRedBottomRight *= r;
-                this.colorRedTopRight *= r;
-                this.colorGreenTopLeft *= g;
-                this.colorGreenBottomLeft *= g;
-                this.colorGreenBottomRight *= g;
-                this.colorGreenTopRight *= g;
-                this.colorBlueTopLeft *= b;
-                this.colorBlueBottomLeft *= b;
-                this.colorBlueBottomRight *= b;
-                this.colorBlueTopRight *= b;
+                this.colorRedTopLeft *= par5;
+                this.colorRedBottomLeft *= par5;
+                this.colorRedBottomRight *= par5;
+                this.colorRedTopRight *= par5;
+                this.colorGreenTopLeft *= par6;
+                this.colorGreenBottomLeft *= par6;
+                this.colorGreenBottomRight *= par6;
+                this.colorGreenTopRight *= par6;
+                this.colorBlueTopLeft *= par7;
+                this.colorBlueBottomLeft *= par7;
+                this.colorBlueBottomRight *= par7;
+                this.colorBlueTopRight *= par7;
                 this.renderFaceXNeg(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
             }
 
@@ -5818,9 +5805,9 @@ public class RenderBlocks
 
             if (flag1)
             {
-                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = r * 0.6F;
-                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = g * 0.6F;
-                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = b * 0.6F;
+                this.colorRedTopLeft = this.colorRedBottomLeft = this.colorRedBottomRight = this.colorRedTopRight = par5 * 0.6F;
+                this.colorGreenTopLeft = this.colorGreenBottomLeft = this.colorGreenBottomRight = this.colorGreenTopRight = par6 * 0.6F;
+                this.colorBlueTopLeft = this.colorBlueBottomLeft = this.colorBlueBottomRight = this.colorBlueTopRight = par7 * 0.6F;
             }
             else
             {
@@ -5846,18 +5833,18 @@ public class RenderBlocks
 
             if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
-                this.colorRedTopLeft *= r;
-                this.colorRedBottomLeft *= r;
-                this.colorRedBottomRight *= r;
-                this.colorRedTopRight *= r;
-                this.colorGreenTopLeft *= g;
-                this.colorGreenBottomLeft *= g;
-                this.colorGreenBottomRight *= g;
-                this.colorGreenTopRight *= g;
-                this.colorBlueTopLeft *= b;
-                this.colorBlueBottomLeft *= b;
-                this.colorBlueBottomRight *= b;
-                this.colorBlueTopRight *= b;
+                this.colorRedTopLeft *= par5;
+                this.colorRedBottomLeft *= par5;
+                this.colorRedBottomRight *= par5;
+                this.colorRedTopRight *= par5;
+                this.colorGreenTopLeft *= par6;
+                this.colorGreenBottomLeft *= par6;
+                this.colorGreenBottomRight *= par6;
+                this.colorGreenTopRight *= par6;
+                this.colorBlueTopLeft *= par7;
+                this.colorBlueBottomLeft *= par7;
+                this.colorBlueBottomRight *= par7;
+                this.colorBlueTopRight *= par7;
                 this.renderFaceXPos(par1Block, (double)par2, (double)par3, (double)par4, BlockGrass.getIconSideOverlay());
             }
 
@@ -5900,13 +5887,15 @@ public class RenderBlocks
 
     /**
      * Renders a standard cube block at the given coordinates, with a given color ratio.  Args: block, x, y, z, r, g, b
+     * 
+     * Accepts and tints blocks according to their colored light value 
+     * CptSpaceToaster
      */
     public boolean renderStandardBlockWithColorMultiplier(Block par1Block, int x, int y, int z, float r, float g, float b)
     {
         this.enableAO = false;
         Tessellator tessellator = Tessellator.instance;
         boolean flag = false;
-        
         float f3 = 0.5F;
         float f4 = 1.0F;
         float f5 = 0.8F;
@@ -5938,10 +5927,10 @@ public class RenderBlocks
         }
 
         int l = par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z);
-        
+
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y - 1, z, 0))
         {
-            int i = this.renderMinY > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z);
+        	int i = this.renderMinY > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z);
             tessellator.setBrightness(i);
             
             float rc = 1;
@@ -5963,7 +5952,7 @@ public class RenderBlocks
 
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y + 1, z, 1))
         {
-            int i = this.renderMaxY < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y + 1, z);
+        	int i = this.renderMaxY < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y + 1, z);
             tessellator.setBrightness(i);
             		
             float rc = 1;
@@ -5985,7 +5974,7 @@ public class RenderBlocks
 
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y, z - 1, 2))
         {
-            int i = this.renderMinZ > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z - 1);
+        	int i = this.renderMinZ > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z - 1);
             tessellator.setBrightness(i);
             
             float rc = 1;
@@ -6004,7 +5993,7 @@ public class RenderBlocks
 
             if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
-                tessellator.setColorOpaque_F(f11 * r*rc, f14 * g*gc, f17 * b*bc);
+            	tessellator.setColorOpaque_F(f11 * r*rc, f14 * g*gc, f17 * b*bc);
                 this.renderFaceZNeg(par1Block, (double)x, (double)y, (double)z, BlockGrass.getIconSideOverlay());
             }
 
@@ -6013,7 +6002,7 @@ public class RenderBlocks
 
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y, z + 1, 3))
         {
-            int i = this.renderMaxZ < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z + 1);
+        	int i = this.renderMaxZ < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z + 1);
             tessellator.setBrightness(i);
             
             float rc = 1;
@@ -6032,7 +6021,7 @@ public class RenderBlocks
 
             if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
-                tessellator.setColorOpaque_F(f11 * r*rc, f14 * g*gc, f17 * b*bc);
+            	tessellator.setColorOpaque_F(f11 * r*rc, f14 * g*gc, f17 * b*bc);
                 this.renderFaceZPos(par1Block, (double)x, (double)y, (double)z, BlockGrass.getIconSideOverlay());
             }
 
@@ -6041,7 +6030,7 @@ public class RenderBlocks
 
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x - 1, y, z, 4))
         {
-            int i = this.renderMinX > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z);
+        	int i = this.renderMinX > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z);
             tessellator.setBrightness(i);
             
             float rc = 1;
@@ -6060,7 +6049,7 @@ public class RenderBlocks
 
             if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
-                tessellator.setColorOpaque_F(f12 * r*rc, f15 * g*gc, f18 * b*bc);
+            	tessellator.setColorOpaque_F(f12 * r*rc, f15 * g*gc, f18 * b*bc);
                 this.renderFaceXNeg(par1Block, (double)x, (double)y, (double)z, BlockGrass.getIconSideOverlay());
             }
 
@@ -6069,26 +6058,26 @@ public class RenderBlocks
 
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x + 1, y, z, 5))
         {
-            int i = this.renderMaxX < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y, z);
-            tessellator.setBrightness(i);
-            
-            float rc = 1;
-            float gc = 1;
-            float bc = 1;
-            
-            if ((i & 1048320) > 0) {
-            	rc *= (i & 3840)/3840f;
-            	gc *= (i & 61440)/61440f;	
-            	bc *= (i & 983040)/983040f;
-            }
-            
-            tessellator.setColorOpaque_F(f12*rc, f15*gc, f18*bc);
+        	 int i = this.renderMaxX < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y, z);
+             tessellator.setBrightness(i);
+             
+             float rc = 1;
+             float gc = 1;
+             float bc = 1;
+             
+             if ((i & 1048320) > 0) {
+             	rc *= (i & 3840)/3840f;
+             	gc *= (i & 61440)/61440f;	
+             	bc *= (i & 983040)/983040f;
+             }
+             
+             tessellator.setColorOpaque_F(f12*rc, f15*gc, f18*bc);
             icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 5);
             this.renderFaceXPos(par1Block, (double)x, (double)y, (double)z, icon);
 
             if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
             {
-                tessellator.setColorOpaque_F(f12 * r*rc, f15 * g*gc, f18 * b*bc);
+            	 tessellator.setColorOpaque_F(f12 * r*rc, f15 * g*gc, f18 * b*bc);
                 this.renderFaceXPos(par1Block, (double)x, (double)y, (double)z, BlockGrass.getIconSideOverlay());
             }
 
@@ -6109,7 +6098,7 @@ public class RenderBlocks
         int l = this.blockAccess.getBlockMetadata(par2, par3, par4);
         int i1 = BlockDirectional.getDirection(l);
         int j1 = BlockCocoa.func_72219_c(l);
-        Icon icon = par1BlockCocoa.func_94468_i_(j1);
+        Icon icon = par1BlockCocoa.getCocoaIcon(j1);
         int k1 = 4 + j1 * 2;
         int l1 = 5 + j1 * 2;
         double d0 = 15.0D - (double)k1;
@@ -8269,7 +8258,7 @@ public class RenderBlocks
     {
         if (par1Icon == null)
         {
-            par1Icon = ((TextureMap)Minecraft.getMinecraft().func_110434_K().func_110581_b(TextureMap.field_110575_b)).func_110572_b("missingno");
+            par1Icon = ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
         }
 
         return (Icon)par1Icon;
