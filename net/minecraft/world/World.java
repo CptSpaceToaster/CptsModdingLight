@@ -3473,11 +3473,26 @@ public abstract class World implements IBlockAccess
 	                    	neighboorLight+=4096;
 	                    if((neighboorLight&65520) == 65520)
 	                    	neighboorLight-=65520;
+	                    
+	                    
+                    } 
+                    
+                    if ((neighboorLight&15) > (currentLight&15)) {
+                    	currentLight = neighboorLight;
                     }
-                    if ((neighboorLight&15) > (currentLight&15))
-                    {
-                        currentLight = neighboorLight;
-                    }
+//                    if ((neighboorLight&240) > (currentLight&240))
+//                    {
+//                        currentLight = (currentLight&65295) | (neighboorLight&240);
+//                    }
+//                    if ((neighboorLight&3840) > (currentLight&3840))
+//                    {
+//                        currentLight = (currentLight&61695) | (neighboorLight&3840);
+//                    }
+//                    if ((neighboorLight&61440) > (currentLight&61440))
+//                    {
+//                        currentLight = (currentLight&4095) | (neighboorLight&61440);
+//                    }
+                    
 
                     if ((currentLight&15) >= 14)
                     {
