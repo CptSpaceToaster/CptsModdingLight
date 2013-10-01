@@ -5931,20 +5931,24 @@ public class RenderBlocks
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y - 1, z, 0))
         {
         	int i = this.renderMinY > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z);
-            tessellator.setBrightness(i);
             
-            float rc = 1;
+        	float rc = 1;
             float gc = 1;
             float bc = 1;
-            
-            if ((i & 1048320) > 0) {
-            	rc *= (i & 3840)/3840f;
-            	gc *= (i & 61440)/61440f;	
-            	bc *= (i & 983040)/983040f;
-            }
+            float lc = 1;
+             
+        	if ((i & 1048320) > 0) {
+        		lc = 1f-(i&240)/240f;
+	            rc = (i & 3840)/3840f;
+	            gc = (i & 61440)/61440f;
+	            bc = (i & 983040)/983040f;
+	            
+	            rc = (rc+lc>1)?1:rc+lc;
+	            gc = (gc+lc>1)?1:gc+lc;
+	            bc = (bc+lc>1)?1:bc+lc;
+        	}
             
             tessellator.setBrightness(i);
-            
             tessellator.setColorOpaque_F(f10*rc, f13*gc, f16*bc);
             this.renderFaceYNeg(par1Block, (double)x, (double)y, (double)z, this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 0));
             flag = true;
@@ -5953,18 +5957,24 @@ public class RenderBlocks
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y + 1, z, 1))
         {
         	int i = this.renderMaxY < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y + 1, z);
-            tessellator.setBrightness(i);
             		
-            float rc = 1;
+        	float rc = 1;
             float gc = 1;
             float bc = 1;
+            float lc = 1;
+             
+        	if ((i & 1048320) > 0) {
+        		lc = 1f-(i&240)/240f;
+	            rc = (i & 3840)/3840f;
+	            gc = (i & 61440)/61440f;
+	            bc = (i & 983040)/983040f;
+	            
+	            rc = (rc+lc>1)?1:rc+lc;
+	            gc = (gc+lc>1)?1:gc+lc;
+	            bc = (bc+lc>1)?1:bc+lc;
+        	}
             
-            if ((i & 1048320) > 0) {
-            	rc *= (i & 3840)/3840f;
-            	gc *= (i & 61440)/61440f;	
-            	bc *= (i & 983040)/983040f;
-            }
-            
+            tessellator.setBrightness(i);
             tessellator.setColorOpaque_F(f7*rc, f8*gc, f9*bc);
             this.renderFaceYPos(par1Block, (double)x, (double)y, (double)z, this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 1));
             flag = true;
@@ -5975,18 +5985,24 @@ public class RenderBlocks
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y, z - 1, 2))
         {
         	int i = this.renderMinZ > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z - 1);
-            tessellator.setBrightness(i);
             
-            float rc = 1;
+        	float rc = 1;
             float gc = 1;
             float bc = 1;
+            float lc = 1;
+             
+        	if ((i & 1048320) > 0) {
+        		lc = 1f-(i&240)/240f;
+	            rc = (i & 3840)/3840f;
+	            gc = (i & 61440)/61440f;
+	            bc = (i & 983040)/983040f;
+	            
+	            rc = (rc+lc>1)?1:rc+lc;
+	            gc = (gc+lc>1)?1:gc+lc;
+	            bc = (bc+lc>1)?1:bc+lc;
+        	}
             
-            if ((i & 1048320) > 0) {
-            	rc *= (i & 3840)/3840f;
-            	gc *= (i & 61440)/61440f;	
-            	bc *= (i & 983040)/983040f;
-            }
-            
+            tessellator.setBrightness(i);
             tessellator.setColorOpaque_F(f11*rc, f14*gc, f17*bc);
             icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 2);
             this.renderFaceZNeg(par1Block, (double)x, (double)y, (double)z, icon);
@@ -6003,18 +6019,25 @@ public class RenderBlocks
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y, z + 1, 3))
         {
         	int i = this.renderMaxZ < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z + 1);
-            tessellator.setBrightness(i);
             
-            float rc = 1;
+
+        	float rc = 1;
             float gc = 1;
             float bc = 1;
+            float lc = 1;
+             
+        	if ((i & 1048320) > 0) {
+        		lc = 1f-(i&240)/240f;
+	            rc = (i & 3840)/3840f;
+	            gc = (i & 61440)/61440f;
+	            bc = (i & 983040)/983040f;
+	            
+	            rc = (rc+lc>1)?1:rc+lc;
+	            gc = (gc+lc>1)?1:gc+lc;
+	            bc = (bc+lc>1)?1:bc+lc;
+        	}
             
-            if ((i & 1048320) > 0) {
-            	rc *= (i & 3840)/3840f;
-            	gc *= (i & 61440)/61440f;	
-            	bc *= (i & 983040)/983040f;
-            }
-            
+            tessellator.setBrightness(i);
             tessellator.setColorOpaque_F(f11*rc, f14*gc, f17*bc);
             icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 3);
             this.renderFaceZPos(par1Block, (double)x, (double)y, (double)z, icon);
@@ -6031,18 +6054,25 @@ public class RenderBlocks
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x - 1, y, z, 4))
         {
         	int i = this.renderMinX > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z);
-            tessellator.setBrightness(i);
             
-            float rc = 1;
+            
+        	float rc = 1;
             float gc = 1;
             float bc = 1;
+            float lc = 1;
+             
+        	if ((i & 1048320) > 0) {
+        		lc = 1f-(i&240)/240f;
+	            rc = (i & 3840)/3840f;
+	            gc = (i & 61440)/61440f;
+	            bc = (i & 983040)/983040f;
+	            
+	            rc = (rc+lc>1)?1:rc+lc;
+	            gc = (gc+lc>1)?1:gc+lc;
+	            bc = (bc+lc>1)?1:bc+lc;
+        	}
             
-            if ((i & 1048320) > 0) {
-            	rc *= (i & 3840)/3840f;
-            	gc *= (i & 61440)/61440f;	
-            	bc *= (i & 983040)/983040f;
-            }
-            
+            tessellator.setBrightness(i);
             tessellator.setColorOpaque_F(f12*rc, f15*gc, f18*bc);
             icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 4);
             this.renderFaceXNeg(par1Block, (double)x, (double)y, (double)z, icon);
@@ -6058,20 +6088,27 @@ public class RenderBlocks
 
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x + 1, y, z, 5))
         {
-        	 int i = this.renderMaxX < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y, z);
-             tessellator.setBrightness(i);
+        	int i = this.renderMaxX < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y, z);
              
-             float rc = 1;
-             float gc = 1;
-             float bc = 1;
              
-             if ((i & 1048320) > 0) {
-             	rc *= (i & 3840)/3840f;
-             	gc *= (i & 61440)/61440f;	
-             	bc *= (i & 983040)/983040f;
-             }
+        	float rc = 1;
+            float gc = 1;
+            float bc = 1;
+            float lc = 1;
+              
+         	if ((i & 1048320) > 0) {
+         		lc = 1f-(i&240)/240f;
+ 	            rc = (i & 3840)/3840f;
+ 	            gc = (i & 61440)/61440f;
+ 	            bc = (i & 983040)/983040f;
+ 	            
+ 	            rc = (rc+lc>1)?1:rc+lc;
+ 	            gc = (gc+lc>1)?1:gc+lc;
+ 	            bc = (bc+lc>1)?1:bc+lc;
+         	}
              
-             tessellator.setColorOpaque_F(f12*rc, f15*gc, f18*bc);
+            tessellator.setBrightness(i);
+            tessellator.setColorOpaque_F(f12*rc, f15*gc, f18*bc);
             icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 5);
             this.renderFaceXPos(par1Block, (double)x, (double)y, (double)z, icon);
 

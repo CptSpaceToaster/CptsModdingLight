@@ -3448,9 +3448,8 @@ public abstract class World implements IBlockAccess
             {
                 return 0;
             }
-            else if ((currentLight&15) >= 14)
-            {
-                return currentLight;
+            else if ((currentLight&15) >= 14) {
+            	return currentLight;
             }
             else
             {
@@ -3459,44 +3458,31 @@ public abstract class World implements IBlockAccess
                     int l1 = par1 + Facing.offsetsXForSide[k1];
                     int i2 = par2 + Facing.offsetsYForSide[k1];
                     int j2 = par3 + Facing.offsetsZForSide[k1];
+                    
                     int neighboorLight = this.getSavedLightValue(par4EnumSkyBlock, l1, i2, j2);
                     
-                    if((neighboorLight >= 0) && ((neighboorLight&15)>=opacity))
-                    	neighboorLight-=opacity;
-                    
-                    if((neighboorLight&65520)>0) {
-	                    if((neighboorLight&240)<240) 
-	                    	neighboorLight+=16;
-	                    if((neighboorLight&3840)<3840) 
-	                    	neighboorLight+=256;
-	                    if((neighboorLight&61440)<61440)
-	                    	neighboorLight+=4096;
-	                    if((neighboorLight&65520) == 65520)
-	                    	neighboorLight-=65520;
-	                    
-	                    
-                    } 
+                    if(neighboorLight >= 0) {
+	                    if((neighboorLight&15)>=opacity)
+	                    	neighboorLight-=opacity;
+	                    if(((neighboorLight&240)>=16*opacity) )
+	                    	neighboorLight-=16*opacity;
+	                    if((neighboorLight&3840)>=256*opacity) 
+	                    	neighboorLight-=256*opacity;
+	                    if((neighboorLight&61440)>=4096*opacity)
+	                    	neighboorLight-=4096*opacity;
+                    }
                     
                     if ((neighboorLight&15) > (currentLight&15)) {
-                    	currentLight = neighboorLight;
+                    	currentLight = (currentLight&65520) | (neighboorLight&15);
+                    } 
+                    if ((neighboorLight&240) > (currentLight&240)) {
+                        currentLight = (currentLight&65295) | (neighboorLight&240);
                     }
-//                    if ((neighboorLight&240) > (currentLight&240))
-//                    {
-//                        currentLight = (currentLight&65295) | (neighboorLight&240);
-//                    }
-//                    if ((neighboorLight&3840) > (currentLight&3840))
-//                    {
-//                        currentLight = (currentLight&61695) | (neighboorLight&3840);
-//                    }
-//                    if ((neighboorLight&61440) > (currentLight&61440))
-//                    {
-//                        currentLight = (currentLight&4095) | (neighboorLight&61440);
-//                    }
-                    
-
-                    if ((currentLight&15) >= 14)
-                    {
-                        return currentLight;
+                    if ((neighboorLight&3840) > (currentLight&3840)) {
+                    	currentLight = (currentLight&61695) | (neighboorLight&3840);
+	                }
+                    if ((neighboorLight&61440) > (currentLight&61440)) {
+                        currentLight = (currentLight&4095) | (neighboorLight&61440);
                     }
                 }
 
