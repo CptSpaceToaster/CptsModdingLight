@@ -3551,7 +3551,7 @@ public abstract class World implements IBlockAccess
 //                    	(i3&3840) == (l2&3840)	||
 //                    	(i3&61440) == (l2&61440) )
 //                    {
-                    	System.out.println("l2: " + l2);
+                    	System.out.println("i3: " + i3 + ", l2: " + l2);
                     	this.setLightValue(par1Enu, i2, j2, k2, 0);
                     	
 //                    	if ((i3&15) == (l2&15))
