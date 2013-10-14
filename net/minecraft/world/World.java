@@ -3,6 +3,7 @@ package net.minecraft.world;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockHalfSlab;
@@ -3502,23 +3504,26 @@ public abstract class World implements IBlockAccess
      */
     public void updateLightByType(EnumSkyBlock par1Enu, int x, int y, int z)
     {
+    	// EnumSkyBlock is whether is a skyblock or normal block
         if (this.doChunksNearChunkExist(x, y, z, 17))
         {
-            int l = 0;
-            int i1 = 0;
+            int l = 0; // intermediate variables
+            int i1 = 0; // intermediate variables
             this.theProfiler.startSection("getBrightness");
-            int initSavedLight = this.getSavedLightValue(par1Enu, x, y, z);
-            int initCompLight = this.computeLightValue(x, y, z, par1Enu);
-            int l1;
-            int i2;
-            int j2;
-            int k2;
-            int l2;
-            int i3;
-            int j3;
-            int k3;
-            int l3;
+            int initSavedLight = this.getSavedLightValue(par1Enu, x, y, z);  
+            int initCompLight = this.computeLightValue(x, y, z, par1Enu); 
+            int l1; // Blocklist 1
+            int i2; // X2
+            int j2; // Y2
+            int k2; // Z2
+            int l2; // blocklist 2
+            int i3; // X3
+            int j3; // Y3
+            int k3; // Z3
+            int l3; // blocklist 3
 
+            // This first block checks to see if the computed light is greater than the
+            // maximum value for Intensity, Red, Green, and Blue
             if ((initCompLight&15) > (initSavedLight&15)	 ||
             	(initCompLight&240) > (initSavedLight&240)	 ||
             	(initCompLight&3840) > (initSavedLight&3840) ||
@@ -3526,49 +3531,46 @@ public abstract class World implements IBlockAccess
             {
                 this.lightUpdateBlockList[i1++] = 133152;
             }
+            // This second block checks to see if the computed light is less than the
+            // maximum value for intensity, red, green, and blue
             else if ((initCompLight&15) < (initSavedLight&15)	 ||
                 	(initCompLight&240) < (initSavedLight&240)	 ||
                 	(initCompLight&3840) < (initSavedLight&3840) ||
                 	(initCompLight&61440) < (initSavedLight&61440) )
             {
-                this.lightUpdateBlockList[i1++] = 133152 | initSavedLight << 18;
+                this.lightUpdateBlockList[i1++] = 133152 | initSavedLight << 18; // Takes saved light and throws into left
 
                 while (l < i1)
                 {
                     l1 = this.lightUpdateBlockList[l++];
-                    i2 = (l1 & 63) - 32 + x;
-                    j2 = (l1 >> 6 & 63) - 32 + y;
-                    k2 = (l1 >> 12 & 63) - 32 + z;
-                    l2 = l1 >> 18;
+                    i2 = (l1 & 63) - 32 + x; // X2 Location
+                    j2 = (l1 >> 6 & 63) - 32 + y; // Y2 Location
+                    k2 = (l1 >> 12 & 63) - 32 + z; // Z2 location
+                    l2 = l1 >> 18; // Initially saved light popped back
                     i3 = this.getSavedLightValue(par1Enu, i2, j2, k2);
 
-                    
+                    // l2 and i3 are both light values
                     if ((i3&15) == (l2&15))
-                    {
-                    	
-//                    if ((i3&15) == (l2&15)		|| 
-//                    	(i3&240) == (l2&240)	||
-//                    	(i3&3840) == (l2&3840)	||
-//                    	(i3&61440) == (l2&61440) )
-//                    {
-                    	System.out.println("i3: " + i3 + ", l2: " + l2);
-                    	this.setLightValue(par1Enu, i2, j2, k2, 0);
-                    	
-//                    	if ((i3&15) == (l2&15))
-//                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~15);
-//                    	if ((i3&240) == (l2&240))
-//                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~240);
+                    {                    	
+                    	// ~ bit flip operator (NOT)
+                    	// & AND operator
+                    	// l2&~15 = turning off bits 1234 and 
+                    	// TODO: FIX THIS
+                    	this.setLightValue(par1Enu, i2, j2, k2, 0); // detects that destroyed light and spreads it
+                    	//if ((i3&240) == (l2&240))
+                    		//this.setLightValue(par1Enu, i2, j2, k2, l2&~240);
 //                    	if ((i3&3840) == (l2&3840))
 //                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~3840);
 //                    	if ((i3&61440) == (l2&61440))
 //                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~61440);
 
-                        if ((l2&2147483647) > 0)
+                        if ((l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
                         {
                             j3 = MathHelper.abs_int(i2 - x);
                             l3 = MathHelper.abs_int(j2 - y);
                             k3 = MathHelper.abs_int(k2 - z);
 
+                            // Computes light again
                             if (j3 + l3 + k3 < 17)
                             {
                                 for (int i4 = 0; i4 < 6; ++i4)
@@ -3597,7 +3599,7 @@ public abstract class World implements IBlockAccess
             this.theProfiler.endSection();
             this.theProfiler.startSection("checkedPosition < toCheckCount");
 
-            while (l < i1)
+            while (l < i1) // Lights greater than saved lights
             {
                 l1 = this.lightUpdateBlockList[l++];
                 i2 = (l1 & 63) - 32 + x;
@@ -3630,8 +3632,9 @@ public abstract class World implements IBlockAccess
                         k3 = Math.abs(k2 - z);
                         boolean flag = i1 < this.lightUpdateBlockList.length - 6;
 
-                        if (j3 + l3 + k3 < 17 && flag)
+                        if (j3 + l3 + k3 < 17 && flag) // Manhatan distance
                         {
+                        	// WHERE LAG HAPPENS WHEN PLACED
                             if ((this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&15) < (i3&15) 	||
                             	(this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&240) < (i3&240) 	||
                             	(this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&3840) < (i3&3840) ||
