@@ -2514,7 +2514,7 @@ public class Block
     	
     	//System.out.println("Pre: " + lightValue[this.blockID]);
     	//System.out.println("Adding: " + ((((int)(15.0F * r))<<4) + (((int)(15.0F * g))<<8) + (((int)(15.0F * b))<<12)));
-    	lightValue[this.blockID] |= ((((int)(15.0F * b))<<12) + (((int)(15.0F * g))<<8) + (((int)(15.0F * r))<<4));
+    	lightValue[this.blockID] |= ((((int)(15.0F * b))<<15) + (((int)(15.0F * g))<<10) + (((int)(15.0F * r))<<5));
     	//System.out.println("After: " + lightValue[this.blockID]);
         return this;
     }

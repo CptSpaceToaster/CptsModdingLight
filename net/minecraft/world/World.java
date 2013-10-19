@@ -1037,6 +1037,12 @@ public abstract class World implements IBlockAccess
     /**
      * Brightness for SkyBlock.Sky is clear white and (through color computing it is assumed) DEPENDENT ON DAYTIME.
      * Brightness for SkyBlock.Block is yellowish and independent.
+     * 
+     * 
+     * 
+     * Modified by CptSpaceToaster
+     * 
+     * kinda...
      */
     public int getSkyBlockTypeBrightness(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
     {
@@ -1071,7 +1077,8 @@ public abstract class World implements IBlockAccess
                     int l1 = this.getSavedLightValue(par1EnumSkyBlock, par2 - 1, par3, par4);
                     int i2 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4 + 1);
                     int j2 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4 - 1);
-
+                    
+                    //TODO: Fix this, it doesn't mess with colors.
                     if (k1 > j1)
                     {
                         j1 = k1;
@@ -1091,7 +1098,7 @@ public abstract class World implements IBlockAccess
                     {
                         j1 = j2;
                     }
-
+                    
                     return j1;
                 }
                 else
@@ -1192,11 +1199,24 @@ public abstract class World implements IBlockAccess
         int i1 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, par1, par2, par3);
         int j1 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Block, par1, par2, par3);
 
+        par4 = ((par4 & 15)			|
+          	   ((par4 & 480) >> 1) 	|
+         	   ((par4 & 15360) >> 2)|
+         	   ((par4 & 491520) >> 3) );
+        
+        j1 =   ((j1 & 15)			|
+           	   ((j1 & 480) >> 1) 	|
+          	   ((j1 & 15360) >> 2)	|
+          	   ((j1 & 491520) >> 3) );
+        
         if (j1 < par4)
         {
-            j1 = par4;
+        	j1 = par4;
         }
-
+        
+//        if (j1 != 0)
+//        	System.out.println("(i1<<20 | j1<<4): " + (i1<<20 | j1<<4));
+        
         return i1 << 20 | j1 << 4;
     }
 
@@ -1205,6 +1225,16 @@ public abstract class World implements IBlockAccess
     {
         int i1 = this.getBlockLightValue(par1, par2, par3);
 
+        par4 = ((par4 & 15)			|
+           	   ((par4 & 480) >> 1) 	|
+          	   ((par4 & 15360) >> 2)|
+          	   ((par4 & 491520) >> 3) );
+         
+         i1 =  ((i1 & 15)			|
+        	   ((i1 & 480) >> 1) 	|
+           	   ((i1 & 15360) >> 2)	|
+           	   ((i1 & 491520) >> 3) );
+        
         if (i1 < par4)
         {
             i1 = par4;
@@ -3466,25 +3496,25 @@ public abstract class World implements IBlockAccess
                     if(neighboorLight >= 0) {
 	                    if((neighboorLight&15)>=opacity)
 	                    	neighboorLight-=opacity;
-	                    if(((neighboorLight&240)>=16*opacity) )
-	                    	neighboorLight-=16*opacity;
-	                    if((neighboorLight&3840)>=256*opacity) 
-	                    	neighboorLight-=256*opacity;
-	                    if((neighboorLight&61440)>=4096*opacity)
-	                    	neighboorLight-=4096*opacity;
+	                    if(((neighboorLight&480)>=32*opacity) )
+	                    	neighboorLight-=32*opacity;
+	                    if((neighboorLight&15360)>=1024*opacity) 
+	                    	neighboorLight-=1024*opacity;
+	                    if((neighboorLight&491520)>=32768*opacity)
+	                    	neighboorLight-=32768*opacity;
                     }
                     
                     if ((neighboorLight&15) > (currentLight&15)) {
-                    	currentLight = (currentLight&65520) | (neighboorLight&15);
+                    	currentLight = (currentLight&507360) | (neighboorLight&15);
                     } 
-                    if ((neighboorLight&240) > (currentLight&240)) {
-                        currentLight = (currentLight&65295) | (neighboorLight&240);
+                    if ((neighboorLight&480) > (currentLight&480)) {
+                        currentLight = (currentLight&506895) | (neighboorLight&480);
                     }
-                    if ((neighboorLight&3840) > (currentLight&3840)) {
-                    	currentLight = (currentLight&61695) | (neighboorLight&3840);
+                    if ((neighboorLight&15360) > (currentLight&15360)) {
+                    	currentLight = (currentLight&492015) | (neighboorLight&15360);
 	                }
-                    if ((neighboorLight&61440) > (currentLight&61440)) {
-                        currentLight = (currentLight&4095) | (neighboorLight&61440);
+                    if ((neighboorLight&491520) > (currentLight&491520)) {
+                        currentLight = (currentLight&15855) | (neighboorLight&491520);
                     }
                 }
 
@@ -3525,18 +3555,18 @@ public abstract class World implements IBlockAccess
             // This first block checks to see if the computed light is greater than the
             // maximum value for Intensity, Red, Green, and Blue
             if ((initCompLight&15) > (initSavedLight&15)	 ||
-            	(initCompLight&240) > (initSavedLight&240)	 ||
-            	(initCompLight&3840) > (initSavedLight&3840) ||
-            	(initCompLight&61440) > (initSavedLight&61440) )
+            	(initCompLight&480) > (initSavedLight&480)	 ||
+            	(initCompLight&15360) > (initSavedLight&15360) ||
+            	(initCompLight&491520) > (initSavedLight&491520) )
             {
                 this.lightUpdateBlockList[i1++] = 133152;
             }
             // This second block checks to see if the computed light is less than the
             // maximum value for intensity, red, green, and blue
             else if ((initCompLight&15) < (initSavedLight&15)	 ||
-                	(initCompLight&240) < (initSavedLight&240)	 ||
-                	(initCompLight&3840) < (initSavedLight&3840) ||
-                	(initCompLight&61440) < (initSavedLight&61440) )
+                	(initCompLight&480) < (initSavedLight&480)	 ||
+                	(initCompLight&15360) < (initSavedLight&15360) ||
+                	(initCompLight&491520) < (initSavedLight&491520) )
             {
                 this.lightUpdateBlockList[i1++] = 133152 | initSavedLight << 18; // Takes saved light and throws into left
 
@@ -3608,24 +3638,24 @@ public abstract class World implements IBlockAccess
                 l2 = (this.getSavedLightValue(par1Enu, i2, j2, k2));
                 i3 = (this.computeLightValue(i2, j2, k2, par1Enu));
 
-                if ((i3&15) != (l2&15)		|| 
-                	(i3&240) != (l2&240)	||
-                	(i3&3840) != (l2&3840)	||
-                	(i3&61440) != (l2&61440) )
+                if ((i3&15) != (l2&15)			|| 
+                	(i3&480) != (l2&480)		||
+                	(i3&15360) != (l2&15360)	||
+                	(i3&491520) != (l2&491520) )
                 {
                 	if((i3&15) != (l2&15))
                 		this.setLightValue(par1Enu, i2, j2, k2, l2&~15 | i3&15);
-                	if((i3&240) != (l2&240))
-                		this.setLightValue(par1Enu, i2, j2, k2, l2&~240 | i3&240);
-                	if((i3&3840) != (l2&3840))
-                		this.setLightValue(par1Enu, i2, j2, k2, l2&~3840 | i3&3840);
-                	if((i3&61440) != (l2&61440))
-                		this.setLightValue(par1Enu, i2, j2, k2, l2&~61440 | i3&61440);
+                	if((i3&480) != (l2&480))
+                		this.setLightValue(par1Enu, i2, j2, k2, l2&~480 | i3&480);
+                	if((i3&15360) != (l2&15360))
+                		this.setLightValue(par1Enu, i2, j2, k2, l2&~15360 | i3&15360);
+                	if((i3&491520) != (l2&491520))
+                		this.setLightValue(par1Enu, i2, j2, k2, l2&~491520 | i3&491520);
                 	
                     if ((i3&15) > (l2&15)		||
-                		(i3&240) > (l2&240)		||
-                		(i3&3840) > (l2&3840)	||
-                		(i3&61440) > (l2&61440) )
+                		(i3&480) > (l2&480)		||
+                		(i3&15360) > (l2&15360)	||
+                		(i3&491520) > (l2&491520) )
                     {
                         j3 = Math.abs(i2 - x);
                         l3 = Math.abs(j2 - y);
@@ -3636,49 +3666,49 @@ public abstract class World implements IBlockAccess
                         {
                         	// WHERE LAG HAPPENS WHEN PLACED
                             if ((this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&15) < (i3&15) 	||
-                            	(this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&240) < (i3&240) 	||
-                            	(this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&3840) < (i3&3840) ||
-                            	(this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&61440) < (i3&61440) )
+                            	(this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&480) < (i3&480) 	||
+                            	(this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&15360) < (i3&15360) ||
+                            	(this.getSavedLightValue(par1Enu, i2 - 1, j2, k2)&491520) < (i3&491520) )
                             {
                                 this.lightUpdateBlockList[i1++] = i2 - 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
                             }
 
                             if ((this.getSavedLightValue(par1Enu, i2 + 1, j2, k2)&15) < (i3&15) 	||
-                            	(this.getSavedLightValue(par1Enu, i2 + 1, j2, k2)&240) < (i3&240) 	||
-                            	(this.getSavedLightValue(par1Enu, i2 + 1, j2, k2)&3840) < (i3&3840) ||
-                            	(this.getSavedLightValue(par1Enu, i2 + 1, j2, k2)&61440) < (i3&61440) )
+                            	(this.getSavedLightValue(par1Enu, i2 + 1, j2, k2)&480) < (i3&480) 	||
+                            	(this.getSavedLightValue(par1Enu, i2 + 1, j2, k2)&15360) < (i3&15360) ||
+                            	(this.getSavedLightValue(par1Enu, i2 + 1, j2, k2)&491520) < (i3&491520) )
                             {
                                 this.lightUpdateBlockList[i1++] = i2 + 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
                             }
 
                             if ((this.getSavedLightValue(par1Enu, i2, j2 - 1, k2)&15) < (i3&15) 	||
-                            	(this.getSavedLightValue(par1Enu, i2, j2 - 1, k2)&240) < (i3&240) 	||
-                            	(this.getSavedLightValue(par1Enu, i2, j2 - 1, k2)&3840) < (i3&3840) ||
-                            	(this.getSavedLightValue(par1Enu, i2, j2 - 1, k2)&61440) < (i3&61440) )
+                            	(this.getSavedLightValue(par1Enu, i2, j2 - 1, k2)&480) < (i3&480) 	||
+                            	(this.getSavedLightValue(par1Enu, i2, j2 - 1, k2)&15360) < (i3&15360) ||
+                            	(this.getSavedLightValue(par1Enu, i2, j2 - 1, k2)&491520) < (i3&491520) )
                             {
                                 this.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - 1 - y + 32 << 6) + (k2 - z + 32 << 12);
                             }
 
                             if ((this.getSavedLightValue(par1Enu, i2, j2 + 1, k2)&15) < (i3&15) 	||
-                            	(this.getSavedLightValue(par1Enu, i2, j2 + 1, k2)&240) < (i3&240) 	||
-                            	(this.getSavedLightValue(par1Enu, i2, j2 + 1, k2)&3840) < (i3&3840) ||
-                            	(this.getSavedLightValue(par1Enu, i2, j2 + 1, k2)&61440) < (i3&61440) )
+                            	(this.getSavedLightValue(par1Enu, i2, j2 + 1, k2)&480) < (i3&480) 	||
+                            	(this.getSavedLightValue(par1Enu, i2, j2 + 1, k2)&15360) < (i3&15360) ||
+                            	(this.getSavedLightValue(par1Enu, i2, j2 + 1, k2)&491520) < (i3&491520) )
                             {
                                 this.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 + 1 - y + 32 << 6) + (k2 - z + 32 << 12);
                             }
 
                             if ((this.getSavedLightValue(par1Enu, i2, j2, k2 - 1)&15) < (i3&15) 	||
-                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 - 1)&240) < (i3&240) 	||
-                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 - 1)&3840) < (i3&3840) ||
-                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 - 1)&61440) < (i3&61440) )
+                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 - 1)&480) < (i3&480) 	||
+                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 - 1)&15360) < (i3&15360) ||
+                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 - 1)&491520) < (i3&491520) )
                             {
                                 this.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 - 1 - z + 32 << 12);
                             }
 
                             if ((this.getSavedLightValue(par1Enu, i2, j2, k2 + 1)&15) < (i3&15) 	||
-                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 + 1)&240) < (i3&240) 	||
-                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 + 1)&3840) < (i3&3840) ||
-                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 + 1)&61440) < (i3&61440) )
+                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 + 1)&480) < (i3&480) 	||
+                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 + 1)&15360) < (i3&15360) ||
+                            	(this.getSavedLightValue(par1Enu, i2, j2, k2 + 1)&491520) < (i3&491520) )
                             {
                                 this.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 + 1 - z + 32 << 12);
                             }

@@ -5931,14 +5931,13 @@ public class RenderBlocks
         if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y - 1, z, 0))
         {
         	int i = this.renderMinY > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z);
-            
         	float rc = 1;
             float gc = 1;
             float bc = 1;
             float lc = 1;
              
-        	if ((i & 1048320) > 0) {
-        		lc = 1f-(i&240)/240f;
+            if ((i & 1048320) > 0) {
+            	lc = 1f-(i & 240)/240f;
 	            rc = (i & 3840)/3840f;
 	            gc = (i & 61440)/61440f;
 	            bc = (i & 983040)/983040f;
@@ -5963,8 +5962,8 @@ public class RenderBlocks
             float bc = 1;
             float lc = 1;
              
-        	if ((i & 1048320) > 0) {
-        		lc = 1f-(i&240)/240f;
+            if ((i & 1048320) > 0) {
+            	lc = 1f-(i & 240)/240f;
 	            rc = (i & 3840)/3840f;
 	            gc = (i & 61440)/61440f;
 	            bc = (i & 983040)/983040f;
@@ -5991,8 +5990,8 @@ public class RenderBlocks
             float bc = 1;
             float lc = 1;
              
-        	if ((i & 1048320) > 0) {
-        		lc = 1f-(i&240)/240f;
+            if ((i & 1048320) > 0) {
+            	lc = 1f-(i & 240)/240f;
 	            rc = (i & 3840)/3840f;
 	            gc = (i & 61440)/61440f;
 	            bc = (i & 983040)/983040f;
@@ -6026,8 +6025,8 @@ public class RenderBlocks
             float bc = 1;
             float lc = 1;
              
-        	if ((i & 1048320) > 0) {
-        		lc = 1f-(i&240)/240f;
+            if ((i & 1048320) > 0) {
+            	lc = 1f-(i & 240)/240f;
 	            rc = (i & 3840)/3840f;
 	            gc = (i & 61440)/61440f;
 	            bc = (i & 983040)/983040f;
@@ -6061,8 +6060,8 @@ public class RenderBlocks
             float bc = 1;
             float lc = 1;
              
-        	if ((i & 1048320) > 0) {
-        		lc = 1f-(i&240)/240f;
+            if ((i & 1048320) > 0) {
+            	lc = 1f-(i & 240)/240f;
 	            rc = (i & 3840)/3840f;
 	            gc = (i & 61440)/61440f;
 	            bc = (i & 983040)/983040f;
@@ -6096,16 +6095,16 @@ public class RenderBlocks
             float bc = 1;
             float lc = 1;
               
-         	if ((i & 1048320) > 0) {
-         		lc = 1f-(i&240)/240f;
- 	            rc = (i & 3840)/3840f;
- 	            gc = (i & 61440)/61440f;
- 	            bc = (i & 983040)/983040f;
- 	            
- 	            rc = (rc+lc>1)?1:rc+lc;
- 	            gc = (gc+lc>1)?1:gc+lc;
- 	            bc = (bc+lc>1)?1:bc+lc;
-         	}
+            if ((i & 1048320) > 0) {
+            	lc = 1f-(i & 240)/240f;
+	            rc = (i & 3840)/3840f;
+	            gc = (i & 61440)/61440f;
+	            bc = (i & 983040)/983040f;
+	            
+	            rc = (rc+lc>1)?1:rc+lc;
+	            gc = (gc+lc>1)?1:gc+lc;
+	            bc = (bc+lc>1)?1:bc+lc;
+        	}
              
             tessellator.setBrightness(i);
             tessellator.setColorOpaque_F(f12*rc, f15*gc, f18*bc);

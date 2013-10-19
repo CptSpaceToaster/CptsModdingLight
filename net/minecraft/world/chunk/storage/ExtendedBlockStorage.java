@@ -195,13 +195,16 @@ public class ExtendedBlockStorage
 
     /**
      * Sets the saved Block-light value in the extended block storage structure.
+     * 
+     * Modded to save colored lights
+     * CptSpaceToaster
      */
     public void setExtBlocklightValue(int par1, int par2, int par3, int par4)
     {
         this.blocklightArray.set(par1, par2, par3, par4);
-        this.rColorArray.set(par1, par2, par3, (par4>>4) &15);
-        this.gColorArray.set(par1, par2, par3, (par4>>8) &15);
-        this.bColorArray.set(par1, par2, par3, (par4>>12)&15);
+        this.rColorArray.set(par1, par2, par3, (par4>>5) &15);
+        this.gColorArray.set(par1, par2, par3, (par4>>10) &15);
+        this.bColorArray.set(par1, par2, par3, (par4>>15)&15);
     }
 
     /**
@@ -214,9 +217,9 @@ public class ExtendedBlockStorage
     {
         //return this.blocklightArray.get(par1, par2, par3);
     	return 	(this.blocklightArray.get(par1, par2, par3)) | 
-        		(this.rColorArray.get(par1, par2, par3)<<4) |
-        		(this.gColorArray.get(par1, par2, par3)<<8) |
-        		(this.bColorArray.get(par1, par2, par3)<<12) ;
+        		(this.rColorArray.get(par1, par2, par3)<<5)  |
+        		(this.gColorArray.get(par1, par2, par3)<<10) |
+        		(this.bColorArray.get(par1, par2, par3)<<15) ;
     }
 
     public void removeInvalidBlocks()
