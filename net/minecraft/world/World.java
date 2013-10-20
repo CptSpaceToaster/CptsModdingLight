@@ -3581,20 +3581,25 @@ public abstract class World implements IBlockAccess
                     	// & AND operator
                     	// l2&~15 = turning off bits 1234 and 
                     	// TODO: FIX THIS
-                    	this.setLightValue(par1Enu, i2, j2, k2, 0); // detects that destroyed light and spreads it
-                    	//if ((i3&240) == (l2&240))
-                    		//this.setLightValue(par1Enu, i2, j2, k2, l2&~240);
-//                    	if ((i3&3840) == (l2&3840))
-//                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~3840);
-//                    	if ((i3&61440) == (l2&61440))
-//                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~61440);
+                    	if ((i3&15) == (l2&15))
+                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~15); // detects that destroyed light and spreads it
+                    	if ((i3&480) == (l2&480))
+                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~240);
+                    	if ((i3&15360) == (l2&15360))
+                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~3840);
+                    	if ((i3&491520) == (l2&491520))
+                    		this.setLightValue(par1Enu, i2, j2, k2, l2&~61440);
 
                     	j3 = MathHelper.abs_int(i2 - x);
                         l3 = MathHelper.abs_int(j2 - y);
                         k3 = MathHelper.abs_int(k2 - z);
                     	
                     	/* WHITE LIGHT */
-                        if ((i3&15) == (l2&15) && (l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
+                        if (((i3&15) == (l2&15)		||
+                        	(i3&480) == (l2&480)	||
+                        	(i3&15360) == (l2&15360)||
+                        	(i3&491520) == (l2&491520) )&&
+                        	(l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
                         {
                             // Computes light again
                             if (j3 + l3 + k3 < 17) //Manhatten distance
@@ -3604,17 +3609,40 @@ public abstract class World implements IBlockAccess
                                     int j4 = i2 + Facing.offsetsXForSide[i4];
                                     int k4 = j2 + Facing.offsetsYForSide[i4];
                                     int l4 = k2 + Facing.offsetsZForSide[i4];
-                                    
+//                                    
                                     Block block = Block.blocksList[getBlockId(j4, k4, l4)];
                                     int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
-                                    int i5 = Math.max(1, blockOpacity);
+                                    //int opacity = (block == null ? 0 : block.getLightOpacity(this, x, y, z));
+                                    int opacity = Math.max(1, blockOpacity);
                                     
-                                    i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
-                                    int tryThis = this.computeLightValue(j4, k4, l4, par1Enu); 
+                                    int neighboorLight = this.getSavedLightValue(par1Enu, j4, k4, l4);
+                                    int ll = neighboorLight&15;
+                                    int rl = neighboorLight&480;
+                                    int gl = neighboorLight&15360;
+                                    int bl = neighboorLight&491520;
                                     
-                                    if ((i3&15) == (l2&15) - i5 && i1 < this.lightUpdateBlockList.length)
+                                    if(neighboorLight >= 0) {
+                	                    if(ll>=opacity)
+                	                    	ll-=opacity;
+                	                    if((rl>=32*opacity) )
+                	                    	rl-=32*opacity;
+                	                    if(gl>=1024*opacity) 
+                	                    	gl-=1024*opacity;
+                	                    if(bl>=32768*opacity)
+                	                    	bl-=32768*opacity;
+                                    }
+                                	
+                                    
+                                    i3 = this.getSavedLightValue(par1Enu, i2, j2, k2);
+                                    //int tryThis = this.computeLightValue(j4, k4, l4, par1Enu); 
+                                    
+                                    if ( ( (i3&15) == ll		||
+	                                	   (i3&480) == rl		||
+	                                	   (i3&15360) == gl		||
+	                                	   (i3&491520) == bl )	&&
+	                                	   i1 < this.lightUpdateBlockList.length	)
                                     {
-                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
+                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | (k4 - y + 32 << 6) | (l4 - z + 32 << 12) | neighboorLight << 18;
                                     }
                                 }
                             }
