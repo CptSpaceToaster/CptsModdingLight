@@ -2496,14 +2496,14 @@ public class Block
      * Adds more Data to the lightValue array
      * Normal Light values range from Binary 0000 0000 0000 0000 0000 0000 0000 LLLL
      * 
-     * This adds some more data in the form  0000 0000 0000 0000 BBBB GGGG RRRR LLLL
+     * This adds some more data in the form  0000 0000 0000 0BBBB 0GGGG  0RRRR 0LLLL
      * 
      * Note, by having a dim light, such as LLLL = 0001 = LightValue of 1, but giving it a
      * color, then the value will still read as an insanely large integer.  
      * 
      * By Adding 0011 into BBBB, a new integer reads like this 
-     * 0000 0000 0000 0000 0011 0000 0000 0000 LLLL, or a number ranging from
-     * 12288 to 12303 based on LLLL  
+     * 0000 0000 0000 00011 00000  00000 0LLLL, or a number ranging from
+     * 98304 to 98319 based on LLLL  
      * 
      * Adding color will mess up a lot of stuff, just make sure you handle lightValue
      * appropriatly
