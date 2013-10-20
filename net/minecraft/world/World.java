@@ -3604,11 +3604,14 @@ public abstract class World implements IBlockAccess
                                     int j4 = i2 + Facing.offsetsXForSide[i4];
                                     int k4 = j2 + Facing.offsetsYForSide[i4];
                                     int l4 = k2 + Facing.offsetsZForSide[i4];
+                                    
                                     Block block = Block.blocksList[getBlockId(j4, k4, l4)];
                                     int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
                                     int i5 = Math.max(1, blockOpacity);
+                                    
                                     i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
-
+                                    int tryThis = this.computeLightValue(j4, k4, l4, par1Enu); 
+                                    
                                     if ((i3&15) == (l2&15) - i5 && i1 < this.lightUpdateBlockList.length)
                                     {
                                         this.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
@@ -3617,79 +3620,79 @@ public abstract class World implements IBlockAccess
                             }
                         }
                         
-                        /* RED LIGHT */
-                        if ((i3&480) == (l2&480) && (l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
-                        {
-                            // Computes light again
-                            if (j3 + l3 + k3 < 17) //Manhatten distance
-                            {
-                                for (int i4 = 0; i4 < 6; ++i4)
-                                {
-                                	//This looks like it's "recomputing light"  WHy not use the method I modified a while ago instead?
-                                	
-                                    int j4 = i2 + Facing.offsetsXForSide[i4];
-                                    int k4 = j2 + Facing.offsetsYForSide[i4];
-                                    int l4 = k2 + Facing.offsetsZForSide[i4];
-                                    Block block = Block.blocksList[getBlockId(j4, k4, l4)];
-                                    int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
-                                    int i5 = Math.max(1, blockOpacity);
-                                    i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
-
-                                    if ((i3&480) == (l2&480) - 32*i5 && i1 < this.lightUpdateBlockList.length)
-                                    {
-                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
-                                    }
-                                }
-                            }
-                        }
-                        
-                        /* GREEN LIGHT */
-                        if ((i3&15360) == (l2&15360) && (l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
-                        {
-                            // Computes light again
-                            if (j3 + l3 + k3 < 17) //Manhatten distance
-                            {
-                                for (int i4 = 0; i4 < 6; ++i4)
-                                {
-                                    int j4 = i2 + Facing.offsetsXForSide[i4];
-                                    int k4 = j2 + Facing.offsetsYForSide[i4];
-                                    int l4 = k2 + Facing.offsetsZForSide[i4];
-                                    Block block = Block.blocksList[getBlockId(j4, k4, l4)];
-                                    int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
-                                    int i5 = Math.max(1, blockOpacity);
-                                    i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
-
-                                    if ((i3&15360) == (l2&15360) - 1024*i5 && i1 < this.lightUpdateBlockList.length)
-                                    {
-                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
-                                    }
-                                }
-                            }
-                        }
-                        
-                        /* BLUE LIGHT */
-                        if ((i3&491520) == (l2&491520) && (l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
-                        {
-                            // Computes light again
-                            if (j3 + l3 + k3 < 17) //Manhatten distance
-                            {
-                                for (int i4 = 0; i4 < 6; ++i4)
-                                {
-                                    int j4 = i2 + Facing.offsetsXForSide[i4];
-                                    int k4 = j2 + Facing.offsetsYForSide[i4];
-                                    int l4 = k2 + Facing.offsetsZForSide[i4];
-                                    Block block = Block.blocksList[getBlockId(j4, k4, l4)];
-                                    int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
-                                    int i5 = Math.max(1, blockOpacity);
-                                    i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
-
-                                    if ((i3&491520) == (l2&491520) - i5 && i1 < this.lightUpdateBlockList.length)
-                                    {
-                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
-                                    }
-                                }
-                            }
-                        }
+//                        /* RED LIGHT */
+//                        if ((i3&480) == (l2&480) && (l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
+//                        {
+//                            // Computes light again
+//                            if (j3 + l3 + k3 < 17) //Manhatten distance
+//                            {
+//                                for (int i4 = 0; i4 < 6; ++i4)
+//                                {
+//                                	//This looks like it's "recomputing light"  WHy not use the method I modified a while ago instead?
+//                                	
+//                                    int j4 = i2 + Facing.offsetsXForSide[i4];
+//                                    int k4 = j2 + Facing.offsetsYForSide[i4];
+//                                    int l4 = k2 + Facing.offsetsZForSide[i4];
+//                                    Block block = Block.blocksList[getBlockId(j4, k4, l4)];
+//                                    int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
+//                                    int i5 = Math.max(1, blockOpacity);
+//                                    i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
+//                                    
+//                                    if ((i3&480) == (l2&480) - 32*i5 && i1 < this.lightUpdateBlockList.length)
+//                                    {
+//                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        
+//                        /* GREEN LIGHT */
+//                        if ((i3&15360) == (l2&15360) && (l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
+//                        {
+//                            // Computes light again
+//                            if (j3 + l3 + k3 < 17) //Manhatten distance
+//                            {
+//                                for (int i4 = 0; i4 < 6; ++i4)
+//                                {
+//                                    int j4 = i2 + Facing.offsetsXForSide[i4];
+//                                    int k4 = j2 + Facing.offsetsYForSide[i4];
+//                                    int l4 = k2 + Facing.offsetsZForSide[i4];
+//                                    Block block = Block.blocksList[getBlockId(j4, k4, l4)];
+//                                    int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
+//                                    int i5 = Math.max(1, blockOpacity);
+//                                    i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
+//
+//                                    if ((i3&15360) == (l2&15360) - 1024*i5 && i1 < this.lightUpdateBlockList.length)
+//                                    {
+//                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        
+//                        /* BLUE LIGHT */
+//                        if ((i3&491520) == (l2&491520) && (l2&2147483647) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
+//                        {
+//                            // Computes light again
+//                            if (j3 + l3 + k3 < 17) //Manhatten distance
+//                            {
+//                                for (int i4 = 0; i4 < 6; ++i4)
+//                                {
+//                                    int j4 = i2 + Facing.offsetsXForSide[i4];
+//                                    int k4 = j2 + Facing.offsetsYForSide[i4];
+//                                    int l4 = k2 + Facing.offsetsZForSide[i4];
+//                                    Block block = Block.blocksList[getBlockId(j4, k4, l4)];
+//                                    int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
+//                                    int i5 = Math.max(1, blockOpacity);
+//                                    i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
+//
+//                                    if ((i3&491520) == (l2&491520) - i5 && i1 < this.lightUpdateBlockList.length)
+//                                    {
+//                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
+//                                    }
+//                                }
+//                            }
+//                        }
                         
                         
                         
