@@ -3585,10 +3585,11 @@ public abstract class World implements IBlockAccess
                     i3 = this.getSavedLightValue(par1Enu, i2, j2, k2);		//Second Saved Light
 
                     // l2 and i3 are both light values
-                    if ((i3&15) == (l2&15) 		 ||
-                    	(i3&480) == (l2&480) 	 ||
-                    	(i3&15360) == (l2&15360) ||
-                    	(i3&491520) == (l2&491520) )
+//                    if ((i3&15) == (l2&15) 		 ||
+//                    	(i3&480) == (l2&480) 	 ||
+//                    	(i3&15360) == (l2&15360) ||
+//                    	(i3&491520) == (l2&491520) )
+                    if((i3&15) == (l2&15))
                     {
                     	// ~ bit flip operator (NOT)
                     	// & AND operator
