@@ -3573,7 +3573,7 @@ public abstract class World implements IBlockAccess
             else if ((((1048576|initCompLight)-initSavedLight)&541200) > 0)
             {
                 this.lightUpdateBlockList[i1++] = 133152 | initSavedLight << 18; // Takes saved light and throws into left
-                System.out.println("Loop 2: il = " + i1 + " ,l = " + l);
+                System.out.println("Loop 1: il = " + i1 + " ,l = " + l);
                 while (l < i1)
                 {
                 	
@@ -3585,12 +3585,12 @@ public abstract class World implements IBlockAccess
                     i3 = this.getSavedLightValue(par1Enu, i2, j2, k2);		//Second Saved Light
 
                     // l2 and i3 are both light values
-//                    if ((i3&15) == (l2&15) 		 ||
-//                    	(i3&480) == (l2&480) 	 ||
-//                    	(i3&15360) == (l2&15360) ||
-//                    	(i3&491520) == (l2&491520) )
-                    if((i3&15) == (l2&15))
+                    if ((i3&15) == (l2&15) 		 ||
+                    	(i3&480) == (l2&480) 	 ||
+                    	(i3&15360) == (l2&15360) ||
+                    	(i3&491520) == (l2&491520) )
                     {
+                    	
                     	// ~ bit flip operator (NOT)
                     	// & AND operator
                     	// l2&~15 = turning off bits 1234 and 
@@ -3603,10 +3603,6 @@ public abstract class World implements IBlockAccess
                     		this.setLightValue(par1Enu, i2, j2, k2, l2&492015);
                     	if ((i3&491520) == (l2&491520))
                     		this.setLightValue(par1Enu, i2, j2, k2, l2&15855);
-
-                    	j3 = MathHelper.abs_int(i2 - x);
-                        l3 = MathHelper.abs_int(j2 - y);
-                        k3 = MathHelper.abs_int(k2 - z);
                     	
                         if (((i3&15) == (l2&15)		||
                         	(i3&480) == (l2&480)	||
@@ -3615,8 +3611,12 @@ public abstract class World implements IBlockAccess
                         	(l2&507375) > 0) // Checks to see if there is any light FORCES NUMBER TO BE POSITIVE
                         {
                         	
+                        	j3 = MathHelper.abs_int(i2 - x);
+                            l3 = MathHelper.abs_int(j2 - y);
+                            k3 = MathHelper.abs_int(k2 - z);
+                        	
                         	//System.out.println("l2: " + Integer.toBinaryString(l2));
-                            // Computes light again
+                            //Computes light again
                             if (j3 + l3 + k3 < 17) //Manhatten distance
                             {
                                 for (int i4 = 0; i4 < 6; ++i4)
@@ -3624,7 +3624,7 @@ public abstract class World implements IBlockAccess
                                     int j4 = i2 + Facing.offsetsXForSide[i4];
                                     int k4 = j2 + Facing.offsetsYForSide[i4];
                                     int l4 = k2 + Facing.offsetsZForSide[i4];
-//                                    
+                                    
                                     Block block = Block.blocksList[getBlockId(j4, k4, l4)];
                                     int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, j4, k4, l4));
                                     int opacity = Math.max(1, blockOpacity);
@@ -3657,15 +3657,16 @@ public abstract class World implements IBlockAccess
                                     
                                     
                                     i3 = this.getSavedLightValue(par1Enu, i2, j2, k2);
+                                    //i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
                                     //int tryThis = this.computeLightValue(j4, k4, l4, par1Enu); 
                                     
                                     if ( ( (i3&15) == ll		||
 	                                	   (i3&480) == rl		||
 	                                	   (i3&15360) == gl		||
 	                                	   (i3&491520) == bl )	&&
-	                                	   i1 < this.lightUpdateBlockList.length -6	)
+	                                	   i1 < this.lightUpdateBlockList.length - 6)//-6 again?
                                     {
-                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | (k4 - y + 32 << 6) | (l4 - z + 32 << 12) | neighboorLight << 18;
+                                        this.lightUpdateBlockList[i1++] = j4 - x + 32 | (k4 - y + 32 << 6) | (l4 - z + 32 << 12) | ((bl<<15) | (gl<<10) | (rl<<5) | ll) << 18;
                                     }
                                 }
                             }
@@ -3678,7 +3679,7 @@ public abstract class World implements IBlockAccess
 
             this.theProfiler.endSection();
             this.theProfiler.startSection("checkedPosition < toCheckCount");
-            System.out.println("Loop 2: il = " + i1 + " ,l = " + l);
+            //System.out.println("Loop 2: il = " + i1 + " ,l = " + l);
             while (l < i1) // Lights greater than saved lights
             {
             	
