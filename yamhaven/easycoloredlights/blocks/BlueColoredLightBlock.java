@@ -22,7 +22,7 @@ public class BlueColoredLightBlock extends Block {
 		//Accepts RGB floats ranging from 0.0 to 1.0
 		addColorLightValue(0F,0F,1.0F);
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	private Icon blockIcon;
 	

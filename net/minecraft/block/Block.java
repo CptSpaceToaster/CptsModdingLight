@@ -2492,6 +2492,8 @@ public class Block
     // To be removed next MC version {1.6.3+}
     public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
     
+    
+    
     /**
      * Adds more Data to the lightValue array
      * Normal Light values range from Binary 0000 0000 0000 0000 0000 0000 0000 LLLL
@@ -2518,4 +2520,8 @@ public class Block
     	//System.out.println("After: " + lightValue[this.blockID]);
         return this;
     }
+    
+    
 }
+
+
