@@ -3585,7 +3585,7 @@ public abstract class World implements IBlockAccess
 //                    i3 = this.getSavedLightValue(par1Enu, i2, j2, k2);		//Second Saved Light
 //
 //                    // l2 and i3 are both light values
-//                    if ((i3&15) == (l2&15) 		 ||
+//                    if ((i3&15) == (l2&15) 	 ||
 //                    	(i3&480) == (l2&480) 	 ||
 //                    	(i3&15360) == (l2&15360) ||
 //                    	(i3&491520) == (l2&491520) )
@@ -3955,9 +3955,15 @@ public abstract class World implements IBlockAccess
                     z1 = ((int)(l1 >> 12 & 63) - 32 + z);		//Get Entry Z coord
                     lightEntry = (int)(l1 >>> 18)&507375;		//Get Entry's saved Light
                     expectedEntryLight = this.getSavedLightValue(par1Enu, x1, y1, z1);	//Get the saved Light Level at the entry's location
-
-                    if (expectedEntryLight == lightEntry)	//The entered light, and the saved light equal
-                    										//Not sure why this condition is super important...
+                    
+                	//The entered light, and the saved light equal
+                	//Not sure why this condition is super important...	
+                    if ((expectedEntryLight&15) == (lightEntry&15))
+                    
+//                	if ((expectedEntryLight&15) == (lightEntry&15) 	 	||
+//                		(expectedEntryLight&480) == (lightEntry&480) 	 ||
+//                		(expectedEntryLight&15360) == (lightEntry&15360) ||
+//                		(expectedEntryLight&491520) == (lightEntry&491520) )
                     {
                         this.setLightValue(par1Enu, x1, y1, z1, 0);
 
@@ -3999,7 +4005,7 @@ public abstract class World implements IBlockAccess
                             		int opacity = Math.max(1, blockOpacity);
                             		//Get Saved light value from face
                             		expectedEntryLight = this.getSavedLightValue(par1Enu, xFace, yFace, zFace);
-                            		
+
                             		int neighboorLight = lightEntry;
                             		int ll = neighboorLight&15;
                             		int rl = neighboorLight&480;
