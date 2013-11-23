@@ -3482,7 +3482,7 @@ public abstract class World implements IBlockAccess
             }
 //            else if ((currentLight&15) >= 14) {
 //            	return currentLight;
-//            }
+//            }	
             else
             {
                 for (int k1 = 0; k1 < 6; ++k1)
@@ -4006,13 +4006,12 @@ public abstract class World implements IBlockAccess
                             		//Get Saved light value from face
                             		expectedEntryLight = this.getSavedLightValue(par1Enu, xFace, yFace, zFace);
 
-                            		int neighboorLight = lightEntry;
-                            		int ll = neighboorLight&15;
-                            		int rl = neighboorLight&480;
-                            		int gl = neighboorLight&15360;
-                            		int bl = neighboorLight&491520;
+                            		int ll = lightEntry&15;
+                            		int rl = lightEntry&480;
+                            		int gl = lightEntry&15360;
+                            		int bl = lightEntry&491520;
 
-                            		if((neighboorLight&507375) >= 0) {
+                            		if((lightEntry&507375) >= 0) {
                             			ll-=opacity;
                             			if (ll < 0)
                             				ll = 0;

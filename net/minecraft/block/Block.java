@@ -416,7 +416,7 @@ public class Block
     public Block setLightValue(float par1)
     {
         lightValue[this.blockID] = (int)(15.0F * par1);
-        return this;
+        return this.addColorLightValue(par1, par1, par1);
     }
 
     /**
@@ -2513,11 +2513,10 @@ public class Block
      * CptSpaceToaster
      */
     public Block addColorLightValue(float r, float g, float b) {
-    	
-    	//System.out.println("Pre: " + lightValue[this.blockID]);
-    	//System.out.println("Adding: " + ((((int)(15.0F * r))<<4) + (((int)(15.0F * g))<<8) + (((int)(15.0F * b))<<12)));
+    	//Erase Current Color (a default of white will exist)
+    	lightValue[this.blockID] &= 15;
+    	//Add the Light
     	lightValue[this.blockID] |= ((((int)(15.0F * b))<<15) + (((int)(15.0F * g))<<10) + (((int)(15.0F * r))<<5));
-    	//System.out.println("After: " + lightValue[this.blockID]);
         return this;
     }
     
