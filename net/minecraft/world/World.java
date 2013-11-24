@@ -3960,7 +3960,7 @@ public abstract class World implements IBlockAccess
                 	//Not sure why this condition is super important...	
                     if ((expectedEntryLight&15) == (lightEntry&15))
                     
-//                	if ((expectedEntryLight&15) == (lightEntry&15) 	 	||
+//                	if ((expectedEntryLight&15) == (lightEntry&15) 	 	 ||
 //                		(expectedEntryLight&480) == (lightEntry&480) 	 ||
 //                		(expectedEntryLight&15360) == (lightEntry&15360) ||
 //                		(expectedEntryLight&491520) == (lightEntry&491520) )
@@ -3990,7 +3990,7 @@ public abstract class World implements IBlockAccess
 //                                    if (expectedEntryLight == lightEntry - opacity && i1 < this.lightUpdateBlockList.length)
 //                                    {
 //                                    	//Create entry at the face's location, with the diminished lightEntry
-//                                        this.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | lightEntry - i5 << 18;
+//                                        this.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | lightEntry - opacity << 18;
 //                                    }
 //                                }
                             	
@@ -4028,16 +4028,15 @@ public abstract class World implements IBlockAccess
                             			if (bl < 0)
                             				bl = 0;
                             		}
-
                             		
                             		//i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
                             		//int tryThis = this.computeLightValue(j4, k4, l4, par1Enu); 
-
                             		if ( ((expectedEntryLight&15) == ll		||
-                            			  (expectedEntryLight&480) == rl	||
-                            			  (expectedEntryLight&15360) == gl	||
-                            			  (expectedEntryLight&491520) == bl )	&&
-                            			  i1 < this.lightUpdateBlockList.length )		//Why did I have a -6 here?
+                              			 ((expectedEntryLight>>5)&15) == rl	||
+                              			 ((expectedEntryLight>>10)&15) == gl	||
+                              			 ((expectedEntryLight>>15)&15) == bl )	&&
+                              			  i1 < this.lightUpdateBlockList.length )		//Why did I have a -6 here?
+                            			
                             		{
                             			this.lightUpdateBlockList[i1++] = xFace - x + 32 | (yFace - y + 32 << 6) | (zFace - z + 32 << 12) | ((bl<<15) | (gl<<10) | (rl<<5) | ll) << 18;
                             		}
