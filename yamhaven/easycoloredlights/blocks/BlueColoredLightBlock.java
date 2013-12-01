@@ -20,7 +20,7 @@ public class BlueColoredLightBlock extends Block {
 		setLightValue(1.0F);
 		
 		//Accepts RGB floats ranging from 0.0 to 1.0
-		addColorLightValue(0F,0F,1.0F);
+		addColorLightValue(Block.l[0], Block.l[0], Block.l[15]);
 	}
 
 	@SideOnly(Side.CLIENT)

@@ -1,5 +1,5 @@
 package yamhaven.easycoloredlights.blocks;
-//hi
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -17,10 +17,10 @@ public class WhiteColoredLightBlock extends Block {
 		setHardness(0.3F);
 		setStepSound(Block.soundGlassFootstep);
 		setCreativeTab(CreativeTabs.tabDecorations);
-		setLightValue(1.0F);
+		setLightValue(15);
 		
 		//Accepts RGB floats ranging from 0.0 to 1.0
-		addColorLightValue(1.0F,1.0F,1.0F);
+		addColorLightValue(Block.l[15], Block.l[15], Block.l[15]);
 	}
 	
 	@SideOnly(Side.CLIENT)

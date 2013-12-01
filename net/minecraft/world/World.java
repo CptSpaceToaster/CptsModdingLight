@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockHalfSlab;
@@ -1078,7 +1080,7 @@ public abstract class World implements IBlockAccess
                     int i2 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4 + 1);
                     int j2 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4 - 1);
                     
-                    //TODO: Fix this, it doesn't mess with colors.
+                    //TODO: Fix this, it doesn't mess with colors?
                     if (k1 > j1)
                     {
                         j1 = k1;
@@ -1155,22 +1157,22 @@ public abstract class World implements IBlockAccess
      * Sets the light value either into the sky map or block map depending on if enumSkyBlock is set to sky or block.
      * Args: enumSkyBlock, x, y, z, lightValue
      */
-    public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4, int par5)
+    public void setLightValue(EnumSkyBlock par1EnumSkyBlock, int x, int y, int z, int lightValue)
     {
-        if (par2 >= -30000000 && par4 >= -30000000 && par2 < 30000000 && par4 < 30000000)
+        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000)
         {
-            if (par3 >= 0)
+            if (y >= 0)
             {
-                if (par3 < 256)
+                if (y < 256)
                 {
-                    if (this.chunkExists(par2 >> 4, par4 >> 4))
+                    if (this.chunkExists(x >> 4, z >> 4))
                     {
-                        Chunk chunk = this.getChunkFromChunkCoords(par2 >> 4, par4 >> 4);
-                        chunk.setLightValue(par1EnumSkyBlock, par2 & 15, par3, par4 & 15, par5);
+                        Chunk chunk = this.getChunkFromChunkCoords(x >> 4, z >> 4);
+                        chunk.setLightValue(par1EnumSkyBlock, x & 15, y, z & 15, lightValue);
 
                         for (int i1 = 0; i1 < this.worldAccesses.size(); ++i1)
                         {
-                            ((IWorldAccess)this.worldAccesses.get(i1)).markBlockForRenderUpdate(par2, par3, par4);
+                            ((IWorldAccess)this.worldAccesses.get(i1)).markBlockForRenderUpdate(x, y, z);
                         }
                     }
                 }
@@ -1193,25 +1195,27 @@ public abstract class World implements IBlockAccess
 
     /**
      * Any Light rendered on a 1.8 Block goes through here
+     * 
+     * 
      */
-    public int getLightBrightnessForSkyBlocks(int par1, int par2, int par3, int par4)
+    public int getLightBrightnessForSkyBlocks(int x, int y, int z, int lightValue)
     {
-        int i1 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, par1, par2, par3);
-        int j1 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Block, par1, par2, par3);
+        int i1 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
+        int j1 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
 
-        par4 = ((par4 & 15)			|
-          	   ((par4 & 480) >> 1) 	|
-         	   ((par4 & 15360) >> 2)|
-         	   ((par4 & 491520) >> 3) );
+        lightValue = ((lightValue & 15)			|
+        			 ((lightValue & 480) >> 1) 	|
+        			 ((lightValue & 15360) >> 2)|
+        			 ((lightValue & 491520) >> 3) );
         
         j1 =   ((j1 & 15)			|
            	   ((j1 & 480) >> 1) 	|
           	   ((j1 & 15360) >> 2)	|
           	   ((j1 & 491520) >> 3) );
         
-        if (j1 < par4)
+        if (j1 < lightValue)
         {
-        	j1 = par4;
+        	j1 = lightValue;
         }
         
 //        if (j1 != 0)
@@ -3485,11 +3489,11 @@ public abstract class World implements IBlockAccess
 //            }	
             else
             {
-                for (int k1 = 0; k1 < 6; ++k1)
+                for (int faceIndex = 0; faceIndex < 6; ++faceIndex)
                 {
-                    int l1 = x + Facing.offsetsXForSide[k1];
-                    int i2 = y + Facing.offsetsYForSide[k1];
-                    int j2 = z + Facing.offsetsZForSide[k1];
+                    int l1 = x + Facing.offsetsXForSide[faceIndex];
+                    int i2 = y + Facing.offsetsYForSide[faceIndex];
+                    int j2 = z + Facing.offsetsZForSide[faceIndex];
                     
                     int neighboorLight = this.getSavedLightValue(par4EnumSkyBlock, l1, i2, j2);
                     int ll = neighboorLight&15;
@@ -3497,26 +3501,12 @@ public abstract class World implements IBlockAccess
                     int gl = neighboorLight&15360;
                     int bl = neighboorLight&491520;
                     
-                    if((neighboorLight&507375) >= 0) {
-                    	ll-=opacity;
-                    	
-                    	if (ll < 0)
-                        	ll = 0;
-                    	
-                    	rl-=32*opacity;
-                        if (rl < 0)
-                        	rl = 0;
-                        
-                        gl-=1024*opacity;
-                        if (gl < 0)
-                        	gl = 0;
-                        
-                        bl-=32768*opacity;
-                        if (bl < 0)
-                        	bl = 0;
-                    }
+                	ll-=opacity;
+                	rl-=32*opacity;
+                    gl-=1024*opacity;
+                    bl-=32768*opacity;
                     
-                    if (ll > (currentLight&15)) {
+                    if (ll > (currentLight&15)) {	
                     	currentLight = (currentLight&507360) | ll;
                     } 
                     if (rl > (currentLight&480)) {
@@ -3539,10 +3529,10 @@ public abstract class World implements IBlockAccess
      * This was gutted and refitted to handle blocks with colors
      * 
      * CptSpaceToaster
-     * @param par1Enu
-     * @param x
-     * @param y
-     * @param z
+     * @param par1Enu Blocktype - Sky Block (Block on the top visible to sun) or Normal Block
+     * @param x the X Coordinate
+     * @param y the Y Coordinate
+     * @param z the Z Coordinate
      */
     public void updateLightByType(EnumSkyBlock par1Enu, int x, int y, int z)
     {
@@ -3958,13 +3948,15 @@ public abstract class World implements IBlockAccess
                     
                 	//The entered light, and the saved light equal
                 	//Not sure why this condition is super important...	
-//                    if ((expectedEntryLight&15) == (lightEntry&15))
-                    
-                	if ((expectedEntryLight&15) == (lightEntry&15) 	 	 ||
-                		(expectedEntryLight&480) == (lightEntry&480) 	 ||
-                		(expectedEntryLight&15360) == (lightEntry&15360) ||
-                		(expectedEntryLight&491520) == (lightEntry&491520) )
+                    if ((expectedEntryLight&15) >= (lightEntry&15))
                     {
+                    
+//                	if ((expectedEntryLight&15) >= (lightEntry&15) 	 	 ||
+//                		(expectedEntryLight&480) == (lightEntry&480) 	 ||
+//                		(expectedEntryLight&15360) == (lightEntry&15360) ||
+//                		(expectedEntryLight&491520) == (lightEntry&491520) )
+//                    {
+                		//Break this up into 4 if's
                         this.setLightValue(par1Enu, x1, y1, z1, 0);
 
                         if (lightEntry > 0)
@@ -3994,53 +3986,68 @@ public abstract class World implements IBlockAccess
 //                                    }
 //                                }
                             	
+//                            	for (int faceIndex = 0; faceIndex < 6; ++faceIndex)
+//                            	{
+//                            		int xFace = x1 + Facing.offsetsXForSide[faceIndex];
+//                            		int yFace = y1 + Facing.offsetsYForSide[faceIndex];
+//                            		int zFace = z1 + Facing.offsetsZForSide[faceIndex];
+//
+//                            		Block block = Block.blocksList[getBlockId(xFace, yFace, zFace)];
+//                            		int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, xFace, yFace, zFace));
+//                            		int opacity = Math.max(1, blockOpacity);
+//                            		//Get Saved light value from face
+//                            		expectedEntryLight = this.getSavedLightValue(par1Enu, xFace, yFace, zFace);
+//
+//                            		int ll = lightEntry&15;
+//                            		int rl = lightEntry&480;
+//                            		int gl = lightEntry&15360;
+//                            		int bl = lightEntry&491520;
+//                            		
+//                            		ll-=opacity;
+//                                	
+//                                	rl-=32*opacity;
+//                                    
+//                                    gl-=1024*opacity;
+//                                    
+//                                    bl-=32768*opacity;
+//
+//                        			
+//                            		//i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
+//                            		//int tryThis = this.computeLightValue(j4, k4, l4, par1Enu); 
+//                            		if ( ( (expectedEntryLight&15) >= ll		||
+//                              			  ((expectedEntryLight)&480) == rl		||
+//                              			  ((expectedEntryLight)&15360) == gl	||
+//                              			  ((expectedEntryLight)&491520) == bl	)	&&
+//                              			  	i1 < this.lightUpdateBlockList.length)		//Why did I have a -6 here?
+//                            			
+//                            		{
+//                            			this.lightUpdateBlockList[i1++] = xFace - x + 32 | (yFace - y + 32 << 6) | (zFace - z + 32 << 12) | ((ll|rl|gl|bl)<<18);
+//                            		}
+//                            	}
+                            	
                             	for (int faceIndex = 0; faceIndex < 6; ++faceIndex)
-                            	{
-                            		int xFace = x1 + Facing.offsetsXForSide[faceIndex];
-                            		int yFace = y1 + Facing.offsetsYForSide[faceIndex];
-                            		int zFace = z1 + Facing.offsetsZForSide[faceIndex];
-
-                            		Block block = Block.blocksList[getBlockId(xFace, yFace, zFace)];
-                            		int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, xFace, yFace, zFace));
-                            		int opacity = Math.max(1, blockOpacity);
-                            		//Get Saved light value from face
-                            		expectedEntryLight = this.getSavedLightValue(par1Enu, xFace, yFace, zFace);
-
-                            		int ll = lightEntry&15;
-                            		int rl = lightEntry&480;
-                            		int gl = lightEntry&15360;
-                            		int bl = lightEntry&491520;
-
-                            		if((lightEntry&507375) >= 0) {
-                            			ll-=opacity;
-                            			if (ll < 0)
-                            				ll = 0;
-
-                            			rl-=32*opacity;
-                            			if (rl < 0)
-                            				rl = 0;
-
-                            			gl-=1024*opacity;
-                            			if (gl < 0)
-                            				gl = 0;
-
-                            			bl-=32768*opacity;
-                            			if (bl < 0)
-                            				bl = 0;
-                            		}
-                            		
-                            		//i3 = this.getSavedLightValue(par1Enu, j4, k4, l4);
-                            		//int tryThis = this.computeLightValue(j4, k4, l4, par1Enu); 
-                            		if ( ((expectedEntryLight&15) == ll			||
-                              			  ((expectedEntryLight>>5)&15) == rl	||
-                              			  ((expectedEntryLight>>10)&15) == gl	||
-                              			  ((expectedEntryLight>>15)&15) == bl	)	&&
-                              			  	i1 < this.lightUpdateBlockList.length	)		//Why did I have a -6 here?
-                            			
-                            		{
-                            			this.lightUpdateBlockList[i1++] = xFace - x + 32 | (yFace - y + 32 << 6) | (zFace - z + 32 << 12) | ((bl<<15) | (gl<<10) | (rl<<5) | ll) << 18;
-                            		}
-                            	}
+                                {
+                                     int xFace = x1 + Facing.offsetsXForSide[faceIndex];
+                                     int yFace = y1 + Facing.offsetsYForSide[faceIndex];
+                                     int zFace = z1 + Facing.offsetsZForSide[faceIndex];
+                                     Block block = Block.blocksList[getBlockId(xFace, yFace, zFace)];
+                                     int blockOpacity = (block == null ? 0 : block.getLightOpacity(this, xFace, yFace, zFace));
+                                     int opacity = Math.max(1, blockOpacity);
+                                     //Get Saved light value from face
+                                     expectedEntryLight = this.getSavedLightValue(par1Enu, xFace, yFace, zFace);
+                                     int ll = lightEntry&15;
+                                     int rl = lightEntry&480;
+                                     int gl = lightEntry&15360;
+                                     int bl = lightEntry&491520;
+                                     
+                                	 ll-=opacity;
+                                	 rl-=32*opacity;
+                                	 gl-=1024*opacity;
+                                	 bl-=32768*opacity;
+                                	 
+                                     if ( ((expectedEntryLight&15) >= ll) && (i1 < this.lightUpdateBlockList.length))
+                                    	 this.lightUpdateBlockList[i1++] = xFace - x + 32 | (yFace - y + 32 << 6) | (zFace - z + 32 << 12) | ((ll | rl | gl | bl) << 18);
+                                }
                             }
                         }
                     }
@@ -4060,65 +4067,49 @@ public abstract class World implements IBlockAccess
                 z1 = ((int)(l1 >> 12 & 63) - 32 + z);		//Get Entry Z coord
                 
                 //Get the Saved Light at the Entry's Position
-                lightEntry = this.getSavedLightValue(par1Enu, x1, y1, z1);	
-                
+                lightEntry = this.getSavedLightValue(par1Enu, x1, y1, z1);
                 
                 //Compute the light level at the entry's location.  If the light's have been set to zero before this occurs,
                 //then the computation will change dynamically
                 expectedEntryLight = this.computeLightValue(x1, y1, z1, par1Enu);
-                
 
                 if (expectedEntryLight != lightEntry)
-                {
-                    //this.setLightValue(par1Enu, x1, y1, z1, expectedEntryLight);
+                {	
+                	int tempStorageLightValue = lightEntry;
+                	
                     if((expectedEntryLight&15) > (lightEntry&15))
-                		this.setLightValue(par1Enu, x1, y1, z1, lightEntry&507360 | expectedEntryLight&15);
+                    	tempStorageLightValue = tempStorageLightValue&507360 | expectedEntryLight&15;
                 	if((expectedEntryLight&480) > (lightEntry&480))
-                		this.setLightValue(par1Enu, x1, y1, z1, lightEntry&506895 | expectedEntryLight&480);
+                		tempStorageLightValue = tempStorageLightValue&506895 | expectedEntryLight&480;
                 	if((expectedEntryLight&15360) > (lightEntry&15360))
-                		this.setLightValue(par1Enu, x1, y1, z1, lightEntry&492015 | expectedEntryLight&15360);
+                		tempStorageLightValue = tempStorageLightValue&492015 | expectedEntryLight&15360;
                 	if((expectedEntryLight&491520) > (lightEntry&491520))
-                		this.setLightValue(par1Enu, x1, y1, z1, lightEntry&15855 | expectedEntryLight&491520);
+                		tempStorageLightValue = tempStorageLightValue&15855 | expectedEntryLight&491520;
                 	
-                	
-                    if (expectedEntryLight > lightEntry)
+                    if ((((1048576|lightEntry) - expectedEntryLight)&541200) > 0)
                     {
+                    	//Moved this here, from the lines above
+                    	this.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
+                    	
                         x2 = Math.abs(x1 - x);
                         y2 = Math.abs(y1 - y);
                         z2 = Math.abs(z1 - z);
-                        boolean flag = i1 < this.lightUpdateBlockList.length - 6;
+                        boolean flag = i1 < this.lightUpdateBlockList.length - 6; //What's with the minus 6?  6 Sides on cube?
 
                         if (x2 + y2 + z2 < 17 && flag)
-                        {
-                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1 - 1, y2, z2))-expectedEntryLight)&541200) > 0)
-                            {
+                        {	
+                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1 - 1, y1, z1))-expectedEntryLight)&541200) > 0)
                                 this.lightUpdateBlockList[i1++] = x1 - 1 - x + 32 + (y1 - y + 32 << 6) + (z1 - z + 32 << 12);
-                            }
-
                         	if ((((1048576|this.getSavedLightValue(par1Enu, x1 + 1, y1, z1))-expectedEntryLight)&541200) > 0)
-                            {
                                 this.lightUpdateBlockList[i1++] = x1 + 1 - x + 32 + (y1 - y + 32 << 6) + (z1 - z + 32 << 12);
-                            }
-
-                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1, y2 - 1, z2))-expectedEntryLight)&541200) > 0)
-                            {
+                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1, y1 - 1, z1))-expectedEntryLight)&541200) > 0)
                                 this.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - 1 - y + 32 << 6) + (z1 - z + 32 << 12);
-                            }
-
-                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1, y2 + 1, z2))-expectedEntryLight)&541200) > 0)
-                            {
+                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1, y1 + 1, z1))-expectedEntryLight)&541200) > 0)
                                 this.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 + 1 - y + 32 << 6) + (z1 - z + 32 << 12);
-                            }
-
-                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1, y2, z2 - 1))-expectedEntryLight)&541200) > 0)
-                            {
+                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1, y1, z1 - 1))-expectedEntryLight)&541200) > 0)
                                 this.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - y + 32 << 6) + (z1 - 1 - z + 32 << 12);
-                            }
-
-                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1, y2, z2 + 1))-expectedEntryLight)&541200) > 0)
-                            {
+                        	if ((((1048576|this.getSavedLightValue(par1Enu, x1, y1, z1 + 1))-expectedEntryLight)&541200) > 0)
                                 this.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - y + 32 << 6) + (z1 + 1 - z + 32 << 12);
-                            }
                         }
                     }
                 }

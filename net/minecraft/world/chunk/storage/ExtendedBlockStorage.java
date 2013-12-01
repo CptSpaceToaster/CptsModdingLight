@@ -199,12 +199,12 @@ public class ExtendedBlockStorage
      * Modded to save colored lights
      * CptSpaceToaster
      */
-    public void setExtBlocklightValue(int par1, int par2, int par3, int par4)
+    public void setExtBlocklightValue(int x, int y, int z, int lightValue)
     {
-        this.blocklightArray.set(par1, par2, par3, par4);
-        this.rColorArray.set(par1, par2, par3, (par4>>5) &15);
-        this.gColorArray.set(par1, par2, par3, (par4>>10) &15);
-        this.bColorArray.set(par1, par2, par3, (par4>>15)&15);
+        this.blocklightArray.set(x, y, z, lightValue);
+        this.rColorArray.set(x, y, z, (lightValue>>5) &15);
+        this.gColorArray.set(x, y, z, (lightValue>>10)&15);
+        this.bColorArray.set(x, y, z, (lightValue>>15)&15);
     }
 
     /**
