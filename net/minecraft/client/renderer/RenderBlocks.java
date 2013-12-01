@@ -4423,9 +4423,6 @@ public class RenderBlocks
             
             int lightVal = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z);
             
-            if ((lightVal&65535) > 0)
-            	System.out.println("One Side: " + Integer.toBinaryString(lightVal));
-            
             this.aoBrightnessXYNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z)&15728880;
             this.aoBrightnessXYPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y, z)&15728880;
             this.aoBrightnessYZPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z - 1)&15728880;
