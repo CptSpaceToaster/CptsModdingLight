@@ -3,7 +3,6 @@ package net.minecraft.world;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -12,9 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import javax.swing.JOptionPane;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.BlockHalfSlab;
@@ -187,7 +183,7 @@ public abstract class World implements IBlockAccess
      * 4-bit L is a light level used when darkening blocks. 6-bit numbers x, y and z represent the block's offset from
      * the original block, plus 32 (i.e. value of 31 would mean a -1 offset
      */
-    long[] lightUpdateBlockList;
+    private long[] lightUpdateBlockList;
 
     /** This is set to true for client worlds, and false for server worlds. */
     public boolean isRemote;

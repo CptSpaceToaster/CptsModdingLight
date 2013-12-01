@@ -1,0 +1,59 @@
+//Items listed as they appear in my Eclipse Workspace
+//
+// + means an addition to the code.  Lines marked with + didn't exist in any form, but were added to the source
+// - means code/method replacement.  Lines marked with - existed, but were modified to accept changes.
+//										These include code additions to pre-existing methods.
+
+net.minecraft.block.Block.java
+	//Variable Additions
+	+(97)	public final static Float[] l
+	//Block Constructors
+	-(114)	public static final BlockFluid lavaMoving
+	-(117)	public static final Block lavaStill
+	-(164)	public static final Block torchWood
+	-(165)	public static final BlockFire fire
+	-(192)	public static final Block oreRedstoneGlowing
+	-(198)	public static final Block torchRedstoneActive
+	-(217)	public static final BlockPortal portal
+	-(225)	public static final BlockRedstoneRepeater redstoneRepeaterActive
+	-(290)	public static final BlockComparator redstoneComparatorActive
+	//Methods
+	-(420)	public Block setLightValue(float par1)
+	+(432)	public Block setLightValue(int par1)
+	+(2531)	public Block addColorLightValue(float r, float g, float b)
+
+net.minecraft.client.renderer.RenderBlocks.java
+	-(4247)	public boolean renderStandardBlockWithAmbientOcclusion(Block par1Block, int x, int y, int z, float r, float g, float b)
+	-(6017)	public boolean renderStandardBlockWithColorMultiplier(Block par1Block, int x, int y, int z, float r, float g, float b)
+
+net.minecraft.client.renderer.Tessellator.java
+	-(368)	public void setBrightness(int par1)
+
+net.minecraft.world.chunk.storage.ExtendedBlockStorage.java
+	//Variable Additions
+	+(51)	private NibbleArray rColorArray
+	+(52)	private NibbleArray gColorArray
+	+(53)	private NibbleArray bColorArray
+	//Modified Constructor
+	-(55)	public ExtendedBlockStorage(int par1, boolean par2)
+	//Methods
+	-(202)	public void setExtBlocklightValue(int x, int y, int z, int lightValue)
+	-(216)	public int getExtBlocklightValue(int par1, int par2, int par3)
+
+net.minecraft.world.ChunkChache.java
+	-(143)	public int getLightBrightnessForSkyBlocks(int par1, int par2, int par3, int par4)
+	-(200)	public float getLightBrightness(int par1, int par2, int par3)
+
+net.minecraft.world.World.java
+	//Variable Change
+	-(186)	private long[] lightUpdateBlockList;		//Is now an array of longs instead of ints
+	//Modified Constructors
+	-(223)	this.lightUpdateBlockList = new long[32768];
+	-(261)	this.lightUpdateBlockList = new long[32768];
+	//Methods
+	-(923)	public int getBlockLightValue_do(int par1, int par2, int par3, boolean par4)
+	-(1197)	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int lightValue)
+	-(1124)	public float getBrightness(int par1, int par2, int par3, int par4)
+	-(1254)	public float getLightBrightness(int par1, int par2, int par3)
+	-(3455)	private int computeLightValue(int x, int y, int z, EnumSkyBlock par4EnumSkyBlock)
+	-(3533)	public void updateLightByType(EnumSkyBlock par1Enu, int x, int y, int z)

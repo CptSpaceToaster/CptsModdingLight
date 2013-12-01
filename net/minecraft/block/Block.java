@@ -112,10 +112,8 @@ public class Block
     
     // XXX START
     public static final BlockFluid lavaMoving = (BlockFluid)(new BlockFlowing(10, Material.lava)).setHardness(0.0F).setLightValue(1.0F).setUnlocalizedName("lava").disableStats().setTextureName("lava_flow").addColorLightValue(l[15], l[12], l[10]);
-    // XXX END
     
     /** Stationary lava source block */
-    // XXX START
     public static final Block lavaStill = (new BlockStationary(11, Material.lava)).setHardness(100.0F).setLightValue(1.0F).setUnlocalizedName("lava").disableStats().setTextureName("lava_still").addColorLightValue(l[15], l[12], l[10]);
     // XXX END
     
