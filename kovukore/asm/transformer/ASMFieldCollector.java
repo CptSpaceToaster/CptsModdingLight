@@ -1,4 +1,4 @@
-package kovu.asm.transformer;
+package kovukore.asm.transformer;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;

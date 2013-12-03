@@ -1,4 +1,4 @@
-package kovu.asm.transformer;
+package kovukore.asm.transformer;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

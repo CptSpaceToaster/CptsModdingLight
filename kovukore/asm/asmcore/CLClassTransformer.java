@@ -1,8 +1,9 @@
-package kovu.asm.asmcore;
+package kovukore.asm.asmcore;
 
 import java.util.HashMap;
 
-import kovu.asm.transformer.ASMClassTransformer;
+import kovukore.asm.overriddenclasses.Lights_Block;
+import kovukore.asm.transformer.ASMClassTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 public class CLClassTransformer implements IClassTransformer
@@ -25,7 +26,7 @@ public class CLClassTransformer implements IClassTransformer
 	
 	public void addClasses(HashMap classes)
 	{
-		
+		addClassNameAndAlias(classes, "net.minecraft.block.Block", "aqz", Lights_Block.class);
 	}
 	
 	protected void addClassNameAndAlias(HashMap<String, String> map, String className, String obfName, Class clss)

@@ -1,4 +1,4 @@
-package kovu.asm.asmcore;
+package kovukore.asm.asmcore;
 
 import java.util.Arrays;
 

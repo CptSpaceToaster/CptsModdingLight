@@ -1,4 +1,4 @@
-package kovu.asm.asmcore;
+package kovukore.asm.asmcore;
 
 import java.io.File;
 import java.util.Map;
