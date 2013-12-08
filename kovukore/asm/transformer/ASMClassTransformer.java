@@ -222,29 +222,4 @@ public class ASMClassTransformer
 			return false;	
 		}
 	}
-
-	private void replaceObfuscatedMethodNames(ASMDiffVisitor dv)
-	{
-		for (MethodNode mn : dv.newMethods)
-		{
-			if (mn.visibleAnnotations != null)
-			{
-				for (Object oan : mn.visibleAnnotations)
-				{
-					AnnotationNode an = (AnnotationNode) oan;
-					if (an.desc.contains("ASMReplaceMethod"))
-					{
-						List<Object> vals = an.values;
-						String alias = null;
-						if (vals != null || vals.size() > 1)
-						{
-							alias = (String) vals.get(1);
-							dv.methodsToReplace.put(alias, 1);
-							mn.name = alias;
-						}
-					}
-				}
-			}
-		}
-	}
 }

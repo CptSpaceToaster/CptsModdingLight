@@ -28,7 +28,7 @@ public class ASMMethodTextReplacementVisitor extends MethodVisitor
 			newType = newType.replace(rem, reps.get(rem));
 		}
 
-		mv.visitTypeInsn(opcode, type); // TODO: NewType?
+		mv.visitTypeInsn(opcode, type); 
 
 		if (!(type.equals(newType)))
 		{
