@@ -1278,7 +1278,7 @@ public class Block
     /**
      * Disable statistics for the block, the block will no count for mined or placed.
      */
-    protected Block disableStats()
+    public Block disableStats()
     {
         this.enableStats = false;
         return this;
