@@ -24,7 +24,7 @@ public class CLDummyContainer extends DummyModContainer
 		meta.name = "ColoredLightsCore";
 		meta.version = "1.0.0";
 		meta.credits = "";
-		meta.authorList = Arrays.asList("Kovu, CptSpaceToaster");
+		meta.authorList = Arrays.asList("Kovu (Lion-O), CptSpaceToaster");
 		meta.description = "The coremod for Colored Lights";
 	}
 	
