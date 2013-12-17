@@ -4,9 +4,10 @@
 // - means code/method replacement.  Lines marked with - existed, but were modified to accept changes.
 //										These include code additions to pre-existing methods.
 
+//Done
 net.minecraft.block.Block.java
 	//Variable Additions
-	+(97)	public final static Float[] l DONE
+	+(97)	public final static Float[] l
 	//Block Constructors
 	-(114)	public static final BlockFluid lavaMoving
 	-(117)	public static final Block lavaStill
@@ -18,9 +19,9 @@ net.minecraft.block.Block.java
 	-(225)	public static final BlockRedstoneRepeater redstoneRepeaterActive
 	-(290)	public static final BlockComparator redstoneComparatorActive
 	//Methods
-	-(420)	public Block setLightValue(float par1) DONE
-	+(432)	public Block setLightValue(int par1) DONE
-	+(2531)	public Block addColorLightValue(float r, float g, float b) DONE
+	-(420)	public Block setLightValue(float par1)
+	+(432)	public Block setLightValue(int par1)
+	+(2531)	public Block addColorLightValue(float r, float g, float b)
 
 net.minecraft.world.chunk.storage.ExtendedBlockStorage.java
 	//Variable Additions
