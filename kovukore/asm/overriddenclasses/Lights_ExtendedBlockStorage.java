@@ -3,13 +3,18 @@ package kovukore.asm.overriddenclasses;
 import kovukore.asm.transformer.ASMAddField;
 import kovukore.asm.transformer.ASMReplaceMethod;
 import net.minecraft.world.chunk.NibbleArray;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
-public class Lights_ExtendedBlockStorage {
+public class Lights_ExtendedBlockStorage extends ExtendedBlockStorage {
+	public Lights_ExtendedBlockStorage(int par1, boolean par2) {
+		super(par1, par2);
+	}
 	private int yBase;
 	private byte[] blockLSBArray;
 	private NibbleArray blockMetadataArray;
 	private NibbleArray blocklightArray;
 	private NibbleArray skylightArray;
+	
 	
 	
 	@ASMAddField

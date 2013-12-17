@@ -5,6 +5,7 @@ import javax.xml.ws.soap.Addressing;
 import kovukore.asm.transformer.ASMAddField;
 import kovukore.asm.transformer.ASMAddMethod;
 import kovukore.asm.transformer.ASMReplaceField;
+import kovukore.asm.transformer.ASMReplaceMethod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockComparator;
 import net.minecraft.block.BlockFire;
@@ -22,11 +23,10 @@ import net.minecraft.creativetab.CreativeTabs;
 public class Lights_Block extends Block
 {
 	//Junk Constructor to hopefully get this to compile
-	private Lights_Block()
-	{
-		super(10000, Material.air);
+	public Lights_Block(int par1, Material par2Material) {
+		super(par1, par2Material);
 	}
-	
+
 	@ASMAddField
     public final static Float[] l = {0F, 1F/15, 2F/15, 3F/15, 4F/15, 5F/15, 6F/15, 7F/15, 8F/15, 9F/15, 10F/15, 11F/15, 12F/15, 13F/15, 14F/15, 1F};
 	
@@ -57,14 +57,14 @@ public class Lights_Block extends Block
 	@ASMReplaceField
 	public static final BlockComparator redstoneComparatorActive = (BlockComparator)(new BlockComparator(150, true)).setHardness(0.0F).setLightValue(0.625F).setStepSound(soundWoodFootstep).setUnlocalizedName("comparator").disableStats().setTextureName("comparator_on").addColorLightValue(l[9], l[7], l[7]);
 	
-	@ASMAddMethod
+	@ASMReplaceMethod
 	public Block setLightValue(float par1)
     {
         lightValue[this.blockID] = (int)(15.0F * par1);
         return this.addColorLightValue(par1, par1, par1);
     }
 	
-	@ASMAddMethod
+	@ASMReplaceMethod
     public Block setLightValue(int par1)
     {
         lightValue[this.blockID] = par1;

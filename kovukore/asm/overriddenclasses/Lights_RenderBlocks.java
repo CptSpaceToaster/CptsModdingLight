@@ -10,7 +10,7 @@ import net.minecraft.util.Icon;
 
 public class Lights_RenderBlocks extends RenderBlocks
 {
-	@ASMAddMethod
+	@ASMReplaceMethod
     public boolean renderStandardBlockWithAmbientOcclusion(Block par1Block, int x, int y, int z, float r, float g, float b)
     {
         this.enableAO = true;
@@ -912,7 +912,7 @@ public class Lights_RenderBlocks extends RenderBlocks
         return flag;
     }
 
-	@ASMAddMethod
+	@ASMReplaceMethod
 	public boolean renderStandardBlockWithColorMultiplier(Block par1Block, int x, int y, int z, float r, float g, float b)
     {
         this.enableAO = false;
@@ -1144,5 +1144,4 @@ public class Lights_RenderBlocks extends RenderBlocks
 
         return flag;
     }
-
 }
