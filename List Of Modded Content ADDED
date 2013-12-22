@@ -1,7 +1,0 @@
-net.minecraft.client.renderer.RenderBlocks.java
-    -(4247) public boolean renderStandardBlockWithAmbientOcclusion(Block par1Block, int x, int y, int z, float r, float g, float b) DONE
-    -(6017) public boolean renderStandardBlockWithColorMultiplier(Block par1Block, int x, int y, int z, float r, float g, float b) DONE
-
-net.minecraft.client.renderer.Tessellator.java
-    -(368)  public void setBrightness(int par1) DONE
-    

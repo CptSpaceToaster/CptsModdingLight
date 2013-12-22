@@ -4,7 +4,13 @@
 // - means code/method replacement.  Lines marked with - existed, but were modified to accept changes.
 //										These include code additions to pre-existing methods.
 
-//Done
+net.minecraft.client.renderer.RenderBlocks.java
+    -(4247) public boolean renderStandardBlockWithAmbientOcclusion(Block par1Block, int x, int y, int z, float r, float g, float b)
+    -(6017) public boolean renderStandardBlockWithColorMultiplier(Block par1Block, int x, int y, int z, float r, float g, float b)
+
+net.minecraft.client.renderer.Tessellator.java
+    -(368)  public void setBrightness(int par1)
+
 net.minecraft.block.Block.java
 	//Variable Additions
 	+(97)	public final static Float[] l
