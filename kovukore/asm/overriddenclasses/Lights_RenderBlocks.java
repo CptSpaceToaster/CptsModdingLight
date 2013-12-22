@@ -7,9 +7,17 @@ import net.minecraft.block.BlockGrass;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Icon;
+import net.minecraft.world.IBlockAccess;
 
 public class Lights_RenderBlocks extends RenderBlocks
 {
+	public Lights_RenderBlocks(IBlockAccess par1IBlockAccess) {
+		super(par1IBlockAccess);
+	}
+	public Lights_RenderBlocks() {
+		super();
+	}
+	
 	@ASMReplaceMethod
     public boolean renderStandardBlockWithAmbientOcclusion(Block par1Block, int x, int y, int z, float r, float g, float b)
     {

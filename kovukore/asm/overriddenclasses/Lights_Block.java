@@ -1,7 +1,5 @@
 package kovukore.asm.overriddenclasses;
 
-import javax.xml.ws.soap.Addressing;
-
 import kovukore.asm.transformer.ASMAddField;
 import kovukore.asm.transformer.ASMAddMethod;
 import kovukore.asm.transformer.ASMReplaceField;
