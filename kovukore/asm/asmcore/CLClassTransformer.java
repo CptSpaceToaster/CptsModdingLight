@@ -24,7 +24,7 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 	public CLClassTransformer()  throws IOException
 	{	
 		// Do Access Transforming First
-		super("/kovukore/asm/config/lights_at.cfg");
+		super("kovukore/asm/config/lights_at.cfg");
 		
 		// Do Class Replacement second
 		classes = createClassesToTransform();

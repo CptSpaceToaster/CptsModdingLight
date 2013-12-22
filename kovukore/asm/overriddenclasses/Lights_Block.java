@@ -22,7 +22,7 @@ import net.minecraft.creativetab.CreativeTabs;
 
 public class Lights_Block extends Block
 {
-	//Junk Constructor to hopefully get this to compile
+	@ASMReplaceMethod
 	public Lights_Block(int par1, Material par2Material) {
 		super(par1, par2Material);
 	}
