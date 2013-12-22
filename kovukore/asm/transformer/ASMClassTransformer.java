@@ -76,13 +76,13 @@ public class ASMClassTransformer
 				}
 				else if (hasAddAnnotation(mnRepl.visibleAnnotations))
 				{
-					cnOrig.methods.add(cnOrig.methods.size() + 1, scrubMethod(cnOrig, cnRepl, mnRepl));
+					cnOrig.methods.add(cnOrig.methods.size(), scrubMethod(cnOrig, cnRepl, mnRepl));
 				}
 			}
 			{
 				ClassWriter cwNew = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 				cnOrig.accept(cwNew);
-				return cwNew.toByteArray();	
+				return cwNew.toByteArray();
 			}
 		}
 		catch (IOException e)
