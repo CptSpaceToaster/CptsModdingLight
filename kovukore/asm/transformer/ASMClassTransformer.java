@@ -28,6 +28,7 @@ public class ASMClassTransformer
 		{
 			return transformClass(bytes, c2t.get(nameToMatch));
 		}
+		else
 		{
 			return bytes;	
 		}
@@ -79,19 +80,24 @@ public class ASMClassTransformer
 					cnOrig.methods.add(cnOrig.methods.size(), scrubMethod(cnOrig, cnRepl, mnRepl));
 				}
 			}
-			{
-				ClassWriter cwNew = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-				cnOrig.accept(cwNew);
-				return cwNew.toByteArray();
-			}
+			
+			ClassWriter cwNew = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+			
+			//This one
+			cnOrig.accept(cwNew);
+			
+			System.out.println("Transformed A File!");
+			return cwNew.toByteArray();
+			
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-		{
-			return bytes;	
-		}
+		
+		System.out.println("WARNING: Did Not Transform!");
+		return bytes;	
+		
 	}
 
 	protected FieldNode findField(List fields, FieldNode fnRepl)
@@ -110,9 +116,9 @@ public class ASMClassTransformer
 				return fn;
 			}
 		}
-		{
-			return null;	
-		}
+		
+		return null;	
+		
 	}
 
 	protected FieldNode scrubField(ClassNode cnOrig, ClassNode cnRepl, FieldNode fnRepl)
@@ -125,9 +131,9 @@ public class ASMClassTransformer
 		{
 			fnRepl.name = fr.get(fnRepl.name);
 		}
-		{
-			return fnRepl;	
-		}
+		
+		return fnRepl;	
+		
 	}
 
 	protected MethodNode scrubMethod(ClassNode orig, ClassNode repl, MethodNode mn)
@@ -161,9 +167,8 @@ public class ASMClassTransformer
 				}
 			}
 		}
-		{
-			return mn;	
-		}
+		
+		return mn;	
 	}
 
 	private MethodNode findMethod(List methods, MethodNode mnRepl)
@@ -182,9 +187,8 @@ public class ASMClassTransformer
 				return mn;
 			}
 		}
-		{
-			return null;
-		}
+		
+		return null;
 	}
 
 	protected boolean hasReplaceAnnotation(List<AnnotationNode> nodes)
@@ -200,9 +204,8 @@ public class ASMClassTransformer
 				return true;	
 			}
 		}
-		{
-			return false;	
-		}
+		
+		return false;	
 	}
 
 	protected boolean hasAddAnnotation(List<AnnotationNode> nodes)
@@ -218,8 +221,7 @@ public class ASMClassTransformer
 				return true;	
 			}
 		}
-		{
-			return false;	
-		}
+		
+		return false;	
 	}
 }

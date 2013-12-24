@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cpw.mods.fml.common.asm.transformers.AccessTransformer;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kovukore.asm.overriddenclasses.Lights_Block;
 import kovukore.asm.overriddenclasses.Lights_ChunkCache;
 import kovukore.asm.overriddenclasses.Lights_ExtendedBlockStorage;
@@ -40,13 +42,13 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 	
 	public void addClasses(HashMap classes)
 	{
-		System.out.println("Patching all classes");
-		addClassNameAndAlias(classes, "net.minecraft.block.Block", "aqz", Lights_Block.class);
-		addClassNameAndAlias(classes, "net.minecraft.world.chunk.ChunkCache", "acl", Lights_ChunkCache.class);
-		addClassNameAndAlias(classes, "net.minecraft.world.chunk.storage.ExtendedBlockStorage", "ads", Lights_ExtendedBlockStorage.class);
-		addClassNameAndAlias(classes, "net.minecraft.client.renderer.RenderBlocks", "bfr", Lights_RenderBlocks.class);
-		addClassNameAndAlias(classes, "net.minecraft.client.renderer.Tessellator", "bfq", Lights_Tessellator.class);
-		addClassNameAndAlias(classes, "net.minecraft.world.World", "abw", Lights_World.class);
+		System.out.println("Patching Classes");
+		addClassNameAndAlias(classes, "net.minecraft.block.Block", net.minecraft.block.Block.class.getSimpleName(), Lights_Block.class);
+		addClassNameAndAlias(classes, "net.minecraft.world.ChunkCache", net.minecraft.world.ChunkCache.class.getSimpleName(), Lights_ChunkCache.class);
+		addClassNameAndAlias(classes, "net.minecraft.world.chunk.storage.ExtendedBlockStorage", net.minecraft.world.chunk.storage.ExtendedBlockStorage.class.getSimpleName(), Lights_ExtendedBlockStorage.class);
+		addClassNameAndAlias(classes, "net.minecraft.world.World", net.minecraft.world.World.class.getSimpleName(), Lights_World.class);
+		addClassNameAndAlias(classes, "net.minecraft.client.renderer.RenderBlocks", net.minecraft.client.renderer.RenderBlocks.class.getSimpleName(), Lights_RenderBlocks.class);
+		addClassNameAndAlias(classes, "net.minecraft.client.renderer.Tessellator", net.minecraft.client.renderer.Tessellator.class.getSimpleName(), Lights_Tessellator.class);
 	}
 	
 	protected void addClassNameAndAlias(HashMap<String, String> map, String className, String obfName, Class clss)
@@ -61,6 +63,11 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 		}
 	}
 	
+	
+	private static void aMethod() {
+		boolean obfuscated = Class.forName("net.minecraft.block.Block");
+	}
+	
 	@Override
 	public byte[] transform(String s, String arg1, byte[] bytes)
 	{
@@ -71,7 +78,10 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 		else
 		{
 			System.out.println("Patching: " + s + ", " + arg1);
+			
 			return act.transform(s, bytes);
 		}
 	}
+	
+	
 }
