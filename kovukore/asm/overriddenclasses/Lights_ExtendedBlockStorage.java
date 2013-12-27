@@ -5,25 +5,17 @@ import kovukore.asm.transformer.ASMReplaceMethod;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
-public class Lights_ExtendedBlockStorage extends ExtendedBlockStorage {
+public class Lights_ExtendedBlockStorage extends ExtendedBlockStorage
+{
 	@ASMAddField
-	private NibbleArray rColorArray;
-	
+	private NibbleArray rColorArray = new NibbleArray(4096, 4);
 	@ASMAddField
-    private NibbleArray gColorArray;
-	
+	private NibbleArray gColorArray = new NibbleArray(4096, 4);
 	@ASMAddField
-    private NibbleArray bColorArray;
-	
-	@ASMReplaceMethod	
+	private NibbleArray bColorArray = new NibbleArray(4096, 4);
+
 	public Lights_ExtendedBlockStorage(int par1, boolean par2)
     {
 		super(par1, par2);
-
-		//this.blockLSBArray.length should evaluate to 4096... but we don't have access
-        this.rColorArray = new NibbleArray(4096, 4);
-        this.gColorArray = new NibbleArray(4096, 4);
-        this.bColorArray = new NibbleArray(4096, 4);
     }
-	
 }

@@ -18,7 +18,6 @@ public class CLDummyContainer extends DummyModContainer
 	public CLDummyContainer()
 	{
 		super(new ModMetadata());
-		
 		ModMetadata meta = getMetadata();
 		meta.modId = "ColoredLightsCore";
 		meta.name = "ColoredLightsCore";
@@ -38,7 +37,6 @@ public class CLDummyContainer extends DummyModContainer
 	@Subscribe
 	public void modConstruction(FMLConstructionEvent evt)
 	{
-
 	}
 
 	@Subscribe
@@ -49,12 +47,10 @@ public class CLDummyContainer extends DummyModContainer
 	@Subscribe
 	public void init(FMLInitializationEvent evt) 
 	{
-
 	}
 
 	@Subscribe
 	public void postInit(FMLPostInitializationEvent evt)
 	{
-
 	}
 }

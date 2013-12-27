@@ -19,7 +19,6 @@ public class CLFMLLoadingPlugin implements IFMLLoadingPlugin
 	public void injectData(Map<String, Object> data)
 	{
 		location = (File)data.get("coremodLocation");
-		//System.out.println("*** Transformer jar location location.getName: " +location.getName());
 	}
 
 	@Override

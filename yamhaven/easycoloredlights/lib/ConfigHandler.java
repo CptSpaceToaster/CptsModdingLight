@@ -6,8 +6,10 @@ import net.minecraftforge.common.Configuration;
 import yamhaven.easycoloredlights.lib.BlockIds;
 import yamhaven.easycoloredlights.lib.BlockInfo;
 
-public class ConfigHandler {
-	public static void init(File configFile) {
+public class ConfigHandler
+{
+	public static void init(File configFile)
+	{
 		Configuration config = new Configuration(configFile);
 		config.load();
 		BlockIds.whiteLightBlockID_actual = config.getBlock(BlockInfo.whiteColoredLighBlock_name, BlockIds.whiteLightBlockID_default).getInt();

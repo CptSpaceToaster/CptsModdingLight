@@ -25,10 +25,7 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 	
 	public CLClassTransformer()  throws IOException
 	{	
-		// Do Access Transforming First
 		super("kovukore/asm/config/lights_at.cfg");
-		
-		// Do Class Replacement second
 		classes = createClassesToTransform();
 		act = new ASMClassTransformer(classes, new HashMap<String, String>(), new HashMap<String, String>());
 	}
@@ -42,7 +39,6 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 	
 	public void addClasses(HashMap classes)
 	{
-		System.out.println("Patching Classes");
 		addClassNameAndAlias(classes, "net.minecraft.block.Block", net.minecraft.block.Block.class.getSimpleName(), Lights_Block.class);
 		addClassNameAndAlias(classes, "net.minecraft.world.ChunkCache", net.minecraft.world.ChunkCache.class.getSimpleName(), Lights_ChunkCache.class);
 		addClassNameAndAlias(classes, "net.minecraft.world.chunk.storage.ExtendedBlockStorage", net.minecraft.world.chunk.storage.ExtendedBlockStorage.class.getSimpleName(), Lights_ExtendedBlockStorage.class);
@@ -63,25 +59,16 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 		}
 	}
 	
-	
-	private static void aMethod() {
-		boolean obfuscated = Class.forName("net.minecraft.block.Block");
-	}
-	
 	@Override
 	public byte[] transform(String s, String arg1, byte[] bytes)
 	{
-		if(s.startsWith("ASM") || !classes.containsKey(s))
+		if(s.startsWith("ASM") || s.startsWith("kovukore") || s.startsWith("yamhaven") || !classes.containsKey(s))
 		{
 			return bytes;
 		}
 		else
 		{
-			System.out.println("Patching: " + s + ", " + arg1);
-			
 			return act.transform(s, bytes);
 		}
 	}
-	
-	
 }

@@ -7,6 +7,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface ASMReplaceMethod
 {
 	String obfuscatedName() default "";
-
-	int replaceType() default 1; // 1 - full, 2 - accessonly
+	int replaceType() default 1;
 }

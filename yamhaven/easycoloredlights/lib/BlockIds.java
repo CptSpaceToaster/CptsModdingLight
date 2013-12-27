@@ -1,6 +1,7 @@
 package yamhaven.easycoloredlights.lib;
 
-public class BlockIds {
+public class BlockIds
+{
 	public static int whiteLightBlockID_actual;
 	public static final int whiteLightBlockID_default = 3874;
 	public static int blackLightBlockID_actual;

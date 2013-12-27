@@ -81,7 +81,7 @@ public class ASMClassTransformer
 				}
 			}
 			
-			ClassWriter cwNew = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+			ClassWriter cwNew = new ClassWriter(0);
 			
 			//This one
 			cnOrig.accept(cwNew);

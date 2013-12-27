@@ -10,26 +10,21 @@ import java.util.List;
 
 public class ASMMethodCollector extends MethodNode
 {
-
 	public ASMMethodCollector(List<MethodNode> nm, HashMap<String, Integer> rm, int i, java.lang.String s, java.lang.String s1, java.lang.String s2, java.lang.String[] strings)
 	{
-
 		super(Opcodes.ASM4, i, s, s1, s2, strings);
 		newMethods = nm;
 		replaceMethods = rm;
 	}
 
 	public List<MethodNode> newMethods = null;
-
 	public HashMap<String, Integer> replaceMethods = null;
-
 	public boolean isWriting = false;
 
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible)
 	{
 		boolean wasAsmAnnotated = false;
-
 		if (!isWriting)
 		{
 			if (desc.contains("ASMAddMethod"))
@@ -37,15 +32,12 @@ public class ASMMethodCollector extends MethodNode
 				newMethods.add(this);
 				wasAsmAnnotated = true;
 			}
-
 			if (desc.contains("ASMReplaceMethod"))
 			{
 				replaceMethods.put(this.name + this.desc, 0);
-
 				newMethods.add(this);
 				wasAsmAnnotated = true;
 			}
-
 			isWriting = true;
 		}
 		if (!wasAsmAnnotated)
@@ -53,5 +45,4 @@ public class ASMMethodCollector extends MethodNode
 		else
 			return null;
 	}
-
 }

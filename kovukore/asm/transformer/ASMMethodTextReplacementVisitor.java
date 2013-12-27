@@ -10,13 +10,11 @@ public class ASMMethodTextReplacementVisitor extends MethodVisitor
 	public ASMMethodTextReplacementVisitor(int i, MethodVisitor methodVisitor, HashMap<String, String> repl, String methodName)
 	{
 		super(i, methodVisitor);
-
 		reps = repl;
 		mName = methodName;
 	}
 
 	String mName = null;
-
 	HashMap<String, String> reps = null;
 
 	@Override
@@ -27,9 +25,7 @@ public class ASMMethodTextReplacementVisitor extends MethodVisitor
 		{
 			newType = newType.replace(rem, reps.get(rem));
 		}
-
 		mv.visitTypeInsn(opcode, type); 
-
 		if (!(type.equals(newType)))
 		{
 			boolean b = true;
@@ -44,16 +40,12 @@ public class ASMMethodTextReplacementVisitor extends MethodVisitor
 		{
 			newOwner = newOwner.replace(rem, reps.get(rem));
 		}
-
 		String newDesc = desc;
 		for (String rem : reps.keySet())
 		{
 			newDesc = newDesc.replace(rem, reps.get(rem));
 		}
-
-		// mv.visitFieldInsn(opcode, newOwner, name, newDesc);
 		mv.visitFieldInsn(opcode, owner, name, desc);
-
 		if (!(owner.equals(newOwner)) || !(desc.equals(newDesc)))
 		{
 			boolean b = true;
@@ -68,13 +60,11 @@ public class ASMMethodTextReplacementVisitor extends MethodVisitor
 		{
 			newOwner = newOwner.replace(rem, reps.get(rem));
 		}
-
 		String newDesc = desc;
 		for (String rem : reps.keySet())
 		{
 			newDesc = newDesc.replace(rem, reps.get(rem));
 		}
-
 		if (name.equals("<init>"))
 		{
 			mv.visitMethodInsn(opcode, newOwner, name, newDesc);
@@ -83,7 +73,6 @@ public class ASMMethodTextReplacementVisitor extends MethodVisitor
 		{
 			mv.visitMethodInsn(opcode, owner, name, newDesc);
 		}
-
 		if (!(owner.equals(newOwner)) || !(desc.equals(newDesc)))
 		{
 			boolean b = true;

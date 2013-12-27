@@ -51,10 +51,11 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.RotationHelper;
 import net.minecraftforge.event.ForgeEventFactory;
+import cpw.mods.fml.common.registry.BlockProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Block
+public class Block implements BlockProxy
 {
     protected static int[] blockFireSpreadSpeed = new int[4096];
     protected static int[] blockFlammability = new int[4096];
