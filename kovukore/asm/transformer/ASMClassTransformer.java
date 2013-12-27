@@ -80,12 +80,14 @@ public class ASMClassTransformer
 					cnOrig.methods.add(cnOrig.methods.size(), scrubMethod(cnOrig, cnRepl, mnRepl));
 				}
 			}
-			
+			/*
+			 * WAS:  ClassWriter cwNew = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+			 * Changed to current line for JDK 7 compatibility AND to make sure it doesn't crash prematurely.
+			 * JDK 7 DOES NOT COMPUTE FRAMES!
+			 * ~AJWGeek
+			 */
 			ClassWriter cwNew = new ClassWriter(0);
-			
-			//This one
 			cnOrig.accept(cwNew);
-			
 			System.out.println("Transformed A File!");
 			return cwNew.toByteArray();
 			

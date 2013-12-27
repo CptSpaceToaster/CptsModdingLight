@@ -9,6 +9,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 
+/*
+ * XXX UPDATE THESE FIELD NAMES AND METHOD NAMES/SIGS ON EACH NEW VERSION OF MINECRAFT
+ */
 public class Lights_RenderBlocks extends RenderBlocks
 {
 	@ASMReplaceMethod

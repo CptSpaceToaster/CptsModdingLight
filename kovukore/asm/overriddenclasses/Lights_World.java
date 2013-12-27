@@ -28,6 +28,9 @@ import kovukore.asm.transformer.ASMAddField;
 import kovukore.asm.transformer.ASMAddMethod;
 import kovukore.asm.transformer.ASMReplaceMethod;
 
+/*
+ * XXX UPDATE THESE FIELD NAMES AND METHOD NAMES/SIGS ON EACH NEW VERSION OF MINECRAFT
+ */
 public abstract class Lights_World extends World
 {
 	@ASMAddField

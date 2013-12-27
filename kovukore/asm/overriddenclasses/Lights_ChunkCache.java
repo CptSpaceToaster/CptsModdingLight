@@ -13,6 +13,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ForgeDirection;
 
+/*
+ * XXX UPDATE THESE FIELD NAMES AND METHOD NAMES/SIGS ON EACH NEW VERSION OF MINECRAFT
+ */
 public class Lights_ChunkCache extends ChunkCache
 {
 	public Lights_ChunkCache(World par1World, int par2, int par3, int par4, int par5, int par6, int par7, int par8)

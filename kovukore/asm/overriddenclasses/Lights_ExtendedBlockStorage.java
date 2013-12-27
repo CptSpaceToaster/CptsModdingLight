@@ -5,6 +5,9 @@ import kovukore.asm.transformer.ASMReplaceMethod;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
+/*
+ * XXX UPDATE THESE FIELD NAMES AND METHOD NAMES/SIGS ON EACH NEW VERSION OF MINECRAFT
+ */
 public class Lights_ExtendedBlockStorage extends ExtendedBlockStorage
 {
 	@ASMAddField

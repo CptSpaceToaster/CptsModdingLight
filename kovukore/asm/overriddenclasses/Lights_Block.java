@@ -19,6 +19,9 @@ import net.minecraft.block.BlockTorch;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
+/*
+ * XXX UPDATE THESE FIELD NAMES AND METHOD NAMES/SIGS ON EACH NEW VERSION OF MINECRAFT
+ */
 public class Lights_Block extends Block
 {
 	@ASMAddField

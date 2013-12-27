@@ -20,6 +20,7 @@ public class RedColoredLightBlock extends Block
 		setStepSound(Block.soundGlassFootstep);
 		setCreativeTab(CreativeTabs.tabDecorations);
 		setLightValue(1.0F);
+		//Accepts RGB floats ranging from 0.0 to 1.0
 		addColorLightValue(Block.l[15], Block.l[0], Block.l[0]);
 	}
 

@@ -25,8 +25,10 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 	
 	public CLClassTransformer()  throws IOException
 	{	
+		//Do access transforming first
 		super("kovukore/asm/config/lights_at.cfg");
 		classes = createClassesToTransform();
+		//Transform classes
 		act = new ASMClassTransformer(classes, new HashMap<String, String>(), new HashMap<String, String>());
 	}
 	
@@ -39,6 +41,7 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 	
 	public void addClasses(HashMap classes)
 	{
+		//Apparently getSimpleName() does return the right class
 		addClassNameAndAlias(classes, "net.minecraft.block.Block", net.minecraft.block.Block.class.getSimpleName(), Lights_Block.class);
 		addClassNameAndAlias(classes, "net.minecraft.world.ChunkCache", net.minecraft.world.ChunkCache.class.getSimpleName(), Lights_ChunkCache.class);
 		addClassNameAndAlias(classes, "net.minecraft.world.chunk.storage.ExtendedBlockStorage", net.minecraft.world.chunk.storage.ExtendedBlockStorage.class.getSimpleName(), Lights_ExtendedBlockStorage.class);
@@ -62,6 +65,7 @@ public class CLClassTransformer extends AccessTransformer implements IClassTrans
 	@Override
 	public byte[] transform(String s, String arg1, byte[] bytes)
 	{
+		//Exclude any of our own code. We CANNOT transform our transformer. Also exclude any class we don't want to transform
 		if(s.startsWith("ASM") || s.startsWith("kovukore") || s.startsWith("yamhaven") || !classes.containsKey(s))
 		{
 			return bytes;
