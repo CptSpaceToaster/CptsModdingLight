@@ -17,7 +17,7 @@ public class WhiteColoredLightBlock extends Block {
 		setHardness(0.3F);
 		setStepSound(Block.soundGlassFootstep);
 		setCreativeTab(CreativeTabs.tabDecorations);
-		setLightValue(15);
+		setLightValue(1.0F);
 		
 		//Accepts RGB floats ranging from 0.0 to 1.0
 		addColorLightValue(Block.l[15], Block.l[15], Block.l[15]);

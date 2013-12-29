@@ -57,19 +57,12 @@ public class Lights_Block extends Block
 		return this.addColorLightValue(par1, par1, par1);
 	}
 
-	@ASMReplaceMethod
-	public Block a(int par1)
-	{
-		lightValue[this.blockID] = par1;
-		return this.addColorLightValue(l[par1], l[par1], l[par1]);
-	}
-
-	@ASMAddMethod
-    public Block setLightValue(int par1)
-    {
-        lightValue[this.blockID] = par1;
-        return this.addColorLightValue(l[par1], l[par1], l[par1]);
-    }
+//	@ASMAddMethod
+//    public Block setLightValue(int par1)
+//    {
+//        lightValue[this.blockID] = par1;
+//        return this.addColorLightValue(l[par1], l[par1], l[par1]);
+//    }
     
 	@ASMAddMethod
 	public Block addColorLightValue(float r, float g, float b)
