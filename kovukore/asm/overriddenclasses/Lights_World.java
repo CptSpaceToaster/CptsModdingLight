@@ -42,8 +42,7 @@ public abstract class Lights_World extends World
 	}
 
 	@ASMReplaceMethod
-	@Override
-	public int getBlockLightValue_do(int par1, int par2, int par3, boolean par4)
+	public int a(int par1, int par2, int par3, boolean par4)
 	{
 		if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
 		{
