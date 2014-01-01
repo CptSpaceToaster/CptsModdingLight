@@ -26,7 +26,7 @@ public class ExtendedBlockStorage
     /**
      * Contains the least significant 8 bits of each block ID belonging to this block storage's parent Chunk.
      */
-    private byte[] blockLSBArray;
+    public byte[] blockLSBArray;
 
     /**
      * Contains the most significant 4 bits of each block ID belonging to this block storage's parent Chunk.
@@ -39,7 +39,7 @@ public class ExtendedBlockStorage
     private NibbleArray blockMetadataArray;
 
     /** The NibbleArray containing a block of Block-light data. */
-    private NibbleArray blocklightArray;
+    public NibbleArray blocklightArray;
 
     /** The NibbleArray containing a block of Sky-light data. */
     private NibbleArray skylightArray;
