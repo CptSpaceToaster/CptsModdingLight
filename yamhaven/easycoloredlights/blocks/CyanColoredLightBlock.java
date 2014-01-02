@@ -18,12 +18,16 @@ public class CyanColoredLightBlock extends BlockColoredLight {
 	
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister icon) {
-		blockIcon = icon.registerIcon(ModInfo.ID.toLowerCase() + ":" + BlockInfo.cyanColoredLightBlock_unlocalizedName);
+		blockIcon = icon.registerIcon(ModInfo.ID.toLowerCase() + ":" + BlockInfo.cyanColoredLightBlock_unlocalizedName + (powered?"On":""));
 	}
 	
 	@Override
 	protected void turnLightsOn() {
 		setLightValue(1.0F);
-		addColorLightValue(0.0F, 1.0F, 1.0F);
+		try {
+			addColorLightValue(0.0F, 1.0F, 1.0F);
+		} catch (Exception e) {
+			System.out.println("The Colored Light Core appears to be missing, or broken"); 
+		}
 	}
 }

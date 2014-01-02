@@ -15,7 +15,7 @@ import yamhaven.easycoloredlights.lib.ModInfo;
   
 public abstract class BlockColoredLight extends Block {
 	/** Whether this lamp block is the powered version of the block. */
-    private final boolean powered;
+    protected final boolean powered;
 	
 	public BlockColoredLight(int idleID, boolean isPowered) {
         super(idleID, Material.redstoneLight);

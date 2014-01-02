@@ -55,7 +55,7 @@ import cpw.mods.fml.common.registry.BlockProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Block implements BlockProxy
+public class Block
 {
     protected static int[] blockFireSpreadSpeed = new int[4096];
     protected static int[] blockFlammability = new int[4096];
