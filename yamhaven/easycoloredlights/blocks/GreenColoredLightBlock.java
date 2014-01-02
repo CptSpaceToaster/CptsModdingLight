@@ -10,29 +10,20 @@ import net.minecraft.util.Icon;
 import yamhaven.easycoloredlights.lib.BlockInfo;
 import yamhaven.easycoloredlights.lib.ModInfo;
   
-public class GreenColoredLightBlock extends Block {
-	public GreenColoredLightBlock(int id) {
-		super(id, Material.glass);
+public class GreenColoredLightBlock extends BlockColoredLight {
+	public GreenColoredLightBlock(int id, boolean isPowered) {
+		super(id, isPowered);
 		setUnlocalizedName(BlockInfo.greenColoredLightBlock_unlocalizedName);
-		setHardness(0.3F);
-		setStepSound(Block.soundGlassFootstep);
-		setCreativeTab(CreativeTabs.tabDecorations);
-		setLightValue(1.0F);
-		
-		//Accepts RGB floats ranging from 0.0 to 1.0
-		addColorLightValue(0F, 1.0F, 0F);
 	}
-	
-	@SideOnly(Side.CLIENT)
-	private Icon blockIcon;
 	
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister icon) {
 		blockIcon = icon.registerIcon(ModInfo.ID.toLowerCase() + ":" + BlockInfo.greenColoredLightBlock_unlocalizedName);
 	}
 	
-	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int par1, int par2) {
-		return blockIcon;
+	@Override
+	protected void turnLightsOn() {
+		setLightValue(1.0F);
+		addColorLightValue(0.0F, 1.0F, 0.0F);
 	}
 }
