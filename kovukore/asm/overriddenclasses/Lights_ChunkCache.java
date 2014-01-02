@@ -2,6 +2,7 @@ package kovukore.asm.overriddenclasses;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kovukore.asm.transformer.ASMAddMethod;
 import kovukore.asm.transformer.ASMReplaceMethod;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +19,7 @@ import net.minecraftforge.common.ForgeDirection;
  */
 public class Lights_ChunkCache extends ChunkCache
 {
+	@ASMAddMethod
 	public Lights_ChunkCache(World par1World, int par2, int par3, int par4, int par5, int par6, int par7, int par8)
 	{
 		super(par1World, par2, par3, par4, par5, par6, par7, par8);

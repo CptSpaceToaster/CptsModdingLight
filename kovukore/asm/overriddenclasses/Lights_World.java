@@ -36,6 +36,7 @@ public abstract class Lights_World extends World
 	@ASMAddField
 	private long[] lightUpdateBlockList;
 
+	@ASMAddMethod
 	public Lights_World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler, ILogAgent par6ILogAgent)
 	{
 		super(par1ISaveHandler, par2Str, par3WorldSettings, par4WorldProvider, par5Profiler, par6ILogAgent);
