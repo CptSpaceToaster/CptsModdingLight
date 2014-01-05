@@ -67,6 +67,10 @@ public class ASMMethodTextReplacementVisitor extends MethodVisitor
 		}
 		if (name.equals("<init>"))
 		{
+			System.out.println(opcode);
+			System.out.println(newOwner);
+			System.out.println(name);
+			System.out.println(newDesc);
 			mv.visitMethodInsn(opcode, newOwner, name, newDesc);
 		}
 		else

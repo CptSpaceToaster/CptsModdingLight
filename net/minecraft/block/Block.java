@@ -793,7 +793,7 @@ public class Block
     /**
      * called by spawner, ore, redstoneOre blocks
      */
-    protected void dropXpOnBlockBreak(World par1World, int par2, int par3, int par4, int par5)
+    public void dropXpOnBlockBreak(World par1World, int par2, int par3, int par4, int par5)
     {
         if (!par1World.isRemote)
         {
@@ -2484,6 +2484,14 @@ public class Block
     }
     
     /**
+     * @return the amount of XP that this block should drop when it is broken
+     */
+    public int getExpDrop(World world, int data, int enchantmentLevel)
+    {
+        return 0;
+    }
+    
+    /**
      * Called when a tile entity on a side of this block changes is created or is destroyed.
      * @param world The world
      * @param x The x position of this block instance
@@ -2505,11 +2513,23 @@ public class Block
         return false;
     }
 
+    /**
+     * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
+     * @param world The world
+     * @param x The x position of this block instance
+     * @param y The y position of this block instance
+     * @param z The z position of this block instance
+     * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
+     * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
+     */
+    public boolean shouldCheckWeakPower(World world, int x, int y, int z, int side)
+    {
+        return !this.isNormalCube(world.getBlockId(x, y, z));
+    }
+    
     @Deprecated //Implemented here as we changed the IFluidBlock interface, and this allows us to do so without breaking exisitng mods.
     // To be removed next MC version {1.6.3+}
     public float getFilledPercentage(World world, int x, int y, int z){ return 1; }
-    
-    
     
     /**
      * Adds more Data to the lightValue array
@@ -2539,5 +2559,3 @@ public class Block
     
     
 }
-
-

@@ -22,8 +22,10 @@ import net.minecraft.creativetab.CreativeTabs;
 /*
  * XXX UPDATE THESE FIELD NAMES AND METHOD NAMES/SIGS ON EACH NEW VERSION OF MINECRAFT
  */
-public class Lights_Block extends Block
+public class Lights_Block extends Block implements BlockProxy
 {
+	//TODO: Make sure I made disableStats() public in the config.asm
+	
 	@ASMAddField
 	public static Float[] l;
 	@ASMReplaceField
@@ -59,6 +61,7 @@ public class Lights_Block extends Block
 		return this.addColorLightValue(par1, par1, par1);
 	}
 
+	@ASMAddMethod
     public Block setLightValue(int par1)
     {
         lightValue[this.blockID] = par1;
