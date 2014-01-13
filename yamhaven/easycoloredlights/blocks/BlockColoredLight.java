@@ -44,7 +44,6 @@ public abstract class BlockColoredLight extends Block
 	}
 
 	@SideOnly(Side.CLIENT)
-<<<<<<< HEAD
 	public int idPicked(World world, int x, int y, int z) {
         return this.blockID+(this.blockID<BlockIds.whiteLightBlockID_actual?16:0);
     }
@@ -53,18 +52,6 @@ public abstract class BlockColoredLight extends Block
 	public int idDropped(int par1, Random random, int par3) {
 		return this.blockID+(this.blockID<BlockIds.whiteLightBlockID_actual?16:0);
     }
-	
-=======
-	public int idPicked(World world, int x, int y, int z)
-	{
-		return this.blockID;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public int idDropped(int par1, Random random, int par3)
-	{
-		return this.blockID;
-	}
 
 	/**
 	 * Called whenever the block is added into the world. Args: world, x, y, z
@@ -84,7 +71,6 @@ public abstract class BlockColoredLight extends Block
 		}
 	}
 
->>>>>>> Updated stuffz
 	/**
 	 * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are their own) Args: x, y, z, neighbor blockID
 	 */

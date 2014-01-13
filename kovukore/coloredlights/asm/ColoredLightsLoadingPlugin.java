@@ -74,4 +74,10 @@ public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 	{
 		return null;
 	}
+
+	@Override
+	@Deprecated
+	public String[] getLibraryRequestClass() {
+		return null;
+	}
 }

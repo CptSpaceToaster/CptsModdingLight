@@ -29,15 +29,9 @@ public class Blocks
 	public static Block cyanColoredLightBlockOn;
 	public static Block yellowColoredLightBlockOn;
 	public static Block magentaColoredLightBlockOn;
-<<<<<<< HEAD
-	public static void init() {
-		
-=======
 
 	public static void init()
 	{
-
->>>>>>> Updated stuffz
 		whiteColoredLightBlockIdle = new WhiteColoredLightBlock(BlockIds.whiteLightBlockID_actual, false);
 		redColoredLightBlockIdle = new RedColoredLightBlock(BlockIds.redLightBlockID_actual, false);
 		greenColoredLightBlockIdle = new GreenColoredLightBlock(BlockIds.greenLightBlockID_actual, false);
@@ -61,11 +55,6 @@ public class Blocks
 		GameRegistry.registerBlock(cyanColoredLightBlockIdle, BlockInfo.cyanColoredLightBlock_name);
 		GameRegistry.registerBlock(yellowColoredLightBlockIdle, BlockInfo.yellowColoredLightBlock_name);
 		GameRegistry.registerBlock(magentaColoredLightBlockIdle, BlockInfo.magentaColoredLightBlock_name);
-<<<<<<< HEAD
-		
-=======
-
->>>>>>> Updated stuffz
 	}
 
 	public static void addNames()
@@ -74,11 +63,6 @@ public class Blocks
 		{
 			// for 16 blocks
 		}
-<<<<<<< HEAD
-		
-=======
-
->>>>>>> Updated stuffz
 		LanguageRegistry.addName(new ItemStack(whiteColoredLightBlockIdle, 1, 0), BlockInfo.whiteColoredLightBlock_name);
 		LanguageRegistry.addName(new ItemStack(redColoredLightBlockIdle, 1, 0), BlockInfo.redColoredLightBlock_name);
 		LanguageRegistry.addName(new ItemStack(greenColoredLightBlockIdle, 1, 0), BlockInfo.greenColoredLightBlock_name);
@@ -86,11 +70,6 @@ public class Blocks
 		LanguageRegistry.addName(new ItemStack(cyanColoredLightBlockIdle, 1, 0), BlockInfo.cyanColoredLightBlock_name);
 		LanguageRegistry.addName(new ItemStack(yellowColoredLightBlockIdle, 1, 0), BlockInfo.yellowColoredLightBlock_name);
 		LanguageRegistry.addName(new ItemStack(magentaColoredLightBlockIdle, 1, 0), BlockInfo.magentaColoredLightBlock_name);
-<<<<<<< HEAD
-		
-=======
-
->>>>>>> Updated stuffz
 	}
 
 	public static void addBlockRecipes()
