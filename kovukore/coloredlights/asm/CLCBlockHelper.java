@@ -24,6 +24,11 @@ public class CLCBlockHelper
 		FMLLog.log(Level.INFO, "ColoredLightsCore is PATCHING vanilla blocks");
 		try
 		{
+			//TODO: This won't run in an obfuscated environment, and it receives the following error
+			//Crash Report: http://i.imgur.com/ti5kYJV.png
+			//Consol Barf:  http://i.imgur.com/jAjnV0a.png
+			
+			
 			//Null the existing entries
 			Block.blocksList[Block.lavaMoving.blockID] = null;
 			Block.blocksList[Block.lavaStill.blockID] = null;
@@ -45,9 +50,10 @@ public class CLCBlockHelper
 			Block.blocksList[Block.redstoneRepeaterActive.blockID] = (BlockRedstoneRepeater) (new BlockRedstoneRepeater(94, true)).setHardness(0.0F).setLightValue(0.625F).setStepSound(Block.soundWoodFootstep).setUnlocalizedName("diode").disableStats().setTextureName("repeater_on").addColorLightValue(0.6F, 0.467F, 0.467F);
 			Block.blocksList[Block.redstoneComparatorActive.blockID] = (BlockComparator) (new BlockComparator(150, true)).setHardness(0.0F).setLightValue(0.625F).setStepSound(Block.soundWoodFootstep).setUnlocalizedName("comparator").disableStats().setTextureName("comparator_on").addColorLightValue(0.6F, 0.467F, 0.467F);
 		}
-		catch (Exception e)
+		catch (Throwable e)
 		{
 			FMLLog.log(Level.INFO, "ColoredLightsCore FAILED patching vanilla blocks!");
+			System.err.println(e.getMessage()); 
 			return;
 		}
 		FMLLog.log(Level.INFO, "ColoredLightsCore is FINISHED vanilla blocks");

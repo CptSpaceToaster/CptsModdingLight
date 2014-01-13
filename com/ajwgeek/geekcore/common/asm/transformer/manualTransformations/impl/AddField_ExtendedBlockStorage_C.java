@@ -12,7 +12,7 @@ import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.Extende
 import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.TransformerSingleFieldAddition;
 import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.TransformerSingleMethod;
 
-public class AddField_ExtendedBlockStorage_C extends TransformerSingleFieldAddition 
+public class AddField_ExtendedBlockStorage_C extends TransformerSingleFieldAddition implements Opcodes
 {
 	@Override
 	protected boolean transforms(String arg0)
@@ -23,6 +23,9 @@ public class AddField_ExtendedBlockStorage_C extends TransformerSingleFieldAddit
 	@Override
 	protected Type type()
 	{
+		//TODO: I'm not sure why this won't run........
+		//Crash Report: http://i.imgur.com/uyhV8Gp.png
+		//Console Barf: http://i.imgur.com/lz7Cl3P.png
 		return Type.getType(NibbleArray.class);
 	}
 
