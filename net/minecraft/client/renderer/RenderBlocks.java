@@ -4915,7 +4915,7 @@ public class RenderBlocks
 
             if (this.renderMinX <= 0.0D || !this.blockAccess.isBlockOpaqueCube(x - 1, y, z))
             {
-                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z)&15728880;
+                i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z);
                 if ((i1&1048320) > 0) {
                 	lc = 1f-(i1 & 240)/240f;
                 	rc = (i1 & 3840)/3840f;

@@ -1,7 +1,7 @@
-package kovukore.asm.overriddenclasses;
+package com.ajwgeek.geekcore.common.asm.transformer.annotation.impl;
 
-import kovukore.asm.transformer.ASMAddMethod;
-import kovukore.asm.transformer.ASMReplaceMethod;
+import com.ajwgeek.geekcore.common.asm.transformer.annotation.MethodReplace;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -9,13 +9,10 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 
-/*
- * XXX UPDATE THESE FIELD NAMES AND METHOD NAMES/SIGS ON EACH NEW VERSION OF MINECRAFT
- */
-public class Lights_RenderBlocks extends RenderBlocks
+public class Transformer_RenderBlocks extends RenderBlocks
 {
-	@ASMReplaceMethod
-	public boolean a(Block par1Block, int x, int y, int z, float r, float g, float b)
+	@MethodReplace
+	public boolean func_78578_a(Block par1Block, int x, int y, int z, float r, float g, float b)
 	{
 		this.enableAO = true;
 		boolean flag = false;
@@ -73,7 +70,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x - 1, y, z - 1);
 				this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z - 1) & 15728880;
 			}
-
 			if (!flag5 && !flag2)
 			{
 				this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXYNN;
@@ -84,7 +80,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZNNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x - 1, y, z + 1);
 				this.aoBrightnessXYZNNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z + 1) & 15728880;
 			}
-
 			if (!flag4 && !flag3)
 			{
 				this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXYPN;
@@ -281,16 +276,13 @@ public class Lights_RenderBlocks extends RenderBlocks
 			bc = 1.0F;
 			flag = true;
 		}
-
 		Icon icon;
-
 		if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y, z - 1, 2))
 		{
 			if (this.renderMinZ <= 0.0D)
 			{
 				--z;
 			}
-
 			this.aoLightValueScratchXZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x - 1, y, z);
 			this.aoLightValueScratchYZNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x, y - 1, z);
 			this.aoLightValueScratchYZPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x, y + 1, z);
@@ -303,7 +295,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 			flag2 = Block.canBlockGrass[this.blockAccess.getBlockId(x - 1, y, z - 1)];
 			flag5 = Block.canBlockGrass[this.blockAccess.getBlockId(x, y + 1, z - 1)];
 			flag4 = Block.canBlockGrass[this.blockAccess.getBlockId(x, y - 1, z - 1)];
-
 			if (!flag2 && !flag4)
 			{
 				this.aoLightValueScratchXYZNNN = this.aoLightValueScratchXZNN;
@@ -314,7 +305,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x - 1, y - 1, z);
 				this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y - 1, z) & 15728880;
 			}
-
 			if (!flag2 && !flag5)
 			{
 				this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
@@ -325,7 +315,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZNPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x - 1, y + 1, z);
 				this.aoBrightnessXYZNPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y + 1, z) & 15728880;
 			}
-
 			if (!flag3 && !flag4)
 			{
 				this.aoLightValueScratchXYZPNN = this.aoLightValueScratchXZPN;
@@ -336,7 +325,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZPNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x + 1, y - 1, z);
 				this.aoBrightnessXYZPNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y - 1, z) & 15728880;
 			}
-
 			if (!flag3 && !flag5)
 			{
 				this.aoLightValueScratchXYZPPN = this.aoLightValueScratchXZPN;
@@ -347,14 +335,11 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZPPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x + 1, y + 1, z);
 				this.aoBrightnessXYZPPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y + 1, z) & 15728880;
 			}
-
 			if (this.renderMinZ <= 0.0D)
 			{
 				++z;
 			}
-
 			i1 = l;
-
 			if (this.renderMinZ <= 0.0D || !this.blockAccess.isBlockOpaqueCube(x, y, z - 1))
 			{
 				i1 = par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z - 1);
@@ -466,7 +451,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZNPP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x - 1, y + 1, z);
 				this.aoBrightnessXYZNPP = par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y + 1, z) & 15728880;
 			}
-
 			if (!flag3 && !flag4)
 			{
 				this.aoLightValueScratchXYZPNP = this.aoLightValueScratchXZPP;
@@ -477,7 +461,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZPNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x + 1, y - 1, z);
 				this.aoBrightnessXYZPNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y - 1, z) & 15728880;
 			}
-
 			if (!flag3 && !flag5)
 			{
 				this.aoLightValueScratchXYZPPP = this.aoLightValueScratchXZPP;
@@ -593,7 +576,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZNNN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x, y - 1, z - 1);
 				this.aoBrightnessXYZNNN = par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z - 1) & 15728880;
 			}
-
 			if (!flag4 && !flag2)
 			{
 				this.aoLightValueScratchXYZNNP = this.aoLightValueScratchXZNP;
@@ -604,7 +586,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZNNP = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x, y - 1, z + 1);
 				this.aoBrightnessXYZNNP = par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z + 1) & 15728880;
 			}
-
 			if (!flag5 && !flag3)
 			{
 				this.aoLightValueScratchXYZNPN = this.aoLightValueScratchXZNN;
@@ -615,7 +596,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 				this.aoLightValueScratchXYZNPN = par1Block.getAmbientOcclusionLightValue(this.blockAccess, x, y + 1, z - 1);
 				this.aoBrightnessXYZNPN = par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y + 1, z - 1) & 15728880;
 			}
-
 			if (!flag4 && !flag3)
 			{
 				this.aoLightValueScratchXYZNPP = this.aoLightValueScratchXZNP;
@@ -841,13 +821,12 @@ public class Lights_RenderBlocks extends RenderBlocks
 			bc = 1.0F;
 			flag = true;
 		}
-
 		this.enableAO = false;
 		return flag;
 	}
 
-	@ASMReplaceMethod
-	public boolean d(Block par1Block, int x, int y, int z, float r, float g, float b)
+	@MethodReplace
+	public boolean func_78609_c(Block par1Block, int x, int y, int z, float r, float g, float b)
 	{
 		this.enableAO = false;
 		Tessellator tessellator = Tessellator.instance;
@@ -868,7 +847,6 @@ public class Lights_RenderBlocks extends RenderBlocks
 		float f16 = f3;
 		float f17 = f5;
 		float f18 = f6;
-
 		if (par1Block != Block.grass)
 		{
 			f10 = f3 * r;
@@ -881,9 +859,7 @@ public class Lights_RenderBlocks extends RenderBlocks
 			f17 = f5 * b;
 			f18 = f6 * b;
 		}
-
 		int l = par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z);
-
 		if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y - 1, z, 0))
 		{
 			int i = this.renderMinY > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y - 1, z);
@@ -891,194 +867,156 @@ public class Lights_RenderBlocks extends RenderBlocks
 			float gc = 1;
 			float bc = 1;
 			float lc = 1;
-
 			if ((i & 1048320) > 0)
 			{
 				lc = 1f - (i & 240) / 240f;
 				rc = (i & 3840) / 3840f;
 				gc = (i & 61440) / 61440f;
 				bc = (i & 983040) / 983040f;
-
 				rc = (rc + lc > 1) ? 1 : rc + lc;
 				gc = (gc + lc > 1) ? 1 : gc + lc;
 				bc = (bc + lc > 1) ? 1 : bc + lc;
 			}
-
 			tessellator.setBrightness(i);
 			tessellator.setColorOpaque_F(f10 * rc, f13 * gc, f16 * bc);
 			this.renderFaceYNeg(par1Block, (double) x, (double) y, (double) z, this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 0));
 			flag = true;
 		}
-
 		if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y + 1, z, 1))
 		{
 			int i = this.renderMaxY < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y + 1, z);
-
 			float rc = 1;
 			float gc = 1;
 			float bc = 1;
 			float lc = 1;
-
 			if ((i & 1048320) > 0)
 			{
 				lc = 1f - (i & 240) / 240f;
 				rc = (i & 3840) / 3840f;
 				gc = (i & 61440) / 61440f;
 				bc = (i & 983040) / 983040f;
-
 				rc = (rc + lc > 1) ? 1 : rc + lc;
 				gc = (gc + lc > 1) ? 1 : gc + lc;
 				bc = (bc + lc > 1) ? 1 : bc + lc;
 			}
-
 			tessellator.setBrightness(i);
 			tessellator.setColorOpaque_F(f7 * rc, f8 * gc, f9 * bc);
 			this.renderFaceYPos(par1Block, (double) x, (double) y, (double) z, this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 1));
 			flag = true;
 		}
-
 		Icon icon;
-
 		if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y, z - 1, 2))
 		{
 			int i = this.renderMinZ > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z - 1);
-
 			float rc = 1;
 			float gc = 1;
 			float bc = 1;
 			float lc = 1;
-
 			if ((i & 1048320) > 0)
 			{
 				lc = 1f - (i & 240) / 240f;
 				rc = (i & 3840) / 3840f;
 				gc = (i & 61440) / 61440f;
 				bc = (i & 983040) / 983040f;
-
 				rc = (rc + lc > 1) ? 1 : rc + lc;
 				gc = (gc + lc > 1) ? 1 : gc + lc;
 				bc = (bc + lc > 1) ? 1 : bc + lc;
 			}
-
 			tessellator.setBrightness(i);
 			tessellator.setColorOpaque_F(f11 * rc, f14 * gc, f17 * bc);
 			icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 2);
 			this.renderFaceZNeg(par1Block, (double) x, (double) y, (double) z, icon);
-
 			if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
 			{
 				tessellator.setColorOpaque_F(f11 * r * rc, f14 * g * gc, f17 * b * bc);
 				this.renderFaceZNeg(par1Block, (double) x, (double) y, (double) z, BlockGrass.getIconSideOverlay());
 			}
-
 			flag = true;
 		}
-
 		if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x, y, z + 1, 3))
 		{
 			int i = this.renderMaxZ < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x, y, z + 1);
-
 			float rc = 1;
 			float gc = 1;
 			float bc = 1;
 			float lc = 1;
-
 			if ((i & 1048320) > 0)
 			{
 				lc = 1f - (i & 240) / 240f;
 				rc = (i & 3840) / 3840f;
 				gc = (i & 61440) / 61440f;
 				bc = (i & 983040) / 983040f;
-
 				rc = (rc + lc > 1) ? 1 : rc + lc;
 				gc = (gc + lc > 1) ? 1 : gc + lc;
 				bc = (bc + lc > 1) ? 1 : bc + lc;
 			}
-
 			tessellator.setBrightness(i);
 			tessellator.setColorOpaque_F(f11 * rc, f14 * gc, f17 * bc);
 			icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 3);
 			this.renderFaceZPos(par1Block, (double) x, (double) y, (double) z, icon);
-
 			if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
 			{
 				tessellator.setColorOpaque_F(f11 * r * rc, f14 * g * gc, f17 * b * bc);
 				this.renderFaceZPos(par1Block, (double) x, (double) y, (double) z, BlockGrass.getIconSideOverlay());
 			}
-
 			flag = true;
 		}
-
 		if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x - 1, y, z, 4))
 		{
 			int i = this.renderMinX > 0.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x - 1, y, z);
-
 			float rc = 1;
 			float gc = 1;
 			float bc = 1;
 			float lc = 1;
-
 			if ((i & 1048320) > 0)
 			{
 				lc = 1f - (i & 240) / 240f;
 				rc = (i & 3840) / 3840f;
 				gc = (i & 61440) / 61440f;
 				bc = (i & 983040) / 983040f;
-
 				rc = (rc + lc > 1) ? 1 : rc + lc;
 				gc = (gc + lc > 1) ? 1 : gc + lc;
 				bc = (bc + lc > 1) ? 1 : bc + lc;
 			}
-
 			tessellator.setBrightness(i);
 			tessellator.setColorOpaque_F(f12 * rc, f15 * gc, f18 * bc);
 			icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 4);
 			this.renderFaceXNeg(par1Block, (double) x, (double) y, (double) z, icon);
-
 			if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
 			{
 				tessellator.setColorOpaque_F(f12 * r * rc, f15 * g * gc, f18 * b * bc);
 				this.renderFaceXNeg(par1Block, (double) x, (double) y, (double) z, BlockGrass.getIconSideOverlay());
 			}
-
 			flag = true;
 		}
-
 		if (this.renderAllFaces || par1Block.shouldSideBeRendered(this.blockAccess, x + 1, y, z, 5))
 		{
 			int i = this.renderMaxX < 1.0D ? l : par1Block.getMixedBrightnessForBlock(this.blockAccess, x + 1, y, z);
-
 			float rc = 1;
 			float gc = 1;
 			float bc = 1;
 			float lc = 1;
-
 			if ((i & 1048320) > 0)
 			{
 				lc = 1f - (i & 240) / 240f;
 				rc = (i & 3840) / 3840f;
 				gc = (i & 61440) / 61440f;
 				bc = (i & 983040) / 983040f;
-
 				rc = (rc + lc > 1) ? 1 : rc + lc;
 				gc = (gc + lc > 1) ? 1 : gc + lc;
 				bc = (bc + lc > 1) ? 1 : bc + lc;
 			}
-
 			tessellator.setBrightness(i);
 			tessellator.setColorOpaque_F(f12 * rc, f15 * gc, f18 * bc);
 			icon = this.getBlockIcon(par1Block, this.blockAccess, x, y, z, 5);
 			this.renderFaceXPos(par1Block, (double) x, (double) y, (double) z, icon);
-
 			if (fancyGrass && icon.getIconName().equals("grass_side") && !this.hasOverrideBlockTexture())
 			{
 				tessellator.setColorOpaque_F(f12 * r * rc, f15 * g * gc, f18 * b * bc);
 				this.renderFaceXPos(par1Block, (double) x, (double) y, (double) z, BlockGrass.getIconSideOverlay());
 			}
-
 			flag = true;
 		}
-
 		return flag;
 	}
 }

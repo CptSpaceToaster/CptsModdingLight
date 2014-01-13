@@ -48,9 +48,9 @@ public class ExtendedBlockStorage
      * We need these to store colored light
      * CptSpaceToaster   
      */
-    private NibbleArray rColorArray;
-    private NibbleArray gColorArray;
-    private NibbleArray bColorArray;
+    protected NibbleArray rColorArray;
+    protected NibbleArray gColorArray;
+    protected NibbleArray bColorArray;
     
     public ExtendedBlockStorage(int par1, boolean par2)
     {
