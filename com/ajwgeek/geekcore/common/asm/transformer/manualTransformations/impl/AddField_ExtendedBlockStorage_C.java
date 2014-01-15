@@ -23,7 +23,7 @@ public class AddField_ExtendedBlockStorage_C extends TransformerSingleFieldAddit
 	@Override
 	protected Type type()
 	{
-		//TODO: I'm not sure why this won't run........
+		//TODO: Nibble Array Can't be referanced in this manner........
 		//Crash Report: http://i.imgur.com/uyhV8Gp.png
 		//Console Barf: http://i.imgur.com/lz7Cl3P.png
 		return Type.getType(NibbleArray.class);
