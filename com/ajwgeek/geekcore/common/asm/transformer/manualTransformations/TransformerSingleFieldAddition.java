@@ -13,11 +13,11 @@ public abstract class TransformerSingleFieldAddition extends TransformerSelectiv
 	{
 		ExtendedClassWriter ecw = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		arg0.accept(ecw);
-		ecw.visitField(access(), name(), type().getDescriptor(), null, null);
+		ecw.visitField(access(), name(), getTypeDescriptor(), null, null);
 		return true;
 	}
 
-	protected abstract Type type();
+	protected abstract String getTypeDescriptor();
 	protected abstract String name();
 	protected abstract int access();
 	protected abstract boolean transforms(String arg0);

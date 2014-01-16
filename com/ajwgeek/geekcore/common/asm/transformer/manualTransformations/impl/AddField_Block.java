@@ -38,7 +38,7 @@ public class AddField_Block extends TransformerSingleFieldAddition implements Op
 	}
 	
 	@Override
-	protected Type type()
+	protected String getTypeDescriptor()
 	{
 		return null;
 	}

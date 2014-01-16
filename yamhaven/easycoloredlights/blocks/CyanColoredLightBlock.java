@@ -26,7 +26,7 @@ public class CyanColoredLightBlock extends BlockColoredLight {
 		setLightValue(1.0F);
 		try {
 			addColorLightValue(0.0F, 1.0F, 1.0F);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			System.out.println("The Colored Light Core appears to be missing, or broken"); 
 		}
 	}

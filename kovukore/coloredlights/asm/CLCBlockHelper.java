@@ -30,7 +30,7 @@ public class CLCBlockHelper
 			
 			
 			//Null the existing entries
-			Block.blocksList[Block.lavaMoving.blockID] = null;
+			Block.blocksList[Block.lavaMoving.blockID] = null;		//line 28 from the crash report
 			Block.blocksList[Block.lavaStill.blockID] = null;
 			Block.blocksList[Block.torchWood.blockID] = null;
 			Block.blocksList[Block.fire.blockID] = null;

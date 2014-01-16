@@ -17,16 +17,16 @@ public class AddField_ExtendedBlockStorage_C extends TransformerSingleFieldAddit
 	@Override
 	protected boolean transforms(String arg0)
 	{
-		return arg0.equals("net.minecraft.world.chunk.storage.ExtendedBlockStorage");
+		return (arg0.equals("net.minecraft.world.chunk.storage.ExtendedBlockStorage") || arg0.equals("adp"));
 	}
 
 	@Override
-	protected Type type()
+	protected String getTypeDescriptor()
 	{
-		//TODO: Nibble Array Can't be referanced in this manner........
+		//TODO: Nibble Array Can't be referenced in this manner........
 		//Crash Report: http://i.imgur.com/uyhV8Gp.png
 		//Console Barf: http://i.imgur.com/lz7Cl3P.png
-		return Type.getType(NibbleArray.class);
+		return "Lnet/minecraft/world/chunk/NibbleArray";
 	}
 
 	@Override
