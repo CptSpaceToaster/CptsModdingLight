@@ -27,7 +27,7 @@ public class AddField_Block extends TransformerSingleFieldAddition implements Op
 	@Override
 	protected boolean transforms(String arg0)
 	{
-		return arg0.equals("net.minecraft.block.Block");
+		return arg0.equals("net.minecraft.block.Block") || arg0.equals("aqz");
 	}
 
 	public static Float[] l;

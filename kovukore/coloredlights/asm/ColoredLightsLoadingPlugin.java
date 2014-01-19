@@ -23,7 +23,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 @SortingIndex(1337)
 @MCVersion("1.6.4")
-@TransformerExclusions({ "kovukore", "com.ajwgeek", "yamhaven" })
+@TransformerExclusions({ "kovukore", "com.ajwgeek"}) //Note to future self... DO NOT PUT "yamhaven" IN THERE!
 public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 {
 	public static File location;

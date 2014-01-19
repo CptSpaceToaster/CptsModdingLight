@@ -40,7 +40,7 @@ public final class SetField_Block extends TransformerSingleMethod implements Opc
 	@Override
 	protected boolean transforms(String className)
 	{
-		return className.equals("net.minecraft.block.Block");
+		return className.equals("net.minecraft.block.Block") || className.equals("aqz");
 	}
 
 	@Override
