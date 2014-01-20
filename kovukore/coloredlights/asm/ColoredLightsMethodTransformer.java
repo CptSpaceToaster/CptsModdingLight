@@ -3,12 +3,6 @@ package kovukore.coloredlights.asm;
 import java.util.HashMap;
 
 import com.ajwgeek.geekcore.common.asm.transformer.annotation.MethodTransformer;
-import com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_Block;
-import com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_ChunkCache;
-import com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_ExtendedBlockStorage;
-import com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_RenderBlocks;
-import com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_Tessellator;
-import com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_World;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 
@@ -19,24 +13,24 @@ public class ColoredLightsMethodTransformer implements IClassTransformer
 
 	public ColoredLightsMethodTransformer()
 	{
-		addClassNameAndAlias(classes, "net.minecraft.block.Block", net.minecraft.block.Block.class.getSimpleName(), Transformer_Block.class);
-		addClassNameAndAlias(classes, "net.minecraft.world.ChunkCache", net.minecraft.world.ChunkCache.class.getSimpleName(), Transformer_ChunkCache.class);
-		addClassNameAndAlias(classes, "net.minecraft.world.chunk.storage.ExtendedBlockStorage", net.minecraft.world.chunk.storage.ExtendedBlockStorage.class.getSimpleName(), Transformer_ExtendedBlockStorage.class);
-		addClassNameAndAlias(classes, "net.minecraft.world.World", net.minecraft.world.World.class.getSimpleName(), Transformer_World.class);
-		addClassNameAndAlias(classes, "net.minecraft.client.renderer.RenderBlocks", net.minecraft.client.renderer.RenderBlocks.class.getSimpleName(), Transformer_RenderBlocks.class);
-		addClassNameAndAlias(classes, "net.minecraft.client.renderer.Tessellator", net.minecraft.client.renderer.Tessellator.class.getSimpleName(), Transformer_Tessellator.class);
+		addClassNameAndAlias(classes, "net.minecraft.block.Block", "aqz", "com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_Block");
+		addClassNameAndAlias(classes, "net.minecraft.world.ChunkCache", "acl", "com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_ChunkCache");
+		addClassNameAndAlias(classes, "net.minecraft.world.chunk.storage.ExtendedBlockStorage", "ads", "com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_ExtendedBlockStorage");
+		addClassNameAndAlias(classes, "net.minecraft.world.World", "abw", "com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_World");
+		addClassNameAndAlias(classes, "net.minecraft.client.renderer.RenderBlocks", "bfr", "com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_RenderBlocks");
+		addClassNameAndAlias(classes, "net.minecraft.client.renderer.Tessellator", "bfq", "com.ajwgeek.geekcore.common.asm.transformer.annotation.impl.Transformer_Tessellator");
 		act = new MethodTransformer(classes, new HashMap<String, String>());
 	}
 
-	protected void addClassNameAndAlias(HashMap<String, String> transformerMap, String className, String obfuscatedName, Class clazz)
+	protected void addClassNameAndAlias(HashMap<String, String> transformerMap, String className, String obfuscatedName, String tfClazzName)
 	{
 		if (obfuscatedName != null)
 		{
-			transformerMap.put(obfuscatedName, clazz.getName());
+			transformerMap.put(obfuscatedName, tfClazzName);
 		}
 		else
 		{
-			transformerMap.put(className, clazz.getName());
+			transformerMap.put(className, tfClazzName);
 		}
 	}
 

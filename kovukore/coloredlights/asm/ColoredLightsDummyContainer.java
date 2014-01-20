@@ -65,7 +65,6 @@ public class ColoredLightsDummyContainer extends DummyModContainer
 	@Subscribe
 	public void init(FMLInitializationEvent evt)
 	{
-		CLCBlockHelper.initializeBlocks();
 	}
 
 	@Subscribe

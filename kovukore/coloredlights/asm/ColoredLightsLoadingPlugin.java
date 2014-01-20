@@ -11,6 +11,7 @@ import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.impl.Ad
 import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.impl.AddField_ExtendedBlockStorage_A;
 import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.impl.AddField_ExtendedBlockStorage_B;
 import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.impl.AddField_ExtendedBlockStorage_C;
+import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.impl.AddField_World;
 import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.impl.LightsCoreAccessTransformer;
 import com.ajwgeek.geekcore.common.asm.transformer.manualTransformations.impl.SetField_Block;
 
@@ -40,11 +41,12 @@ public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 		
 		//Add Fields
 		transformers.add(AddField_Block.class.getName());
+		transformers.add(AddField_World.class.getName());
 		transformers.add(AddField_ExtendedBlockStorage_C.class.getName());
 		transformers.add(AddField_ExtendedBlockStorage_B.class.getName());
 		transformers.add(AddField_ExtendedBlockStorage_A.class.getName());
 		
-		///Prepend Methods
+		//Prepend Methods
 		transformers.add(SetField_Block.class.getName());
 		
 		Object[] ObjectList = transformers.toArray();

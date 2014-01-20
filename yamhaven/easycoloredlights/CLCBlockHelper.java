@@ -1,4 +1,4 @@
-package kovukore.coloredlights.asm;
+package yamhaven.easycoloredlights;
 
 import java.util.logging.Level;
 
