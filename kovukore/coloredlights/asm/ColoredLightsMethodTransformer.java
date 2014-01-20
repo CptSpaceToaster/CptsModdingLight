@@ -9,7 +9,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 public class ColoredLightsMethodTransformer implements IClassTransformer
 {
 	protected MethodTransformer act = null;
-	protected HashMap<String, String> classes = null;
+	protected HashMap<String, String> classes = new HashMap<String, String>();
 
 	public ColoredLightsMethodTransformer()
 	{
@@ -37,6 +37,6 @@ public class ColoredLightsMethodTransformer implements IClassTransformer
 	@Override
 	public byte[] transform(String s, String arg1, byte[] bytes)
 	{
-		return act.transform(s, bytes);
+		return act.transform(arg1, bytes);
 	}
 }

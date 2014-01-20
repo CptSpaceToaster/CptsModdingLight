@@ -49,6 +49,9 @@ public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 		//Prepend Methods
 		transformers.add(SetField_Block.class.getName());
 		
+		//Actual Methods
+		//transformers.add(ColoredLightsMethodTransformer.class.getName());
+		
 		Object[] ObjectList = transformers.toArray();
 		String[] transFinal = Arrays.copyOf(ObjectList,ObjectList.length,String[].class);
 		return transFinal;
