@@ -24,22 +24,15 @@ public class MethodTransformer
 
 	public byte[] transform(String s, byte[] bytes)
 	{
-		String nameToFind = s.replace('/', '.');
-		if (registeredClassesForTransforming.containsKey(nameToFind))
+		FMLLog.log(Level.INFO, "I just got an " + s);
+		try
 		{
-			try
-			{
-				FMLLog.log(Level.INFO, "Transforming " + s);
-				return transformClass(bytes, registeredClassesForTransforming.get(nameToFind));
-			}
-			catch (IOException e)
-			{
-				FMLLog.log(Level.SEVERE, "He's dead, Jim! The transformer failed to patch " + s);
-				return bytes;
-			}
+			FMLLog.log(Level.INFO, "Transforming " + s);
+			return transformClass(bytes, registeredClassesForTransforming.get(s));
 		}
-		else
+		catch (IOException e)
 		{
+			FMLLog.log(Level.SEVERE, "He's dead, Jim! The transformer failed to patch " + s);
 			return bytes;
 		}
 	}
@@ -57,22 +50,42 @@ public class MethodTransformer
 		for (Object method : classNodeReplacement.methods)
 		{
 			MethodNode replacementMethodNode = (MethodNode) method;
-			if (hasReplaceMethodAnnotation(replacementMethodNode.visibleAnnotations))
-			{
+			System.out.println("5. Got here: Recieving Orders: Find " + ((MethodNode)method).name);
+//			if (hasReplaceMethodAnnotation(replacementMethodNode.visibleAnnotations))
+//			{
+//				System.out.println("6. Got here: ");
+//				MethodNode methodNodeOriginal = findTheMethod(classNodeOriginal.methods, replacementMethodNode);
+//				System.out.println("7. Got here: ");
+//				if (methodNodeOriginal != null)
+//				{
+//					System.out.println("8. Got here: ");
+//					classNodeOriginal.methods.remove(methodNodeOriginal);
+//					classNodeOriginal.methods.add(classNodeOriginal.methods.size(), fullyCleanMethod(classNodeOriginal, classNodeReplacement, replacementMethodNode));
+//					System.out.println("9. Got here: ");
+//				}
+//			}
+//			else if (hasCreateMethodAnnotation(replacementMethodNode.visibleAnnotations))
+//			{
+//				System.out.println("10. Got here: ");
+//				classNodeOriginal.methods.add(classNodeOriginal.methods.size(), fullyCleanMethod(classNodeOriginal, classNodeReplacement, replacementMethodNode));
+//				System.out.println("11. Got here: ");
+//			}
+			
+			if(((MethodNode)method).name.contains("<init>")) {
+				System.out.println("6. Target avoided");
+			} else {
 				MethodNode methodNodeOriginal = findTheMethod(classNodeOriginal.methods, replacementMethodNode);
-				if (methodNodeOriginal != null)
-				{
-					classNodeOriginal.methods.remove(methodNodeOriginal);
-					classNodeOriginal.methods.add(classNodeOriginal.methods.size(), fullyCleanMethod(classNodeOriginal, classNodeReplacement, replacementMethodNode));
-				}
-			}
-			else if (hasCreateMethodAnnotation(replacementMethodNode.visibleAnnotations))
-			{
+				System.out.println("6. Target aquired: ");
+				classNodeOriginal.methods.remove(methodNodeOriginal);
+				System.out.println("7. Nuking: ");
 				classNodeOriginal.methods.add(classNodeOriginal.methods.size(), fullyCleanMethod(classNodeOriginal, classNodeReplacement, replacementMethodNode));
+				System.out.println("8. Rebuilding: ");
 			}
+			
 		}
 		ClassWriter cwNew = new ClassWriter(0);
 		classNodeOriginal.accept(cwNew);
+		System.out.println("Mission Accomplished");
 		return cwNew.toByteArray();
 	}
 

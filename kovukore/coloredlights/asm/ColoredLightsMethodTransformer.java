@@ -26,10 +26,12 @@ public class ColoredLightsMethodTransformer implements IClassTransformer
 	{
 		if (obfuscatedName != null)
 		{
-			transformerMap.put(obfuscatedName, tfClazzName);
+			System.out.println("Marked " + obfuscatedName + " For transformation against " + tfClazzName);
+			transformerMap.put(obfuscatedName, tfClazzName);	
 		}
 		else
 		{
+			System.out.println("Marked " + className + " For transformation against " + tfClazzName);
 			transformerMap.put(className, tfClazzName);
 		}
 	}
@@ -37,6 +39,12 @@ public class ColoredLightsMethodTransformer implements IClassTransformer
 	@Override
 	public byte[] transform(String s, String arg1, byte[] bytes)
 	{
-		return act.transform(arg1, bytes);
+		arg1 = arg1.replace('/', '.');
+		if (classes.containsKey(s)) {
+			System.out.println("IT'S A DEBUG: " + s + " - " + arg1);
+			return act.transform(s, bytes);
+		} else { 
+			return bytes;
+		}
 	}
 }

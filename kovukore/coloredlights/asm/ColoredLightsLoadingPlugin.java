@@ -24,7 +24,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 @SortingIndex(1337)
 @MCVersion("1.6.4")
-@TransformerExclusions({ "kovukore", "com.ajwgeek"}) //Note to future self... DO NOT PUT "yamhaven" IN THERE!
+@TransformerExclusions({"kovukore","com.ajwgeek"}) //Note to future self... DO NOT PUT "yamhaven" IN THERE!
 public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 {
 	public static File location;
@@ -50,7 +50,7 @@ public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 		transformers.add(SetField_Block.class.getName());
 		
 		//Actual Methods
-		//transformers.add(ColoredLightsMethodTransformer.class.getName());
+		transformers.add(ColoredLightsMethodTransformer.class.getName());
 		
 		Object[] ObjectList = transformers.toArray();
 		String[] transFinal = Arrays.copyOf(ObjectList,ObjectList.length,String[].class);
