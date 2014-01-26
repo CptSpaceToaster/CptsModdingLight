@@ -1,2 +1,3 @@
 Manifest-Version: 1.0
-FMLCorePlugin: kovukore.asm.asmcore.CLFMLLoadingPlugin
+FMLCorePlugin: kovukore.asm.transformer.head.ColoredLightsLoadingPlugin
+Created-By: 1.7.0 (Oracle Corporation)
