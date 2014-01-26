@@ -1,0 +1,21 @@
+# net.minecraft.world.World.func_72808_j($1, $2, $3, 4)
+{
+	int i1 = this.getBlockLightValue($1, $2, $3);
+
+	$4 = (($4 & 15)			|
+		   (($4 & 480) >> 1) 	|
+		   (($4 & 15360) >> 2)|
+		   (($4 & 491520) >> 3) );
+	 
+	 i1 =  ((i1 & 15)			|
+		   ((i1 & 480) >> 1) 	|
+		   ((i1 & 15360) >> 2)	|
+		   ((i1 & 491520) >> 3) );
+	
+	if (i1 < $4)
+	{
+		i1 = $4;
+	}
+
+	return this.provider.lightBrightnessTable[i1];
+}

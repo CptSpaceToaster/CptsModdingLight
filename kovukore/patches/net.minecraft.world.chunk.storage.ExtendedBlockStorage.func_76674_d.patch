@@ -1,0 +1,4 @@
+# net.minecraft.world.chunk.storage.ExtendedBlockStorage.func_76674_d($1, $2, $3)
+{
+	return (this.blocklightArray.get($1, $2, $3)) | (this.rColorArray.get($1, $2, $3) << 5) | (this.gColorArray.get($1, $2, $3) << 10) | (this.bColorArray.get($1, $2, $3) << 15);
+}

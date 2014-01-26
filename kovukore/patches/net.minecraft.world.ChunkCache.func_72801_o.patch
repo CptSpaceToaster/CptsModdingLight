@@ -1,0 +1,4 @@
+# net.minecraft.world.ChunkCache.func_72801_o($1, $2, $3)
+{
+	return this.worldObj.provider.lightBrightnessTable[this.getLightValue($1, $2, $3)%15];
+}

@@ -1,0 +1,15 @@
+# net.minecraft.world.chunk.storage.ExtendedBlockStorage.(init)($1, $2)
+{
+	this.yBase = $1;
+	this.blockLSBArray = new byte[4096];
+	this.blockMetadataArray = new net.minecraft.world.chunk.NibbleArray(this.blockLSBArray.length, 4);
+	this.blocklightArray = new net.minecraft.world.chunk.NibbleArray(this.blockLSBArray.length, 4);
+	this.rColorArray = new net.minecraft.world.chunk.NibbleArray(this.blockLSBArray.length, 4);
+	this.gColorArray = new net.minecraft.world.chunk.NibbleArray(this.blockLSBArray.length, 4);
+	this.bColorArray = new net.minecraft.world.chunk.NibbleArray(this.blockLSBArray.length, 4);
+
+	if ($2)
+	{
+		this.skylightArray = new net.minecraft.world.chunk.NibbleArray(this.blockLSBArray.length, 4);
+	}
+}

@@ -1,0 +1,5 @@
+# net.minecraft.client.renderer.Tessellator.func_78380_c($1)
+{
+	this.field_78414_p = true;
+	this.field_78401_l = $1 & 15728880;
+}

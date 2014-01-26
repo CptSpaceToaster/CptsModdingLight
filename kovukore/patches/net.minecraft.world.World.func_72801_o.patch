@@ -1,0 +1,4 @@
+# net.minecraft.world.World.func_72801_o($1, $2, $3)
+{
+	return this.provider.lightBrightnessTable[this.getBlockLightValue($1, $2, $3) & 15];
+}
