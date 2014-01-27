@@ -22,10 +22,31 @@ public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 		FMLLog.log(l, "[ColoredLightsCore] " + msg);
 	}
 	
+	public boolean isObfuscated()
+	{
+		try
+		{
+			Class.forName("net.minecraft.world.World");
+		}
+		catch (ClassNotFoundException e)
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public String[] getASMTransformerClass()
 	{
-		return new String[] { ColoredLightsPatchTransformer.class.getName() };
+		if (isObfuscated())
+		{
+			//Run the transformer only in an obfuscated environment.
+			return new String[] { ColoredLightsPatchTransformer.class.getName() };
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	@Override
@@ -42,6 +63,14 @@ public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 	@Override
 	public String getSetupClass()
 	{
-		return ColoredLightsPatchPreloader.class.getName();
+		if (isObfuscated())
+		{
+			//Run the preloader only in an obfuscated environment.
+			return ColoredLightsPatchPreloader.class.getName();
+		}
+		else
+		{
+			return null;
+		}
 	}
 }
