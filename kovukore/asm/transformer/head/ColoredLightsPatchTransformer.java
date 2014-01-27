@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.launchwrapper.IClassTransformer;
 
-public class Transformer implements IClassTransformer
+public class ColoredLightsPatchTransformer implements IClassTransformer
 {
 	private static Map<String, byte[]> classBytes = new HashMap<String, byte[]>();
 
@@ -25,7 +25,7 @@ public class Transformer implements IClassTransformer
 	{
 		if (classBytes.containsKey(name))
 		{
-			FMLLog.log(Level.INFO, "[ColoredLightsCore] Replacing " + name + " from patch");
+			ColoredLightsLoadingPlugin.log(Level.INFO, "Patching " + name + " from binary patch file");
 			return classBytes.get(name);
 		}
 		return bytes;

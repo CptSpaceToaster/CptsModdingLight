@@ -24,10 +24,12 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 
-public class Scanner implements IFMLCallHook
+public class ColoredLightsPatchPreloader implements IFMLCallHook
 {
 	public File coremodLocation;
-
+	private String modDataJarFile = "modData.jar";
+	private String patchFileExtension = ".patch";
+	
 	public void extract(File location)
 	{
 		String sourceZipFile = location.getAbsolutePath();
@@ -38,9 +40,9 @@ public class Scanner implements IFMLCallHook
 			ZipEntry entry = zin.getNextEntry();
 			while ( (entry = zin.getNextEntry()) != null ) 
 			{
-				if (entry.getName().equals("modData.jar"))
+				if (entry.getName().equals(modDataJarFile))
 				{
-					OutputStream os = new FileOutputStream(location.getParentFile() + "/modData.jar");
+					OutputStream os = new FileOutputStream(location.getParentFile() + File.separator + modDataJarFile);
 					byte[] buffer = new byte[1024];
 					int length;
 					while ((length = zin.read(buffer)) > 0)
@@ -54,7 +56,8 @@ public class Scanner implements IFMLCallHook
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			ColoredLightsLoadingPlugin.log(Level.SEVERE, "A severe problem has occured while reading the patchset:" + e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -63,20 +66,19 @@ public class Scanner implements IFMLCallHook
 	{
 		if (coremodLocation != null)
 		{
-			log("ColoredLightsCore is loading the default patchset");
-			String sep = System.getProperty("file.separator");
+			ColoredLightsLoadingPlugin.log(Level.INFO, "ColoredLightsCore is loading the default patchset");
 			extract(coremodLocation);
-			File jar = new File(coremodLocation.getParentFile().getAbsolutePath() + "/modData.jar");
+			File jar = new File(coremodLocation.getParentFile().getAbsolutePath() + File.separator + modDataJarFile);
 			loadJarmod(jar);
-			log("We have preloaded " + Transformer.size() + " patches");
+			ColoredLightsLoadingPlugin.log(Level.INFO, "We have preloaded " + ColoredLightsPatchTransformer.size() + " patches");
 			jar.delete();
 		}
 		return null;
 	}
-
-	private void log(String msg)
+	
+	private String makeValidClassName(String toReplace)
 	{
-		FMLLog.log(Level.INFO, "[ColoredLightsCore] " + msg);
+		return toReplace.replace(patchFileExtension, new String()).replace('/', '.');
 	}
 
 	private void loadJarmod(File file) throws ZipException, IOException
@@ -85,11 +87,10 @@ public class Scanner implements IFMLCallHook
 		for (Enumeration<? extends ZipEntry> entr = zipFile.entries(); entr.hasMoreElements();)
 		{
 			ZipEntry entry = entr.nextElement();
-			String className = entry.getName().replace(".patch", "").replace('/', '.');
 			byte[] bytes = new byte[(int) entry.getSize()];
 			DataInputStream dataInputStream = new DataInputStream(zipFile.getInputStream(entry));
 			dataInputStream.readFully(bytes);
-			Transformer.put(className, bytes);
+			ColoredLightsPatchTransformer.put(makeValidClassName(entry.getName()), bytes);
 		}
 		zipFile.close();
 	}

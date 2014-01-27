@@ -17,20 +17,20 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 @MCVersion("1.6.4")
 public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 {
-	public static File location;
-	public static boolean devEnvironment = false;
-
+	public static void log(Level l, String msg)
+	{
+		FMLLog.log(l, "[ColoredLightsCore] " + msg);
+	}
+	
 	@Override
 	public String[] getASMTransformerClass()
 	{
-		return new String[] { Transformer.class.getName() };
+		return new String[] { ColoredLightsPatchTransformer.class.getName() };
 	}
 
 	@Override
 	public void injectData(Map<String, Object> data)
 	{
-		location = (File) data.get("coremodLocation");
-		devEnvironment = !(Boolean) data.get("runtimeDeobfuscationEnabled");
 	}
 
 	@Override
@@ -42,13 +42,6 @@ public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 	@Override
 	public String getSetupClass()
 	{
-		return Scanner.class.getName();
-	}
-
-	@Override
-	@Deprecated
-	public	String[] getLibraryRequestClass() {
-		// TODO Auto-generated method stub
-		return null;
+		return ColoredLightsPatchPreloader.class.getName();
 	}
 }
