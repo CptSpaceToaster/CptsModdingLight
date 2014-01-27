@@ -1,6 +1,0 @@
-# net.minecraft.block.Block.addColorLightValue($1, $2, $3)
-{
-	lightValue[this.blockID] &= 15;
-	lightValue[this.blockID] |= ((((int) (15.0F * b)) << 15) + (((int) (15.0F * g)) << 10) + (((int) (15.0F * r)) << 5));
-	return this;
-}

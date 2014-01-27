@@ -1,5 +1,0 @@
-# net.minecraft.block.Block.func_71900($1)
-{
-	lightValue[this.blockID] = (int) (15.0F * $1);
-	return this.addColorLightValue($1, $1, $1);
-}

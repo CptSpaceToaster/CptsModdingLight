@@ -1,7 +1,0 @@
-# net.minecraft.world.chunk.storage.ExtendedBlockStorage.void func_76677_d($1, $2, $3, $4)
-{
-	this.blocklightArray.set($1, $2, $3, $4);
-	this.rColorArray.set($1, $2, $3, ($4 >> 5) & 15);
-	this.gColorArray.set($1, $2, $3, ($4 >> 10) & 15);
-	this.bColorArray.set($1, $2, $3, ($4 >> 15) & 15);
-}
