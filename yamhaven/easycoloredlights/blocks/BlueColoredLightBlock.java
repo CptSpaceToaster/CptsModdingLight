@@ -25,12 +25,12 @@ public class BlueColoredLightBlock extends BlockColoredLight {
 	}
 	
 	@Override
-	protected void turnLightsOn() {
+	protected void turnLightsOn(Random r) {
 		setLightValue(1.0F);
 		try {
 			addColorLightValue(0.0F, 0.0F, 1.0F);
 		} catch (Throwable e) {
-			System.out.println("The Colored Light Core appears to be missing, or broken"); 
+			System.out.println("The Colored Light Core appears to be missing, or broken");
 		}
 	}
 }

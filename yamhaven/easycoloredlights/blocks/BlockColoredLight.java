@@ -23,10 +23,9 @@ public abstract class BlockColoredLight extends Block
 	{
 		super(idleID, Material.redstoneLight);
 		this.powered = isPowered;
-
 		if (isPowered)
 		{
-			turnLightsOn();
+			turnLightsOn(new Random());
 		}
 
 		setHardness(0.3F);
@@ -100,5 +99,5 @@ public abstract class BlockColoredLight extends Block
 		}
 	}
 
-	protected abstract void turnLightsOn();
+	protected abstract void turnLightsOn(Random r);
 }

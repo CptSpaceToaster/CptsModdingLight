@@ -3,6 +3,8 @@ package yamhaven.easycoloredlights.lib;
 public class BlockIds {
 	public static int whiteLightBlockID_actual;
 	public static final int whiteLightBlockID_default = 3874;
+	public static int raveLightBlockID_actual;
+	public static final int raveLightBlockID_default = 3875;
 	public static int redLightBlockID_actual;
 	public static final int redLightBlockID_default = 3876;
 	public static int greenLightBlockID_actual;

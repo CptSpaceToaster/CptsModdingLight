@@ -1,5 +1,7 @@
 package yamhaven.easycoloredlights.blocks;
 
+import java.util.Random;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -22,7 +24,7 @@ public class RedColoredLightBlock extends BlockColoredLight {
 	}
 	
 	@Override
-	protected void turnLightsOn() {
+	protected void turnLightsOn(Random r) {
 		setLightValue(1.0F);
 		try {
 			addColorLightValue(1.0F, 0.0F, 0.0F);

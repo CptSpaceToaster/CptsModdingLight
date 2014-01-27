@@ -44,4 +44,11 @@ public class ColoredLightsLoadingPlugin implements IFMLLoadingPlugin
 	{
 		return Scanner.class.getName();
 	}
+
+	@Override
+	@Deprecated
+	public	String[] getLibraryRequestClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

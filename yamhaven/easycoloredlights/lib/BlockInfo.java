@@ -11,6 +11,8 @@ public class BlockInfo {
 	
 	public static final String whiteColoredLightBlock_unlocalizedName = "whiteColoredLightBlock";
 	public static final String whiteColoredLightBlock_name = "White Colored Light";
+	public static final String raveLightBlock_unlocalizedName = "raveLightBlock";
+	public static final String raveLightBlock_name = "Rave Light";
 	
 	public static final String redColoredLightBlock_unlocalizedName = "redColoredLightBlock";
 	public static final String redColoredLightBlock_name = "Red Colored Light";

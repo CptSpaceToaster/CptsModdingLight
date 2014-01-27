@@ -11,6 +11,7 @@ public class ConfigHandler {
 		Configuration config = new Configuration(configFile);
 		config.load();
 		BlockIds.whiteLightBlockID_actual = config.getBlock(BlockInfo.whiteColoredLightBlock_name, BlockIds.whiteLightBlockID_default).getInt();
+		BlockIds.raveLightBlockID_actual = config.getBlock(BlockInfo.raveLightBlock_name, BlockIds.raveLightBlockID_default).getInt();
 		
 		BlockIds.redLightBlockID_actual = config.getBlock(BlockInfo.redColoredLightBlock_name, BlockIds.redLightBlockID_default).getInt();
 		BlockIds.greenLightBlockID_actual = config.getBlock(BlockInfo.greenColoredLightBlock_name, BlockIds.greenLightBlockID_default).getInt();

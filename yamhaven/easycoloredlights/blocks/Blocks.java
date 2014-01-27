@@ -13,6 +13,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class Blocks
 {
 	public static Block whiteColoredLightBlockIdle;
+	public static Block raveLightBlockIdle;
 	public static Block blackColoredLightBlockIdle;
 	public static Block redColoredLightBlockIdle;
 	public static Block greenColoredLightBlockIdle;
@@ -22,6 +23,7 @@ public class Blocks
 	public static Block magentaColoredLightBlockIdle;
 
 	public static Block whiteColoredLightBlockOn;
+	public static Block raveLightBlockOn;
 	public static Block blackColoredLightBlockOn;
 	public static Block redColoredLightBlockOn;
 	public static Block greenColoredLightBlockOn;
@@ -29,10 +31,11 @@ public class Blocks
 	public static Block cyanColoredLightBlockOn;
 	public static Block yellowColoredLightBlockOn;
 	public static Block magentaColoredLightBlockOn;
-
+	
 	public static void init()
 	{
 		whiteColoredLightBlockIdle = new WhiteColoredLightBlock(BlockIds.whiteLightBlockID_actual, false);
+		raveLightBlockIdle = new RaveLightBlock(BlockIds.raveLightBlockID_actual, false);
 		redColoredLightBlockIdle = new RedColoredLightBlock(BlockIds.redLightBlockID_actual, false);
 		greenColoredLightBlockIdle = new GreenColoredLightBlock(BlockIds.greenLightBlockID_actual, false);
 		blueColoredLightBlockIdle = new BlueColoredLightBlock(BlockIds.blueLightBlockID_actual, false);
@@ -41,6 +44,7 @@ public class Blocks
 		magentaColoredLightBlockIdle = new MagentaColoredLightBlock(BlockIds.magentaLightBlockID_actual, false);
 
 		whiteColoredLightBlockOn = new WhiteColoredLightBlock(BlockIds.whiteLightBlockID_actual - 16, true);
+		raveLightBlockOn = new RaveLightBlock(BlockIds.raveLightBlockID_actual - 16, true);
 		redColoredLightBlockOn = new RedColoredLightBlock(BlockIds.redLightBlockID_actual - 16, true);
 		greenColoredLightBlockOn = new GreenColoredLightBlock(BlockIds.greenLightBlockID_actual - 16, true);
 		blueColoredLightBlockOn = new BlueColoredLightBlock(BlockIds.blueLightBlockID_actual - 16, true);
@@ -49,6 +53,7 @@ public class Blocks
 		magentaColoredLightBlockOn = new MagentaColoredLightBlock(BlockIds.magentaLightBlockID_actual - 16, true);
 
 		GameRegistry.registerBlock(whiteColoredLightBlockIdle, BlockInfo.whiteColoredLightBlock_name);
+		GameRegistry.registerBlock(raveLightBlockIdle, BlockInfo.raveLightBlock_name);
 		GameRegistry.registerBlock(redColoredLightBlockIdle, BlockInfo.redColoredLightBlock_name);
 		GameRegistry.registerBlock(greenColoredLightBlockIdle, BlockInfo.greenColoredLightBlock_name);
 		GameRegistry.registerBlock(blueColoredLightBlockIdle, BlockInfo.blueColoredLightBlock_name);
@@ -64,6 +69,7 @@ public class Blocks
 			// for 16 blocks
 		}
 		LanguageRegistry.addName(new ItemStack(whiteColoredLightBlockIdle, 1, 0), BlockInfo.whiteColoredLightBlock_name);
+		LanguageRegistry.addName(new ItemStack(raveLightBlockIdle, 1, 0), BlockInfo.raveLightBlock_name);
 		LanguageRegistry.addName(new ItemStack(redColoredLightBlockIdle, 1, 0), BlockInfo.redColoredLightBlock_name);
 		LanguageRegistry.addName(new ItemStack(greenColoredLightBlockIdle, 1, 0), BlockInfo.greenColoredLightBlock_name);
 		LanguageRegistry.addName(new ItemStack(blueColoredLightBlockIdle, 1, 0), BlockInfo.blueColoredLightBlock_name);
