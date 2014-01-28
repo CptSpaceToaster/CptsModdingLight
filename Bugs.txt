@@ -1,0 +1,4 @@
+Put Your Bugs here
+1. Breaking Lights leaves an outline.
+2. Colors don't blend in appropriately
+3. Colors look terrible in the daylight
