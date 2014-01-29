@@ -1,8 +1,8 @@
-package kovukore.coloredlightscore.src.asm.transformer.core;
+package kovukore.coloredlights.src.asm.transformer.core;
 
-import static kovukore.coloredlightscore.src.asm.transformer.core.ASMUtils.getClassInfo;
-import static kovukore.coloredlightscore.src.asm.transformer.core.ASMUtils.isAssignableFrom;
-import kovukore.coloredlightscore.src.asm.transformer.core.ASMUtils.ClassInfo;
+import static kovukore.coloredlights.src.asm.transformer.core.ASMUtils.getClassInfo;
+import static kovukore.coloredlights.src.asm.transformer.core.ASMUtils.isAssignableFrom;
+import kovukore.coloredlights.src.asm.transformer.core.ASMUtils.ClassInfo;
 
 import org.objectweb.asm.ClassWriter;
 

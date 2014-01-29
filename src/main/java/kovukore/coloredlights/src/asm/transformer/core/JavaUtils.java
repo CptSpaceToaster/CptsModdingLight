@@ -1,4 +1,4 @@
-package kovukore.coloredlightscore.src.asm.transformer.core;
+package kovukore.coloredlights.src.asm.transformer.core;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

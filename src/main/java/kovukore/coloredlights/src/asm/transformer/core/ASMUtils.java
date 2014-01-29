@@ -1,6 +1,6 @@
-package kovukore.coloredlightscore.src.asm.transformer.core;
+package kovukore.coloredlights.src.asm.transformer.core;
 
-import static kovukore.coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLASSLOADER;
+import static kovukore.coloredlights.src.asm.ColoredLightsCoreLoadingPlugin.CLASSLOADER;
 import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 
-import kovukore.coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin;
+import kovukore.coloredlights.src.asm.ColoredLightsCoreLoadingPlugin;
 import net.minecraft.launchwrapper.IClassNameTransformer;
 
 import org.objectweb.asm.ClassReader;
