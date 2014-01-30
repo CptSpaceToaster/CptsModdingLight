@@ -23,10 +23,4 @@ public class ColoredLightsBlock extends Block
 		this.field_149784_t = (int) (15.0F * par1);
 		return this.addColorLightValue(par1, par1, par1);
 	}
-
-	public Block setLightValue(int par1)
-	{
-		this.field_149784_t = par1;
-		return this.addColorLightValue(ColoredLightsApi.getLightValueHelper()[par1], ColoredLightsApi.getLightValueHelper()[par1], ColoredLightsApi.getLightValueHelper()[par1]);
-	}
 }
