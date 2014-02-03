@@ -8,7 +8,6 @@ import org.objectweb.asm.tree.FieldNode;
 
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.world.chunk.NibbleArray;
 
 public class TransformEBSFields implements IClassTransformer, Opcodes
 {
