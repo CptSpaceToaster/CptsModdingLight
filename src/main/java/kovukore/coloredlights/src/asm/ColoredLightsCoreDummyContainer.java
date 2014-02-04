@@ -19,8 +19,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ColoredLightsCoreDummyContainer extends DummyModContainer
 {
-	//public final static Block genericDirt = new BlockTest(Material.piston).func_149647_a(CreativeTabs.tabTools);
-
 	public ColoredLightsCoreDummyContainer()
 	{
 		super(new ModMetadata());
@@ -39,6 +37,7 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
 		Path currentRelativePath = Paths.get("");
 		String s = currentRelativePath.toAbsolutePath().toString();
 		System.out.println("Current relative path is: " + s);
+
 		CLBlocksController.init();
 	}
 	

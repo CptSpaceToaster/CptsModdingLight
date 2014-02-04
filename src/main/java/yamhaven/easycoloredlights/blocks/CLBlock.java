@@ -47,12 +47,15 @@ public class CLBlock extends Block
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void func_149651_a(IIconRegister iconRegister) {
-			icons = new IIcon[16];
-			for(int i = 0; i<icons.length; i++) {
+	public void func_149651_a(IIconRegister iconRegister) {				//registerIcons()
+		icons = new IIcon[16];
+		for(int i = 0; i<icons.length; i++) {
 			icons[i] = iconRegister.registerIcon(ModInfo.ID + ":" + BlockInfo.CLUnlocalizedName + i);
-		}	
+		}
 	}
+	
+	
+	
 	
 	@SideOnly(Side.CLIENT)
 	public IIcon func_149691_a(int side, int meta)
