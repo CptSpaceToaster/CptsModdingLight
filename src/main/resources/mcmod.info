@@ -1,0 +1,17 @@
+[
+{
+  "modid": "easycoloredlights",
+  "name": "Easy Colored Lights",
+  "description": "Because Who Doesn't Like Colors!?!",
+  "credits": "",
+  "logoFile": "",
+  "mcversion": "1.7.2.05",
+  "url": "",
+  "updateUrl": "",
+  "authors": ["Mr. Walrus", "Kohvoooooo!", "CptSpaceToaster"],
+  "screenshots": [ "" ],
+  "dependencies": [
+     "mod_MinecraftForge"
+  ]
+}
+]

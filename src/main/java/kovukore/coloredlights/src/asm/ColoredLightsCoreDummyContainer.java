@@ -1,10 +1,6 @@
 package kovukore.coloredlights.src.asm;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-
-import yamhaven.easycoloredlights.blocks.CLBlocksController;
 
 import net.minecraftforge.common.MinecraftForge;
 
@@ -24,21 +20,17 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
 		super(new ModMetadata());
 		ModMetadata meta = getMetadata();
 		meta.modId = "coloredlightscore";
-		meta.name = "coloredlightscore";
+		meta.name = "Colored Lights Core";
 		meta.version = "1.0.1";
 		meta.credits = "";
-		meta.authorList = Arrays.asList("AJWGeek", "Kohvough", "CptSpaceToaster");
+		meta.authorList = Arrays.asList("AJWGeek", "Kovu", "CptSpaceToaster");
 		meta.description = "The coremod for Colored Lights";
 	}
 	
 	@Subscribe
 	public void registerThis(FMLPreInitializationEvent e)
 	{
-		Path currentRelativePath = Paths.get("");
-		String s = currentRelativePath.toAbsolutePath().toString();
-		System.out.println("Current relative path is: " + s);
-
-		CLBlocksController.init();
+		
 	}
 	
 	@Subscribe

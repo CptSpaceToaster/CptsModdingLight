@@ -23,25 +23,26 @@ public class CLBlock extends Block
 	/** Whether this lamp block is the powered version of the block. */
 	protected final boolean powered;
 	/** The Block the lamp is supposed to switch to **/
-	protected Block switchID;
+	protected Block switchBlock = null;
 	
-	public CLBlock(Block switchBlock, boolean isPowered)
+	public CLBlock(boolean isPowered, Material matt)
 	{
-		super(Material.field_151591_t);				//Material.resdstoneLight
+		super(matt);
 		this.powered = isPowered;
-		this.switchID = switchBlock;
 		
 		if (isPowered)
 		{
 			//turnLightsOn(new Random());
 		}
-
-		func_149663_c(BlockInfo.CLUnlocalizedName);	//setBlockName(BlockInfo.CLUnlocalizedName)
-		func_149711_c(0.3F);						//setHardness(0.3F);
-		func_149672_a(field_149778_k);				//setStepSound(Block.soundGlassFootstep);
-		func_149647_a(CreativeTabs.tabDecorations);	//setCreativeTab(CreativeTabs.tabDecorations);
+		
+		func_149711_c(0.3F);
+		func_149672_a(field_149778_k);
 	}
 
+	protected void setSwitchBlock(Block switchBlock) {
+		this.switchBlock = switchBlock;
+	}
+	
 	@SideOnly(Side.CLIENT)
 	private IIcon icons[];
 
@@ -53,9 +54,6 @@ public class CLBlock extends Block
 			icons[i] = iconRegister.registerIcon(ModInfo.ID + ":" + BlockInfo.CLUnlocalizedName + i);
 		}
 	}
-	
-	
-	
 	
 	@SideOnly(Side.CLIENT)
 	public IIcon func_149691_a(int side, int meta)
@@ -74,7 +72,7 @@ public class CLBlock extends Block
 	@Override
 	public void func_149666_a(Item par1, CreativeTabs par2CreativeTabs, List par3List)	//getBlockSubtypes
     {
-          for(int i = 0; i < 16; i++) //Loops to 2!
+          for(int i = 0; i < 16; i++)
           {
                  par3List.add(new ItemStack(par1, 1, i));
           }
@@ -89,11 +87,11 @@ public class CLBlock extends Block
 		{
 			if (this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 			{
-				par1World.func_147464_a(par2, par3, par4, switchID, 4);
+				par1World.func_147464_a(par2, par3, par4, switchBlock, 4);
 			}
 			else if (!this.powered && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 			{
-				par1World.func_147465_d(par2, par3, par4, switchID, 0, 2);
+				par1World.func_147465_d(par2, par3, par4, switchBlock, 0, 2);
 			}
 		}
 	}
@@ -107,11 +105,11 @@ public class CLBlock extends Block
 		{
 			if (this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 			{
-				par1World.func_147464_a(par2, par3, par4, switchID, 4);
+				par1World.func_147464_a(par2, par3, par4, switchBlock, 4);
 			}
 			else if (!this.powered && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 			{
-				par1World.func_147465_d(par2, par3, par4, switchID, 0, 2);
+				par1World.func_147465_d(par2, par3, par4, switchBlock, 0, 2);
 			}
 		}
 	}
@@ -123,7 +121,7 @@ public class CLBlock extends Block
 	{
 		if (!par1World.isRemote && this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 		{
-			par1World.func_147465_d(par2, par3, par4, switchID, 0, 2);
+			par1World.func_147465_d(par2, par3, par4, switchBlock, 0, 2);
 		}
 	}
 
