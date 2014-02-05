@@ -25,9 +25,9 @@ public class CLBlock extends Block
 	/** The Block the lamp is supposed to switch to **/
 	protected Block switchBlock = null;
 	
-	public CLBlock(boolean isPowered, Material matt)
+	public CLBlock(boolean isPowered )
 	{
-		super(matt);
+		super(Material.field_151591_t);
 		this.powered = isPowered;
 		
 		if (isPowered)
@@ -56,6 +56,7 @@ public class CLBlock extends Block
 	}
 	
 	@SideOnly(Side.CLIENT)
+	@Override
 	public IIcon func_149691_a(int side, int meta)
 	{
 		return icons[meta];
@@ -81,13 +82,14 @@ public class CLBlock extends Block
 	/**
 	 * Called whenever the block is added into the world. Args: world, x, y, z
 	 */
-	public void onBlockAdded(World par1World, int par2, int par3, int par4)
+	@Override
+	public void func_149726_b(World par1World, int par2, int par3, int par4)
 	{
 		if (!par1World.isRemote)
 		{
 			if (this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 			{
-				par1World.func_147464_a(par2, par3, par4, switchBlock, 4);
+				par1World.func_147464_a(par2, par3, par4, this, 4);
 			}
 			else if (!this.powered && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 			{
@@ -99,13 +101,14 @@ public class CLBlock extends Block
 	/**
 	 * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are their own) Args: x, y, z, neighbor blockID
 	 */
-	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, int par5)
+	@Override
+	public void func_149695_a(World par1World, int par2, int par3, int par4, Block par5)
 	{
 		if (!par1World.isRemote)
 		{
 			if (this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 			{
-				par1World.func_147464_a(par2, par3, par4, switchBlock, 4);
+				par1World.func_147464_a(par2, par3, par4, this, 4);
 			}
 			else if (!this.powered && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 			{
@@ -117,7 +120,8 @@ public class CLBlock extends Block
 	/**
 	 * Ticks the block if it's been scheduled
 	 */
-	public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
+	@Override
+	public void func_149674_a(World par1World, int par2, int par3, int par4, Random par5Random)
 	{
 		if (!par1World.isRemote && this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
 		{
