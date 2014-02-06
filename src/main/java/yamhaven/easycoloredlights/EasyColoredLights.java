@@ -19,11 +19,11 @@ public class EasyColoredLights {
 	@EventHandler
 	public static void preInit(FMLPreInitializationEvent event) {
 		CLBlocksController.init();
+		CLBlocksController.registerBlocks();
 	}
 	
 	@EventHandler
 	public static void init(FMLInitializationEvent event) {
-		CLBlocksController.addNames();
 		CLBlocksController.addBlockRecipes();
 	}
 	

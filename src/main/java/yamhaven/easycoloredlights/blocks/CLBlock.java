@@ -1,9 +1,7 @@
 package yamhaven.easycoloredlights.blocks;
 
-import java.util.List;
 import java.util.Random;
 
-import yamhaven.easycoloredlights.lib.BlockInfo;
 import yamhaven.easycoloredlights.lib.ModInfo;
 
 import cpw.mods.fml.relauncher.Side;
@@ -13,9 +11,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 public class CLBlock extends Block
@@ -24,19 +24,23 @@ public class CLBlock extends Block
 	protected final boolean powered;
 	/** The Block the lamp is supposed to switch to **/
 	protected Block switchBlock = null;
+	/** internal storage for our block's unlocalized name... this may redundant **/
+	private String unlocalizedName;
 	
-	public CLBlock(boolean isPowered )
+	public CLBlock(boolean isPowered, String unlocalizedName)
 	{
 		super(Material.field_151591_t);
 		this.powered = isPowered;
+		this.unlocalizedName = unlocalizedName;
 		
-		if (isPowered)
-		{
-			//turnLightsOn(new Random());
-		}
-		
+		func_149663_c(unlocalizedName);
 		func_149711_c(0.3F);
 		func_149672_a(field_149778_k);
+		
+		if (isPowered)
+			turnLightsOn();
+		else
+			func_149647_a(CreativeTabs.tabDecorations);
 	}
 
 	protected void setSwitchBlock(Block switchBlock) {
@@ -44,41 +48,35 @@ public class CLBlock extends Block
 	}
 	
 	@SideOnly(Side.CLIENT)
-	private IIcon icons[];
+	private IIcon icon;
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void func_149651_a(IIconRegister iconRegister) {	//registerIcons()
-		icons = new IIcon[16];
-		for(int i = 0; i<icons.length; i++) {
-			icons[i] = iconRegister.registerIcon(ModInfo.ID + ":" + BlockInfo.CLBlock+ (powered?"":"On") + i);
-		}
+		icon = iconRegister.registerIcon(ModInfo.ID + ":" + unlocalizedName);
 	}
 	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IIcon func_149691_a(int side, int meta)
 	{
-		return icons[meta];
+		return icon;
 	}
 
-	@Override
-    public int func_149692_a(int meta)	//DamageDropped
+	@SideOnly(Side.CLIENT)
+    public Item func_149694_d(World world, int x, int y, int z)
     {
-        return meta;
+        return Item.func_150898_a((powered)?switchBlock:this);
     }
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void func_149666_a(Item par1, CreativeTabs par2CreativeTabs, List par3List)	//getBlockSubtypes
+	public Item func_149650_a(int par1, Random par2Random, int par3) {
+		return Item.func_150898_a((powered)?switchBlock:this);
+	}
+	
+	protected ItemStack func_149644_j(int meta)
     {
-          for(int i = 0; i < 16; i++)
-          {
-                 par3List.add(new ItemStack(par1, 1, i));
-          }
+        return new ItemStack((powered)?switchBlock:this);
     }
-
 	/**
 	 * Called whenever the block is added into the world. Args: world, x, y, z
 	 */
@@ -129,5 +127,7 @@ public class CLBlock extends Block
 		}
 	}
 
-	//protected abstract void turnLightsOn(Random r);
+	protected void turnLightsOn() {
+		func_149715_a(1.0F);
+	}
 }
