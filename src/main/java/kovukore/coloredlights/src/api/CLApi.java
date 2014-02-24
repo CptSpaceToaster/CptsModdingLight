@@ -1,5 +1,7 @@
 package kovukore.coloredlights.src.api;
 
+import net.minecraft.block.Block;
+
 public class CLApi
 {
 	public static float l[] = new float[] {0F, 1F/15, 2F/15, 3F/15, 4F/15, 5F/15, 6F/15, 7F/15, 8F/15, 9F/15, 10F/15, 11F/15, 12F/15, 13F/15, 14F/15, 1F};
@@ -18,5 +20,10 @@ public class CLApi
 	{
 		int brightness = (int)(15.0F * Math.max(Math.max(r, g), b));
 		return brightness | ((((int) (15.0F * b)) << 15) + (((int) (15.0F * g)) << 10) + (((int) (15.0F * r)) << 5));
+	}
+	
+	public static Block injectCLV(Block block, float r, float g, float b) {
+		block.lightValue = makeColorLightValue(r, g, b, block.lightValue);
+		return block;
 	}
 }

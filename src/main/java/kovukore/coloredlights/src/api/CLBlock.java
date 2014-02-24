@@ -12,11 +12,6 @@ public abstract class CLBlock extends Block {
 
 	public abstract int getColorLightValue(int metadata);
 	
-//	@Override
-//	public int getLightValue() {
-//		return 0;
-//	}
-	
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		return getColorLightValue(world.getBlockMetadata(x, y, z));

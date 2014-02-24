@@ -19,7 +19,6 @@ import net.minecraft.util.IIcon;
 
 public class CLStone extends CLBlock
 {
-	
 	public CLStone()
 	{
 		super(Material.glass);
@@ -27,7 +26,6 @@ public class CLStone extends CLBlock
 		setStepSound(soundTypeGlass);
 		setCreativeTab(CreativeTabs.tabDecorations);
 	}
-
 	
 	@SideOnly(Side.CLIENT)
 	private IIcon icons[];
@@ -49,7 +47,7 @@ public class CLStone extends CLBlock
 	}
 	
 	@Override
-    public int damageDropped(int meta)	//DamageDropped
+    public int damageDropped(int meta)
     {
         return meta;
     }
@@ -57,7 +55,7 @@ public class CLStone extends CLBlock
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List)	//getBlockSubtypes
+	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List)
     {
 		for(int i = 0; i < 16; i++)
         {

@@ -18,7 +18,6 @@ public class CLBlocksController {
 		
 		CLBlockIdle.setSwitchBlock(CLBlockOn);
 		CLBlockOn.setSwitchBlock(CLBlockIdle);
-	
 	}
 	
 	public static void registerBlocks() 
