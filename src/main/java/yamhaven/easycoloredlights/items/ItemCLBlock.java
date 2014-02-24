@@ -19,5 +19,5 @@ public class ItemCLBlock extends ItemBlock {
 	@Override
 	public int getMetadata(int par1) {
 		return par1;
-	}	
+	}
 }

@@ -8,7 +8,7 @@ public class BlockInfo {
 	        "Dark Gray", "Pink", "Light Green", "Yellow",
 	        "Light Blue", "Magenta", "Orange", "White"
 	    };
-		public static String CLBlock = "CLBlock";
+		public static String CLLamp = "CLBlock";
 		public static String CLStone = "CLStone";
 
 	}
