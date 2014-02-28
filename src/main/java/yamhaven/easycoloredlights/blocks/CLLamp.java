@@ -82,17 +82,19 @@ public class CLLamp extends CLBlock
 	 * Called whenever the block is added into the world. Args: world, x, y, z
 	 */
 	@Override
-	public void onBlockAdded(World par1World, int par2, int par3, int par4)
+	public void onBlockAdded(World world, int x, int y, int z)
 	{
-		if (!par1World.isRemote)
+		if (!world.isRemote)
 		{
-			if (this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
+			if (this.powered && !world.isBlockIndirectlyGettingPowered(x, y, z))
 			{
-				par1World.scheduleBlockUpdate(par2, par3, par4, this, 4);
+				world.scheduleBlockUpdate(x, y, z, this, 4);
 			}
-			else if (!this.powered && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
+			else if (!this.powered && world.isBlockIndirectlyGettingPowered(x, y, z))
 			{
-				par1World.setBlock(par2, par3, par4, switchBlock, 0, 2);
+				int temp = world.getBlockMetadata(x, y, z);
+				world.setBlock(x, y, z, switchBlock, 0, 0);
+				world.setBlockMetadataWithNotify(x,y,z,temp, 2);
 			}
 		}
 	}
@@ -101,17 +103,19 @@ public class CLLamp extends CLBlock
 	 * Lets the block know when one of its neighbor changes. Doesn't know which neighbor changed (coordinates passed are their own) Args: x, y, z, neighbor blockID
 	 */
 	@Override
-	public void onNeighborBlockChange(World par1World, int par2, int par3, int par4, Block par5)
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
 	{
-		if (!par1World.isRemote)
+		if (!world.isRemote)
 		{
-			if (this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
+			if (this.powered && !world.isBlockIndirectlyGettingPowered(x, y, z))
 			{
-				par1World.scheduleBlockUpdate(par2, par3, par4, this, 4);
+				world.scheduleBlockUpdate(x, y, z, this, 4);
 			}
-			else if (!this.powered && par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
+			else if (!this.powered && world.isBlockIndirectlyGettingPowered(x, y, z))
 			{
-				par1World.setBlock(par2, par3, par4, switchBlock, 0, 2);
+				int temp = world.getBlockMetadata(x, y, z);
+				world.setBlock(x, y, z, switchBlock, 0, 0);
+				world.setBlockMetadataWithNotify(x,y,z,temp, 2);
 			}
 		}
 	}
@@ -120,16 +124,18 @@ public class CLLamp extends CLBlock
 	 * Ticks the block if it's been scheduled
 	 */
 	@Override
-	public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
+	public void updateTick(World world, int x, int y, int z, Random random)
 	{
-		if (!par1World.isRemote && this.powered && !par1World.isBlockIndirectlyGettingPowered(par2, par3, par4))
+		if (!world.isRemote && this.powered && !world.isBlockIndirectlyGettingPowered(x, y, z))
 		{
-			par1World.setBlock(par2, par3, par4, switchBlock, 0, 2);
+			int temp = world.getBlockMetadata(x, y, z);
+			world.setBlock(x, y, z, switchBlock, 0, 0);
+			world.setBlockMetadataWithNotify(x,y,z,temp, 2);
 		}
 	}
 
 	@Override
-    public int damageDropped(int meta)	//DamageDropped
+    public int damageDropped(int meta)
     {
         return meta;
     }
@@ -137,7 +143,7 @@ public class CLLamp extends CLBlock
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List)	//getBlockSubtypes
+	public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List)
     {
 		for(int i = 0; i < 16; i++)
         {
