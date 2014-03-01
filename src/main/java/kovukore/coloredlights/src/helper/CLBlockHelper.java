@@ -1,5 +1,6 @@
-package kovukore.coloredlights.src.api;
+package kovukore.coloredlights.src.helper;
 
+import kovukore.coloredlights.src.api.CLApi;
 import net.minecraft.block.Block;
 
 public class CLBlockHelper
