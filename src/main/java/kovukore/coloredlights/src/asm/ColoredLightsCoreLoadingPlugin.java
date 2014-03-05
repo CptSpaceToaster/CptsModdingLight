@@ -2,6 +2,7 @@ package kovukore.coloredlights.src.asm;
 
 import java.util.Map;
 
+import kovukore.coloredlights.src.asm.transformer.*;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
@@ -13,7 +14,10 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 	@Override
 	public String[] getASMTransformerClass()
 	{
-		return new String[] { };
+		return new String[] {
+				TransformBlock.class.getName(),
+				TransformWorld.class.getName()
+				};
 	}
 
 	@Override

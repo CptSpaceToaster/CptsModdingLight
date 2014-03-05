@@ -352,4 +352,110 @@ public final class ASMUtils
 			return false;
 		}
 	}
+	
+	/**
+	 * Given a type, returns the java keyword for it. Used to assemble
+	 * exception messages by the Transformer classes (I expected "int blah(float blah)").
+	 * Not tested on arrays.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public static String getTypeKeyword(Type type)
+	{
+		// Surely there must be a better way...
+		// Also not sure how this reacts with arrays...
+		
+		if (type == Type.BOOLEAN_TYPE)
+			return "boolean";
+		if (type == Type.BYTE_TYPE)
+			return "byte";
+		if (type == Type.CHAR_TYPE)
+			return "char";
+		if (type == Type.DOUBLE_TYPE)
+			return "double";
+		if (type == Type.FLOAT_TYPE)
+			return "float";
+		if (type == Type.INT_TYPE)
+			return "int";
+		if (type == Type.LONG_TYPE)
+			return "long";
+		if (type == Type.SHORT_TYPE)
+			return "short";
+		if (type == Type.VOID_TYPE)
+			return "void";
+				
+		String internalName = type.getInternalName();
+		
+		int lastSlash = internalName.lastIndexOf('/');
+		
+		if (lastSlash > -1)
+			return internalName.substring(lastSlash + 1);
+		else
+			return internalName;
+	}
+
+	/**
+	 * Tests for the presence of a method with the given name and descriptor in a target
+	 * class. If the method is not found, throws an IllegalArgumentException.
+	 * 
+	 * @author heaton84
+	 * 
+	 * @param className The name of the class to search
+	 * @param methodName The name of the method to look for
+	 * @param methodDescriptor The descriptor of the method to look for
+	 * @throws IOException When the class cannot be found as named
+	 * @throws IllegalArgumentException When the method is not found
+	 */
+	public static void assertClassContainsHelperMethod(String className,
+			String methodName, String methodDescriptor) throws IOException, IllegalArgumentException
+	{
+		String classPath = "/" + ASMUtils.makeNameInternal(className) + ".class";
+		ClassReader classReader = new ClassReader(ASMUtils.class.getResourceAsStream(classPath));
+		ClassNode classNode = new ClassNode();
+		boolean foundStatic = false;
+		boolean foundNonstatic = false;
+
+		classReader.accept(classNode, 0);
+
+		for (MethodNode m : classNode.methods) {
+			if (m.name.equals(methodName) && m.desc.equals(methodDescriptor))
+			{
+				// Better make sure it's a static
+				if ((m.access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC)
+					foundStatic = true;
+				else
+					foundNonstatic = true;
+			}
+		}
+
+		if (!foundStatic)
+		{
+			String exceptionMessage;
+			String plainTextDescriptor;
+			
+			Type expectedReturnType = Type.getReturnType(methodDescriptor);
+			Type[] expectedArgs = Type.getArgumentTypes(methodDescriptor);
+			int argNum;
+			// Turn methodDescriptor (III)Z into plaintext boolean funcname(int, int, int)
+						
+			plainTextDescriptor = String.format("%s %s(", ASMUtils.getTypeKeyword(expectedReturnType), methodName); 
+			
+			for (argNum=0;argNum<expectedArgs.length;argNum++)
+			{
+				if (argNum > 0 && argNum <= expectedArgs.length - 1)
+					plainTextDescriptor += ", ";
+				
+				plainTextDescriptor += ASMUtils.getTypeKeyword(expectedArgs[argNum]); // getClassNameFromInternalName(expectedArgs[argNum].getInternalName());
+			}
+			
+			if (foundNonstatic)
+				exceptionMessage = String.format("Missing STATIC modifier on helper method %s.%s %s!", className, methodName, methodDescriptor);
+			else
+				exceptionMessage = String.format("Unable to locate helper method \"static %s)\" in class %s!", plainTextDescriptor, className);
+			
+			throw new IllegalArgumentException(exceptionMessage);
+		}
+	}
+	
 }
