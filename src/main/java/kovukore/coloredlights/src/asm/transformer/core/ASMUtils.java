@@ -76,17 +76,23 @@ public final class ASMUtils
 	public static final AbstractInsnNode findLastReturn(MethodNode method)
 	{
 		int searchFor = Type.getReturnType(method.desc).getOpcode(Opcodes.IRETURN);
+		
+		return ASMUtils.findLastOpcode(method, searchFor);
+	}
+	
+	public static final AbstractInsnNode findLastOpcode(MethodNode method, int opcode)
+	{
 		AbstractInsnNode found = null;
 		for (int i = 0; i < method.instructions.size(); i++)
 		{
 			AbstractInsnNode insn = method.instructions.get(i);
-			if (insn.getOpcode() == searchFor)
+			if (insn.getOpcode() == opcode)
 			{
 				found = insn;
 			}
 		}
 		return found;
-	}
+	}	
 
 	public static final String makeNameInternal(String name)
 	{

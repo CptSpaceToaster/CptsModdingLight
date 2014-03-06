@@ -19,7 +19,8 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 		return new String[] {
 				TransformBlock.class.getName(),
 				TransformWorld.class.getName(),
-				TransformRenderBlocks.class.getName()
+				TransformRenderBlocks.class.getName(),
+				TransformTessellator.class.getName()
 				//TransformEBSFields.class.getName()
 				};
 	}

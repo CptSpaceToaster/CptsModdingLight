@@ -450,7 +450,7 @@ public class CLRenderBlocksHelper {
             blockIcon = renderBlocks.getBlockIcon(block, renderBlocks.blockAccess, x, y, z, 2);
             renderBlocks.renderFaceZNeg(block, (double)x, (double)y, (double)z, blockIcon);
 
-            if (renderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
+            if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
             {
                 renderBlocks.colorRedTopLeft *= r;
                 renderBlocks.colorRedBottomLeft *= r;
@@ -600,7 +600,7 @@ public class CLRenderBlocksHelper {
             blockIcon = renderBlocks.getBlockIcon(block, renderBlocks.blockAccess, x, y, z, 3);
             renderBlocks.renderFaceZPos(block, (double)x, (double)y, (double)z, renderBlocks.getBlockIcon(block, renderBlocks.blockAccess, x, y, z, 3));
 
-            if (renderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
+            if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
             {
                 renderBlocks.colorRedTopLeft *= r;
                 renderBlocks.colorRedBottomLeft *= r;
@@ -750,7 +750,7 @@ public class CLRenderBlocksHelper {
             blockIcon = renderBlocks.getBlockIcon(block, renderBlocks.blockAccess, x, y, z, 4);
             renderBlocks.renderFaceXNeg(block, (double)x, (double)y, (double)z, blockIcon);
 
-            if (renderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
+            if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
             {
                 renderBlocks.colorRedTopLeft *= r;
                 renderBlocks.colorRedBottomLeft *= r;
@@ -900,7 +900,7 @@ public class CLRenderBlocksHelper {
             blockIcon = renderBlocks.getBlockIcon(block, renderBlocks.blockAccess, x, y, z, 5);
             renderBlocks.renderFaceXPos(block, (double)x, (double)y, (double)z, blockIcon);
 
-            if (renderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
+            if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
             {
                 renderBlocks.colorRedTopLeft *= r;
                 renderBlocks.colorRedBottomLeft *= r;
@@ -1051,7 +1051,7 @@ public class CLRenderBlocksHelper {
             blockIcon = renderBlocks.getBlockIcon(par1Block, renderBlocks.blockAccess, par2X, par3Y, par4Z, 2);
             renderBlocks.renderFaceZNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, blockIcon);
 
-            if (renderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
+            if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
             {
             	tessellator.setColorOpaque_F(f11 * par5R*rc, f14 * par6G*gc, f17 * par7B*bc);
                 renderBlocks.renderFaceZNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, BlockGrass.getIconSideOverlay());
@@ -1086,7 +1086,7 @@ public class CLRenderBlocksHelper {
             blockIcon = renderBlocks.getBlockIcon(par1Block, renderBlocks.blockAccess, par2X, par3Y, par4Z, 3);
             renderBlocks.renderFaceZPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, blockIcon);
 
-            if (renderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
+            if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
             {
             	tessellator.setColorOpaque_F(f11 * par5R*rc, f14 * par6G*gc, f17 * par7B*bc);
                 renderBlocks.renderFaceZPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, BlockGrass.getIconSideOverlay());
@@ -1121,7 +1121,7 @@ public class CLRenderBlocksHelper {
             blockIcon = renderBlocks.getBlockIcon(par1Block, renderBlocks.blockAccess, par2X, par3Y, par4Z, 4);
             renderBlocks.renderFaceXNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, blockIcon);
 
-            if (renderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
+            if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
             {
             	tessellator.setColorOpaque_F(f12 * par5R*rc, f15 * par6G*gc, f18 * par7B*bc);
                 renderBlocks.renderFaceXNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, BlockGrass.getIconSideOverlay());
@@ -1156,7 +1156,7 @@ public class CLRenderBlocksHelper {
             blockIcon = renderBlocks.getBlockIcon(par1Block, renderBlocks.blockAccess, par2X, par3Y, par4Z, 5);
             renderBlocks.renderFaceXPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, blockIcon);
 
-            if (renderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
+            if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !renderBlocks.hasOverrideBlockTexture())
             {
             	 tessellator.setColorOpaque_F(f12 * par5R*rc, f15 * par6G*gc, f18 * par7B*bc);
                 renderBlocks.renderFaceXPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, BlockGrass.getIconSideOverlay());
