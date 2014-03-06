@@ -12,8 +12,8 @@ public class TransformWorld extends HelperMethodTransformer {
 			"getBlockLightValue_do",
 			"getLightBrightnessForSkyBlocks",
 			"getLightBrightness",
-			"computeLightValue",
-			"updateLightByType"
+			"computeLightValue"//,
+			//"updateLightByType"
 	};
 	
 	public TransformWorld() {
