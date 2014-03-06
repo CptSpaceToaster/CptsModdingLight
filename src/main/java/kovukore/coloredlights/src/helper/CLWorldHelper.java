@@ -15,17 +15,17 @@ public class CLWorldHelper {
 	
 	//Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC
 	//Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
-	public static int getBlockLightValue_do(World world, int par1, int par2, int par3, boolean par4)
+	public static int getBlockLightValue_do(World world, int x, int y, int z, boolean par4)
     {
-        if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
+        if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000)
         {
-            if (par4 && world.getBlock(par1, par2, par3).getUseNeighborBrightness())
+            if (par4 && world.getBlock(x, y, z).getUseNeighborBrightness())
             {
-                int l1 = world.getBlockLightValue_do(par1, par2 + 1, par3, false);
-                int l = world.getBlockLightValue_do(par1 + 1, par2, par3, false);
-                int i1 = world.getBlockLightValue_do(par1 - 1, par2, par3, false);
-                int j1 = world.getBlockLightValue_do(par1, par2, par3 + 1, false);
-                int k1 = world.getBlockLightValue_do(par1, par2, par3 - 1, false);
+                int l1 = world.getBlockLightValue_do(x, y + 1, z, false);
+                int l = world.getBlockLightValue_do(x + 1, y, z, false);
+                int i1 = world.getBlockLightValue_do(x - 1, y, z, false);
+                int j1 = world.getBlockLightValue_do(x, y, z + 1, false);
+                int k1 = world.getBlockLightValue_do(x, y, z - 1, false);
 
                 if ((l&15) > (l1&15))
                 {
@@ -49,21 +49,21 @@ public class CLWorldHelper {
 
                 return l1;
             }
-            else if (par2 < 0)
+            else if (y < 0)
             {
                 return 0;
             }
             else
             {
-                if (par2 >= 256)
+                if (y >= 256)
                 {
-                    par2 = 255;
+                    y = 255;
                 }
 
-                Chunk chunk = world.getChunkFromChunkCoords(par1 >> 4, par3 >> 4);
-                par1 &= 15;
-                par3 &= 15;
-                return chunk.getBlockLightValue(par1, par2, par3, world.skylightSubtracted);
+                Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+                x &= 15;
+                z &= 15;
+                return chunk.getBlockLightValue(x, y, z, world.skylightSubtracted);
             }
         }
         else

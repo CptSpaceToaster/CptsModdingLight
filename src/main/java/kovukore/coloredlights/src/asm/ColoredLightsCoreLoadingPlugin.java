@@ -5,7 +5,9 @@ import java.util.Map;
 import kovukore.coloredlights.src.asm.transformer.*;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
 
+@MCVersion("1.7.2")
 public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 {
 	public static LaunchClassLoader CLASSLOADER;
@@ -16,7 +18,9 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 	{
 		return new String[] {
 				TransformBlock.class.getName(),
-				TransformWorld.class.getName()
+				TransformWorld.class.getName(),
+				TransformRenderBlocks.class.getName()
+				//TransformEBSFields.class.getName()
 				};
 	}
 

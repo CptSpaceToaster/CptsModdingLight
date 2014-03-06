@@ -54,6 +54,9 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
 
 		staticInvoke.add(new InsnNode(returnOpcode));
 				
+		// Turns out this bit is important, otherwise we could step on the existing LVT
+		targetMethod.localVariables.clear();
+		
 		targetMethod.instructions.clear();
 		targetMethod.instructions.add(staticInvoke);
 		

@@ -222,7 +222,19 @@ public final class ASMUtils
 	{
 		try
 		{
-			byte[] bytes = CLASSLOADER.getClassBytes(className);
+			// 03-05-2014 heaton84 - Fixed NullPointerException
+			
+			byte[] bytes = null;
+			
+			try
+			{
+				bytes = CLASSLOADER.getClassBytes(className);
+			}
+			catch (NullPointerException npe)
+			{
+				
+			}
+			
 			if (bytes != null)
 			{
 				return new ClassInfoFromNode(ASMUtils.getClassNode(bytes));

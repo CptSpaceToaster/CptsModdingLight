@@ -62,8 +62,8 @@ public class TransformEBSFields implements IClassTransformer, Opcodes
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass)
-	{
-
+	{	
+		
 		if (transformedName.equals("net.minecraft.world.chunk.storage.ExtendedBlockStorage"))
 		{
 			return transformBlock(name, basicClass, false);
