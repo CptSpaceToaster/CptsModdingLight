@@ -20,7 +20,8 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 				TransformBlock.class.getName(),
 				TransformWorld.class.getName(),
 				TransformRenderBlocks.class.getName(),
-				TransformTessellator.class.getName()
+				TransformTessellator.class.getName(),
+				TransformChunkCache.class.getName()
 				//TransformEBSFields.class.getName()
 				};
 	}
