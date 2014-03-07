@@ -3,8 +3,10 @@ package kovukore.coloredlights.src.asm.transformer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import com.sun.org.apache.bcel.internal.classfile.Field;
 import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
+import cpw.mods.fml.common.FMLLog;
 import kovukore.coloredlights.src.asm.transformer.core.MethodTransformer;
 
 public class TransformExtendedBlockStorage extends MethodTransformer {
@@ -13,11 +15,12 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 	private FieldNode rColorArray;
 	private FieldNode gColorArray;
 	private FieldNode bColorArray;
+	private FieldNode blockLSBArray;
 			
 	@Override
 	protected boolean transforms(ClassNode clazz, MethodNode method) {
 		
-		return method.name.equals("setExtBlocklightValue") | method.name.equals("getExtBlocklightValue");
+		return method.name.equals("setExtBlocklightValue") | method.name.equals("getExtBlocklightValue") | method.name.equals("<init>");
 	}
 
 	@Override
@@ -31,6 +34,9 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 
 		if (method.name.equals("getExtBlocklightValue"))
 			transformGetExtBlocklightValue(clazz, method);
+
+		if (method.name.equals("<init>"))
+			transformConstructor(clazz, method);
 		
 		return false;
 	}
@@ -42,15 +48,62 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 
 	private void addRGBNibbleArrays(ClassNode clazz)
 	{
+		for (FieldNode f : clazz.fields)
+			if (f.name.equals("blockLSBArray"))
+				blockLSBArray = f;
+		
 		rColorArray = new FieldNode(Opcodes.ACC_PUBLIC, "rColorArray", "[Lnet/minecraft/world/chunk/NibbleArray;", null, null);
 		gColorArray = new FieldNode(Opcodes.ACC_PUBLIC, "gColorArray", "[Lnet/minecraft/world/chunk/NibbleArray;", null, null);
 		bColorArray = new FieldNode(Opcodes.ACC_PUBLIC, "bColorArray", "[Lnet/minecraft/world/chunk/NibbleArray;", null, null);
 		
 		clazz.fields.add(rColorArray);
 		clazz.fields.add(gColorArray);
-		clazz.fields.add(bColorArray);
+		clazz.fields.add(bColorArray);			
 		
 		addedFields = true;
+	}
+	
+	private void transformConstructor(ClassNode clazz, MethodNode m)
+	{
+		String ebsInternalName = clazz.name;
+		Type typeNibbleArray = Type.getType(net.minecraft.world.chunk.NibbleArray.class);
+		
+		// Initializes array the same length as blockLSBArray:
+//		23  aload_0 [this]
+//	    24  getfield net.minecraft.world.chunk.storage.ExtendedBlockStorage.blockLSBArray : byte[] [3]
+//	    27  arraylength
+//	    28  iconst_4
+//	    29  invokespecial net.minecraft.world.chunk.NibbleArray(int, int) [5]
+//	    32  putfield net.minecraft.world.chunk.storage.ExtendedBlockStorage.blockMetadataArray : net.minecraft.world.chunk.NibbleArray [6]
+		
+		// Remove the return, to be re-inserted later
+		m.instructions.remove(m.instructions.get(m.instructions.size() - 1));
+		
+		// Initialize rColorArray
+		m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+		m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, ebsInternalName, blockLSBArray.name, blockLSBArray.desc));
+		m.instructions.add(new InsnNode(Opcodes.ARRAYLENGTH));
+		m.instructions.add(new InsnNode(Opcodes.ICONST_4));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)"));
+		m.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, ebsInternalName, rColorArray.name, rColorArray.desc));
+
+		// Initialize gColorArray
+		m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+		m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, ebsInternalName, blockLSBArray.name, blockLSBArray.desc));
+		m.instructions.add(new InsnNode(Opcodes.ARRAYLENGTH));
+		m.instructions.add(new InsnNode(Opcodes.ICONST_4));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)"));
+		m.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, ebsInternalName, gColorArray.name, gColorArray.desc));
+	
+		// Initialize bColorArray
+		m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+		m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, ebsInternalName, blockLSBArray.name, blockLSBArray.desc));
+		m.instructions.add(new InsnNode(Opcodes.ARRAYLENGTH));
+		m.instructions.add(new InsnNode(Opcodes.ICONST_4));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)"));
+		m.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, ebsInternalName, bColorArray.name, bColorArray.desc));
+		
+		m.instructions.add(new InsnNode(Opcodes.RETURN));
 	}
 
 	private void transformSetExtBlocklightValue(ClassNode clazz, MethodNode m)
