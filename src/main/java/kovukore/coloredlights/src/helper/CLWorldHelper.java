@@ -212,58 +212,58 @@ public class CLWorldHelper {
             int l = 0;
             int i1 = 0;
             world.theProfiler.startSection("getBrightness");
-            int j1 = world.getSavedLightValue(par1Enu, x, y, z);
-            int k1 = world_computeLightValue(world, x, y, z, par1Enu);
+            int savedLightValue = world.getSavedLightValue(par1Enu, x, y, z);
+            int computedLightValue = world_computeLightValue(world, x, y, z, par1Enu);
             long l1;
-            int i2;
-            int j2;
-            int k2;
-            int l2;
-            int i3;
-            int j3;
-            int l3;
-            int k3;
+            int x1;
+            int y1;
+            int z1;
+            int lightEntry;
+            int expectedEntryLight;
+            int x2;
+            int z2;
+            int y2;
 
-            if (k1 > j1)
+            if (computedLightValue > savedLightValue)
             {
                 CLWorldHelper.lightUpdateBlockList[i1++] = 133152;
             }
-            else if (k1 < j1)
+            else if (computedLightValue < savedLightValue)
             {
-                CLWorldHelper.lightUpdateBlockList[i1++] = 133152 | j1 << 18;
+                CLWorldHelper.lightUpdateBlockList[i1++] = 133152 | savedLightValue << 18;
 
                 while (l < i1)
                 {
                     l1 = CLWorldHelper.lightUpdateBlockList[l++];
-                    i2 = (int)((l1 & 63) - 32 + x);
-                    j2 = (int)((l1 >> 6 & 63) - 32 + y);
-                    k2 = (int)((l1 >> 12 & 63) - 32 + z);
-                    l2 = (int)(l1 >> 18 & 15);
-                    i3 = world.getSavedLightValue(par1Enu, i2, j2, k2);
+                    x1 = (int)((l1 & 63) - 32 + x);
+                    y1 = (int)((l1 >> 6 & 63) - 32 + y);
+                    z1 = (int)((l1 >> 12 & 63) - 32 + z);
+                    lightEntry = (int)(l1 >> 18 & 15);
+                    expectedEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1);
 
-                    if (i3 == l2)
+                    if (expectedEntryLight == lightEntry)
                     {
-                        world.setLightValue(par1Enu, i2, j2, k2, 0);
+                        world.setLightValue(par1Enu, x1, y1, z1, 0);
 
-                        if (l2 > 0)
+                        if (lightEntry > 0)
                         {
-                            j3 = MathHelper.abs_int(i2 - x);
-                            k3 = MathHelper.abs_int(j2 - y);
-                            l3 = MathHelper.abs_int(k2 - z);
+                            x2 = MathHelper.abs_int(x1 - x);
+                            y2 = MathHelper.abs_int(y1 - y);
+                            z2 = MathHelper.abs_int(z1 - z);
 
-                            if (j3 + k3 + l3 < 17)
+                            if (x2 + y2 + z2 < 17)
                             {
                                 for (int i4 = 0; i4 < 6; ++i4)
                                 {
-                                    int j4 = i2 + Facing.offsetsXForSide[i4];
-                                    int k4 = j2 + Facing.offsetsYForSide[i4];
-                                    int l4 = k2 + Facing.offsetsZForSide[i4];
+                                    int j4 = x1 + Facing.offsetsXForSide[i4];
+                                    int k4 = y1 + Facing.offsetsYForSide[i4];
+                                    int l4 = z1 + Facing.offsetsZForSide[i4];
                                     int i5 = Math.max(1, world.getBlock(j4, k4, l4).getLightOpacity(world, j4, k4, l4));
-                                    i3 = world.getSavedLightValue(par1Enu, j4, k4, l4);
+                                    expectedEntryLight = world.getSavedLightValue(par1Enu, j4, k4, l4);
 
-                                    if (i3 == l2 - i5 && i1 < CLWorldHelper.lightUpdateBlockList.length)
+                                    if (expectedEntryLight == lightEntry - i5 && i1 < CLWorldHelper.lightUpdateBlockList.length)
                                     {
-                                        CLWorldHelper.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
+                                        CLWorldHelper.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | lightEntry - i5 << 18;
                                     }
                                 }
                             }
@@ -280,53 +280,53 @@ public class CLWorldHelper {
             while (l < i1)
             {
                 l1 = CLWorldHelper.lightUpdateBlockList[l++];
-                i2 = (int)((l1 & 63) - 32 + x);
-                j2 = (int)((l1 >> 6 & 63) - 32 + y);
-                k2 = (int)((l1 >> 12 & 63) - 32 + z);
-                l2 = world.getSavedLightValue(par1Enu, i2, j2, k2);
-                i3 = world_computeLightValue(world, i2, j2, k2, par1Enu);
+                x1 = (int)((l1 & 63) - 32 + x);
+                y1 = (int)((l1 >> 6 & 63) - 32 + y);
+                z1 = (int)((l1 >> 12 & 63) - 32 + z);
+                lightEntry = world.getSavedLightValue(par1Enu, x1, y1, z1);
+                expectedEntryLight = world_computeLightValue(world, x1, y1, z1, par1Enu);
 
-                if (i3 != l2)
+                if (expectedEntryLight != lightEntry)
                 {
-                    world.setLightValue(par1Enu, i2, j2, k2, i3);
+                    world.setLightValue(par1Enu, x1, y1, z1, expectedEntryLight);
 
-                    if (i3 > l2)
+                    if (expectedEntryLight > lightEntry)
                     {
-                        j3 = Math.abs(i2 - x);
-                        k3 = Math.abs(j2 - y);
-                        l3 = Math.abs(k2 - z);
+                        x2 = Math.abs(x1 - x);
+                        y2 = Math.abs(y1 - y);
+                        z2 = Math.abs(z1 - z);
                         boolean flag = i1 < CLWorldHelper.lightUpdateBlockList.length - 6;
 
-                        if (j3 + k3 + l3 < 17 && flag)
+                        if (x2 + y2 + z2 < 17 && flag)
                         {
-                            if (world.getSavedLightValue(par1Enu, i2 - 1, j2, k2) < i3)
+                            if (world.getSavedLightValue(par1Enu, x1 - 1, y1, z1) < expectedEntryLight)
                             {
-                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
+                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - 1 - x + 32 + (y1 - y + 32 << 6) + (z1 - z + 32 << 12);
                             }
 
-                            if (world.getSavedLightValue(par1Enu, i2 + 1, j2, k2) < i3)
+                            if (world.getSavedLightValue(par1Enu, x1 + 1, y1, z1) < expectedEntryLight)
                             {
-                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 + 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
+                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 + 1 - x + 32 + (y1 - y + 32 << 6) + (z1 - z + 32 << 12);
                             }
 
-                            if (world.getSavedLightValue(par1Enu, i2, j2 - 1, k2) < i3)
+                            if (world.getSavedLightValue(par1Enu, x1, y1 - 1, z1) < expectedEntryLight)
                             {
-                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - 1 - y + 32 << 6) + (k2 - z + 32 << 12);
+                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - 1 - y + 32 << 6) + (z1 - z + 32 << 12);
                             }
 
-                            if (world.getSavedLightValue(par1Enu, i2, j2 + 1, k2) < i3)
+                            if (world.getSavedLightValue(par1Enu, x1, y1 + 1, z1) < expectedEntryLight)
                             {
-                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 + 1 - y + 32 << 6) + (k2 - z + 32 << 12);
+                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 + 1 - y + 32 << 6) + (z1 - z + 32 << 12);
                             }
 
-                            if (world.getSavedLightValue(par1Enu, i2, j2, k2 - 1) < i3)
+                            if (world.getSavedLightValue(par1Enu, x1, y1, z1 - 1) < expectedEntryLight)
                             {
-                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 - 1 - z + 32 << 12);
+                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - y + 32 << 6) + (z1 - 1 - z + 32 << 12);
                             }
 
-                            if (world.getSavedLightValue(par1Enu, i2, j2, k2 + 1) < i3)
+                            if (world.getSavedLightValue(par1Enu, x1, y1, z1 + 1) < expectedEntryLight)
                             {
-                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 + 1 - z + 32 << 12);
+                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - y + 32 << 6) + (z1 + 1 - z + 32 << 12);
                             }
                         }
                     }
