@@ -153,8 +153,10 @@ public class CLLamp extends CLBlock
 	
 	@Override
 	public int getColorLightValue(int meta) {
-		System.out.println("Metadata: " + meta);
-		System.out.println(Integer.toBinaryString(CLApi.makeColorLightValue(CLApi.r[meta], CLApi.g[meta], CLApi.b[meta])) + System.lineSeparator());
-		return (powered?CLApi.makeColorLightValue(CLApi.r[meta], CLApi.g[meta], CLApi.b[meta]):0)&15;
+		//System.out.println("Metadata: " + meta);
+		//System.out.println(Integer.toBinaryString(CLApi.makeColorLightValue(CLApi.r[meta], CLApi.g[meta], CLApi.b[meta])) + System.lineSeparator());
+		//return (powered?CLApi.makeColorLightValue(CLApi.r[meta], CLApi.g[meta], CLApi.b[meta]):0)&15;
+		
+		return (powered?CLApi.makeColorLightValue(CLApi.r[meta], CLApi.g[meta], CLApi.b[meta], 15):0);
 	}
 }

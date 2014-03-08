@@ -3,6 +3,7 @@ package kovukore.coloredlights.src.asm.transformer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
+import cpw.mods.fml.common.FMLLog;
 import kovukore.coloredlights.src.asm.transformer.core.ASMUtils;
 import kovukore.coloredlights.src.asm.transformer.core.SingleMethodTransformer;
 
@@ -49,7 +50,7 @@ public class TransformTessellator extends SingleMethodTransformer {
 		andOperation.add(new InsnNode(Opcodes.IAND));
 		
 		method.instructions.insertBefore(putBrightness, andOperation);
-				
+						
 		return true;
 	}
 

@@ -302,7 +302,11 @@ public class CLWorldHelper {
                     //if (expectedEntryLight > lightEntry)
                     if ((((1048576|lightEntry) - expectedEntryLight)&541200) > 0)
                     {
+                    	
                     	world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
+                    	// -> chunk.setLightValue
+                    	//    -> extendedblockstorage.setExtBlocklightValue(x, y & 15, z, lightValue);
+                    	// -> chunk.markBlockForRenderUpdate
                     	
                         x2 = Math.abs(x1 - x);
                         y2 = Math.abs(y1 - y);
