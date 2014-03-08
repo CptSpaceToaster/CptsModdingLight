@@ -3,10 +3,8 @@ package kovukore.coloredlights.src.asm.transformer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
-import com.sun.org.apache.bcel.internal.classfile.Field;
 import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
-import cpw.mods.fml.common.FMLLog;
 import kovukore.coloredlights.src.asm.transformer.core.MethodTransformer;
 
 public class TransformExtendedBlockStorage extends MethodTransformer {
@@ -67,7 +65,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 	{
 		String ebsInternalName = clazz.name;
 		Type typeNibbleArray = Type.getType(net.minecraft.world.chunk.NibbleArray.class);
-		
+				
 		// Initializes array the same length as blockLSBArray:
 //		23  aload_0 [this]
 //	    24  getfield net.minecraft.world.chunk.storage.ExtendedBlockStorage.blockLSBArray : byte[] [3]
@@ -84,7 +82,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, ebsInternalName, blockLSBArray.name, blockLSBArray.desc));
 		m.instructions.add(new InsnNode(Opcodes.ARRAYLENGTH));
 		m.instructions.add(new InsnNode(Opcodes.ICONST_4));
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)V"));
 		m.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, ebsInternalName, rColorArray.name, rColorArray.desc));
 
 		// Initialize gColorArray
@@ -92,7 +90,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, ebsInternalName, blockLSBArray.name, blockLSBArray.desc));
 		m.instructions.add(new InsnNode(Opcodes.ARRAYLENGTH));
 		m.instructions.add(new InsnNode(Opcodes.ICONST_4));
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)V"));
 		m.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, ebsInternalName, gColorArray.name, gColorArray.desc));
 	
 		// Initialize bColorArray
@@ -100,7 +98,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, ebsInternalName, blockLSBArray.name, blockLSBArray.desc));
 		m.instructions.add(new InsnNode(Opcodes.ARRAYLENGTH));
 		m.instructions.add(new InsnNode(Opcodes.ICONST_4));
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, typeNibbleArray.getInternalName(), "<init>", "(II)V"));
 		m.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, ebsInternalName, bColorArray.name, bColorArray.desc));
 		
 		m.instructions.add(new InsnNode(Opcodes.RETURN));
