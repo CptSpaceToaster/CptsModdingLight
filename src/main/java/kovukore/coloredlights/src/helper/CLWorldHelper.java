@@ -21,11 +21,14 @@ public class CLWorldHelper {
         {
             if (par4 && world.getBlock(x, y, z).getUseNeighborBrightness())
             {
-                int l1 = world.getBlockLightValue_do(x, y + 1, z, false);
-                int l = world.getBlockLightValue_do(x + 1, y, z, false);
-                int i1 = world.getBlockLightValue_do(x - 1, y, z, false);
-                int j1 = world.getBlockLightValue_do(x, y, z + 1, false);
-                int k1 = world.getBlockLightValue_do(x, y, z - 1, false);
+            	// heaton84 - should be world.getBlockLightValue_do,
+            	// switched to CLWorldHelper.getBlockLightValue_do
+            	// This will save an extra invoke
+                int l1 = CLWorldHelper.getBlockLightValue_do(world, x, y + 1, z, false);
+                int l = CLWorldHelper.getBlockLightValue_do(world, x + 1, y, z, false);
+                int i1 = CLWorldHelper.getBlockLightValue_do(world, x - 1, y, z, false);
+                int j1 = CLWorldHelper.getBlockLightValue_do(world, x, y, z + 1, false);
+                int k1 = CLWorldHelper.getBlockLightValue_do(world, x, y, z - 1, false);
 
                 if ((l&15) > (l1&15))
                 {
@@ -227,10 +230,10 @@ public class CLWorldHelper {
                     x1 = (int)((l1 & 63) - 32 + x);
                     y1 = (int)((l1 >> 6 & 63) - 32 + y);
                     z1 = (int)((l1 >> 12 & 63) - 32 + z);
-                    lightEntry = (int)(l1 >> 18 & 15);
+                    lightEntry = (int)(l1 >> 18) & 15;
                     expectedEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1);
 
-                    if ((expectedEntryLight&15) == (lightEntry&15))
+                    if ((expectedEntryLight&15) == lightEntry)
                     {
                         world.setLightValue(par1Enu, x1, y1, z1, 0);
 
@@ -249,19 +252,22 @@ public class CLWorldHelper {
                                     int zFace = z1 + Facing.offsetsZForSide[faceIndex];
                                     int opacity = Math.max(1, world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace));
                                     expectedEntryLight = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
-                                    int ll = lightEntry&15;
-                                    int rl = lightEntry&480;
-                                    int gl = lightEntry&15360;
-                                    int bl = lightEntry&491520;
+                                    
+                                    // heaton84 - RGB components are not needed here. See how lightEntry is set above.
+                                    int ll = lightEntry; //&15;
+                                    //int rl = lightEntry&480;
+                                    //int gl = lightEntry&15360;
+                                    //int bl = lightEntry&491520;
                                                                         
 	                               	ll-=opacity;
-	                               	rl-=32*opacity;
-	                               	gl-=1024*opacity;
-	                               	bl-=32768*opacity;
+	                               	//rl-=32*opacity;
+	                               	//gl-=1024*opacity;
+	                               	//bl-=32768*opacity;
                                	 
                                     if ((expectedEntryLight&15) == ll && i1 < CLWorldHelper.lightUpdateBlockList.length)
                                     {
-                                        CLWorldHelper.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | (ll | rl | gl | bl) << 18;
+                                        //CLWorldHelper.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | (ll | rl | gl | bl) << 18;
+                                    	CLWorldHelper.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | ll  << 18;
                                     }
                                 }
                             }
@@ -304,9 +310,6 @@ public class CLWorldHelper {
                     {
                     	
                     	world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
-                    	// -> chunk.setLightValue
-                    	//    -> extendedblockstorage.setExtBlocklightValue(x, y & 15, z, lightValue);
-                    	// -> chunk.markBlockForRenderUpdate
                     	
                         x2 = Math.abs(x1 - x);
                         y2 = Math.abs(y1 - y);
