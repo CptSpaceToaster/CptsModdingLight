@@ -10,8 +10,19 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class CLWorldHelper {
-	private long[] lightUpdateBlockList = new long[32768];; //world sort of variable addition should be fine... but I'm not 100% sure yet
 	
+	public static long[] lightUpdateBlockList = null;	
+	
+	/**
+	 * Called from World constructor, re-zeros out the update block list
+	 */
+	public static void resetLightUpdateBlockList()
+	{
+		lightUpdateBlockList = null;
+		
+		// Zeros out lightUpdateBlockList
+		lightUpdateBlockList = new long[32768];
+	}
 	
 	//Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC
 	//Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
@@ -192,7 +203,195 @@ public class CLWorldHelper {
     	// This method is different than 1.6.4
     	// Once it is updated, uncomment the last string in TransformWorld.methodsToReplace
     	
-    	return false;
+        if (!world.doChunksNearChunkExist(x, y, z, 17))
+        {
+            return false;
+        }
+        else
+        {
+            int l = 0;
+            int i1 = 0;
+            world.theProfiler.startSection("getBrightness");
+            int j1 = world.getSavedLightValue(par1Enu, x, y, z);
+            int k1 = world_computeLightValue(world, x, y, z, par1Enu);
+            long l1;
+            int i2;
+            int j2;
+            int k2;
+            int l2;
+            int i3;
+            int j3;
+            int l3;
+            int k3;
+
+            if (k1 > j1)
+            {
+                CLWorldHelper.lightUpdateBlockList[i1++] = 133152;
+            }
+            else if (k1 < j1)
+            {
+                CLWorldHelper.lightUpdateBlockList[i1++] = 133152 | j1 << 18;
+
+                while (l < i1)
+                {
+                    l1 = CLWorldHelper.lightUpdateBlockList[l++];
+                    i2 = (int)((l1 & 63) - 32 + x);
+                    j2 = (int)((l1 >> 6 & 63) - 32 + y);
+                    k2 = (int)((l1 >> 12 & 63) - 32 + z);
+                    l2 = (int)(l1 >> 18 & 15);
+                    i3 = world.getSavedLightValue(par1Enu, i2, j2, k2);
+
+                    if (i3 == l2)
+                    {
+                        world.setLightValue(par1Enu, i2, j2, k2, 0);
+
+                        if (l2 > 0)
+                        {
+                            j3 = MathHelper.abs_int(i2 - x);
+                            k3 = MathHelper.abs_int(j2 - y);
+                            l3 = MathHelper.abs_int(k2 - z);
+
+                            if (j3 + k3 + l3 < 17)
+                            {
+                                for (int i4 = 0; i4 < 6; ++i4)
+                                {
+                                    int j4 = i2 + Facing.offsetsXForSide[i4];
+                                    int k4 = j2 + Facing.offsetsYForSide[i4];
+                                    int l4 = k2 + Facing.offsetsZForSide[i4];
+                                    int i5 = Math.max(1, world.getBlock(j4, k4, l4).getLightOpacity(world, j4, k4, l4));
+                                    i3 = world.getSavedLightValue(par1Enu, j4, k4, l4);
+
+                                    if (i3 == l2 - i5 && i1 < CLWorldHelper.lightUpdateBlockList.length)
+                                    {
+                                        CLWorldHelper.lightUpdateBlockList[i1++] = j4 - x + 32 | k4 - y + 32 << 6 | l4 - z + 32 << 12 | l2 - i5 << 18;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                l = 0;
+            }
+
+            world.theProfiler.endSection();
+            world.theProfiler.startSection("checkedPosition < toCheckCount");
+
+            while (l < i1)
+            {
+                l1 = CLWorldHelper.lightUpdateBlockList[l++];
+                i2 = (int)((l1 & 63) - 32 + x);
+                j2 = (int)((l1 >> 6 & 63) - 32 + y);
+                k2 = (int)((l1 >> 12 & 63) - 32 + z);
+                l2 = world.getSavedLightValue(par1Enu, i2, j2, k2);
+                i3 = world_computeLightValue(world, i2, j2, k2, par1Enu);
+
+                if (i3 != l2)
+                {
+                    world.setLightValue(par1Enu, i2, j2, k2, i3);
+
+                    if (i3 > l2)
+                    {
+                        j3 = Math.abs(i2 - x);
+                        k3 = Math.abs(j2 - y);
+                        l3 = Math.abs(k2 - z);
+                        boolean flag = i1 < CLWorldHelper.lightUpdateBlockList.length - 6;
+
+                        if (j3 + k3 + l3 < 17 && flag)
+                        {
+                            if (world.getSavedLightValue(par1Enu, i2 - 1, j2, k2) < i3)
+                            {
+                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
+                            }
+
+                            if (world.getSavedLightValue(par1Enu, i2 + 1, j2, k2) < i3)
+                            {
+                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 + 1 - x + 32 + (j2 - y + 32 << 6) + (k2 - z + 32 << 12);
+                            }
+
+                            if (world.getSavedLightValue(par1Enu, i2, j2 - 1, k2) < i3)
+                            {
+                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - 1 - y + 32 << 6) + (k2 - z + 32 << 12);
+                            }
+
+                            if (world.getSavedLightValue(par1Enu, i2, j2 + 1, k2) < i3)
+                            {
+                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 + 1 - y + 32 << 6) + (k2 - z + 32 << 12);
+                            }
+
+                            if (world.getSavedLightValue(par1Enu, i2, j2, k2 - 1) < i3)
+                            {
+                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 - 1 - z + 32 << 12);
+                            }
+
+                            if (world.getSavedLightValue(par1Enu, i2, j2, k2 + 1) < i3)
+                            {
+                                CLWorldHelper.lightUpdateBlockList[i1++] = i2 - x + 32 + (j2 - y + 32 << 6) + (k2 + 1 - z + 32 << 12);
+                            }
+                        }
+                    }
+                }
+            }
+
+            world.theProfiler.endSection();
+            return true;
+        }
     }
 	
+    public static int world_computeLightValue(World world, int par1, int par2, int par3, EnumSkyBlock par4EnumSkyBlock)
+    {
+        if (par4EnumSkyBlock == EnumSkyBlock.Sky && world.canBlockSeeTheSky(par1, par2, par3))
+        {
+            return 15;
+        }
+        else
+        {
+            Block block = world.getBlock(par1, par2, par3);
+            int blockLight = block.getLightValue(world, par1, par2, par3);
+            int l = par4EnumSkyBlock == EnumSkyBlock.Sky ? 0 : blockLight;
+            int i1 = block.getLightOpacity(world, par1, par2, par3);
+
+            if (i1 >= 15 && blockLight > 0)
+            {
+                i1 = 1;
+            }
+
+            if (i1 < 1)
+            {
+                i1 = 1;
+            }
+
+            if (i1 >= 15)
+            {
+                return 0;
+            }
+            else if (l >= 14)
+            {
+                return l;
+            }
+            else
+            {
+                for (int j1 = 0; j1 < 6; ++j1)
+                {
+                    int k1 = par1 + Facing.offsetsXForSide[j1];
+                    int l1 = par2 + Facing.offsetsYForSide[j1];
+                    int i2 = par3 + Facing.offsetsZForSide[j1];
+                    int j2 = world.getSavedLightValue(par4EnumSkyBlock, k1, l1, i2) - i1;
+
+                    if (j2 > l)
+                    {
+                        l = j2;
+                    }
+
+                    if (l >= 14)
+                    {
+                        return l;
+                    }
+                }
+
+                return l;
+            }
+        }
+    }
+    
 }
