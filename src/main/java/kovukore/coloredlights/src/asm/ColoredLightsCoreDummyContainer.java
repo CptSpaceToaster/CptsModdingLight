@@ -2,14 +2,16 @@ package kovukore.coloredlights.src.asm;
 
 import java.util.Arrays;
 
-import kovukore.coloredlights.src.api.CLApi;
-import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkDataEvent;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import cpw.mods.fml.common.DummyModContainer;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -48,4 +50,24 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
 		bus.register(this);
 		return true;
 	}
+	
+	@Subscribe	
+	public void Load(ChunkDataEvent event)
+	{
+		NBTTagCompound data = event.getData();
+		Chunk chunk = event.getChunk();
+		
+		FMLLog.info("$$$ Load event (%s, %s)", chunk.xPosition, chunk.zPosition);
+	}
+
+	@Subscribe	
+	public void Save(ChunkDataEvent event)
+	{
+		NBTTagCompound data = event.getData();
+		Chunk chunk = event.getChunk();
+
+		FMLLog.info("$$$ Save event (%s, %s)", chunk.xPosition, chunk.zPosition);
+	
+	}
+	
 }

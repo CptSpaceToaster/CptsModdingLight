@@ -9,13 +9,36 @@ import cpw.mods.fml.common.FMLLog;
 import kovukore.coloredlights.src.asm.transformer.core.ASMUtils;
 import kovukore.coloredlights.src.asm.transformer.core.MethodTransformer;
 
+/**
+ * Fields added to net.minecraft.world.chunk.storage.ExtendedBlockStorage:
+ *   NibbleArray rColorArray
+ *   NibbleArray gColorArray
+ *   NibbleArray bColorArray
+ *   
+ * Methods added to net.minecraft.world.chunk.storage.ExtendedBlockStorage:
+ *   setRedColorArray
+ *   setGreenColorArray
+ *   setBlueColorArray
+ *   getRedColorArray
+ *   getGreenColorArray
+ *   getBlueColorArray
+ * 
+ * Methods modified on net.minecraft.world.chunk.storage.ExtendedBlockStorage:
+ *   setExtBlocklightValue
+ *   getExtBlocklightValue
+ * 
+ * @author Josh
+ *
+ */
 public class TransformExtendedBlockStorage extends MethodTransformer {
-
+	
 	private boolean addedFields = false;
 	private FieldNode rColorArray;
 	private FieldNode gColorArray;
 	private FieldNode bColorArray;
 	private FieldNode blockLSBArray;
+	
+	private boolean addedMethods = false;
 			
 	@Override
 	protected boolean transforms(ClassNode clazz, MethodNode method) {
@@ -33,7 +56,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 			addRGBNibbleArrays(clazz);
 			changed = true;
 		}
-		
+						
 		if (method.name.equals("setExtBlocklightValue"))
 		{
 			transformSetExtBlocklightValue(clazz, method);
@@ -53,6 +76,18 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		}
 		
 		return changed;
+	}
+	
+	@Override
+	protected boolean postTransformClass(ClassNode clazz)
+	{
+		if (!addedMethods)
+		{
+			addRGBNibbleArrayMethods(clazz);
+			return true;
+		}			
+		else
+			return false;
 	}
 
 	@Override
@@ -77,6 +112,26 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		clazz.fields.add(bColorArray);			
 		
 		addedFields = true;
+	}
+	
+	private boolean addRGBNibbleArrayMethods(ClassNode clazz)
+	{
+		if (addedFields && !addedMethods)
+		{
+			// These new methods are required for storing/loading the new nibble arrays to disk
+						
+			clazz.methods.add(ASMUtils.generateSetterMethod(clazz.name, "setRedColorArray", rColorArray.name, rColorArray.desc));
+			clazz.methods.add(ASMUtils.generateSetterMethod(clazz.name, "setGreenColorArray", gColorArray.name, gColorArray.desc));
+			clazz.methods.add(ASMUtils.generateSetterMethod(clazz.name, "setBlueColorArray", bColorArray.name, bColorArray.desc));
+
+			clazz.methods.add(ASMUtils.generateGetterMethod(clazz.name, "getRedColorArray", rColorArray.name, rColorArray.desc));
+			clazz.methods.add(ASMUtils.generateGetterMethod(clazz.name, "getGreenColorArray", gColorArray.name, gColorArray.desc));
+			clazz.methods.add(ASMUtils.generateGetterMethod(clazz.name, "getBlueColorArray", bColorArray.name, bColorArray.desc));
+			
+			addedMethods = true;
+		}
+		
+		return addedMethods;
 	}
 	
 	private void transformConstructor(ClassNode clazz, MethodNode m)
@@ -105,7 +160,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		}
 		else
 			m.instructions.remove(returnNode);
-				
+						
 		// Initialize rColorArray
 		m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 		m.instructions.add(new TypeInsnNode(Opcodes.NEW, typeNibbleArray.getInternalName()));
@@ -318,5 +373,6 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		if (returnNode != null)		
 //      51  ireturn
 		m.instructions.add(returnNode);		
-	}
+	}	
+	
 }

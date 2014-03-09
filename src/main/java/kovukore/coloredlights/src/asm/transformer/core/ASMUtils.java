@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -16,12 +17,7 @@ import net.minecraft.launchwrapper.IClassNameTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.AnnotationNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -119,7 +115,51 @@ public final class ASMUtils
 		int opcode = Modifier.isStatic(method.getModifiers()) ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL;
 		return new MethodInsnNode(opcode, Type.getInternalName(method.getDeclaringClass()), method.getName(), Type.getMethodDescriptor(method));
 	}
+	
+	public static final MethodNode generateSetterMethod(String targetClass, String setterMethodName, String fieldName, String fieldTypeDescriptor)
+	{
+		return generateSetterMethod(targetClass, setterMethodName, fieldName, fieldTypeDescriptor, Opcodes.ACC_PUBLIC);
+	}
 
+	public static final MethodNode generateSetterMethod(String targetClass, String setterMethodName, String fieldName, String fieldTypeDescriptor, int methodAccess)
+	{
+		Type fieldType = Type.getType(fieldTypeDescriptor);
+		
+		MethodNode setter = new MethodNode();
+		setter.name = setterMethodName;
+		setter.desc = String.format("(%s)V", fieldTypeDescriptor);
+		setter.exceptions = new ArrayList<String>();
+		setter.access = methodAccess;
+		
+		setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // store [this]
+		setter.instructions.add(new VarInsnNode(fieldType.getOpcode(Opcodes.ILOAD), 1)); // store argument
+		setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, targetClass, fieldName, fieldTypeDescriptor));
+		setter.instructions.add(new InsnNode(Opcodes.RETURN));		
+		
+		return setter;
+	}
+	
+	public static final MethodNode generateGetterMethod(String targetClass, String setterMethodName, String fieldName, String fieldTypeDescriptor)
+	{
+		return generateGetterMethod(targetClass, setterMethodName, fieldName, fieldTypeDescriptor, Opcodes.ACC_PUBLIC);
+	}	
+	public static final MethodNode generateGetterMethod(String targetClass, String setterMethodName, String fieldName, String fieldTypeDescriptor, int methodAccess)
+	{
+		Type fieldType = Type.getType(fieldTypeDescriptor);
+		
+		MethodNode getter = new MethodNode();
+		getter.name = setterMethodName;
+		getter.desc = String.format("()%s", fieldTypeDescriptor);
+		getter.exceptions = new ArrayList<String>();
+		getter.access = methodAccess;
+		
+		getter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // store [this]
+		getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, targetClass, fieldName, fieldTypeDescriptor));
+		getter.instructions.add(new InsnNode(fieldType.getOpcode(Opcodes.IRETURN)));		
+		
+		return getter;
+	}	
+	
 	public static ClassNode getClassNode(byte[] bytes)
 	{
 		ClassReader reader = new ClassReader(bytes);
