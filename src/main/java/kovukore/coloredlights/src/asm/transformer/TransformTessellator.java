@@ -3,7 +3,6 @@ package kovukore.coloredlights.src.asm.transformer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
-import cpw.mods.fml.common.FMLLog;
 import kovukore.coloredlights.src.asm.transformer.core.ASMUtils;
 import kovukore.coloredlights.src.asm.transformer.core.SingleMethodTransformer;
 
