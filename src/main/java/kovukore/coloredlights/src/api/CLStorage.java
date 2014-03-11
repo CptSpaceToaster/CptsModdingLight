@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -123,16 +124,21 @@ public class CLStorage {
 			
 			if (chunkStorageArrays[k] != null)
 			{
-	            if (nbtYCompound.hasKey("RedColorArray", 7))
+	            if (nbtYCompound.hasKey("RedColorArray")) //, 7))
 	            {
 	        		rColorArray = checkedGetNibbleArray(nbtYCompound.getByteArray("RedColorArray"));
 	        		gColorArray = checkedGetNibbleArray(nbtYCompound.getByteArray("GreenColorArray"));
 	        		bColorArray = checkedGetNibbleArray(nbtYCompound.getByteArray("BlueColorArray"));	          
-	        		
+	       
+	      							
 	        		try {
 						methodSetRedColorArray.invoke(chunkStorageArrays[k], rColorArray);
 						methodSetGreenColorArray.invoke(chunkStorageArrays[k], gColorArray);
 						methodSetBlueColorArray.invoke(chunkStorageArrays[k], bColorArray);
+						
+						// TESTING: Pull back the forced value we stored earlier.
+						// Should be "LOAD:111101111"
+						FMLLog.info("LOAD:%s",  Integer.toBinaryString(chunk.getBlockLightValue(0, 0, 0, 15)));
 						
 						foundColorData = true;
 					} catch (IllegalAccessException e) {
@@ -144,8 +150,12 @@ public class CLStorage {
 					} catch (InvocationTargetException e) {
 						FMLLog.severe("%s.loadColorData()   Unexpected InvocationTargetException while setting RGB color data!", EVENT_SOURCE);
 						return false;
-					}	        		
+					}
+	        		
+	        		//FMLLog.info("Loaded nibble array for %s %s %s", chunk.xPosition, chunk.zPosition, k);
 	            }
+	            else
+	            	FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
 			}
 		}
 		
@@ -180,6 +190,9 @@ public class CLStorage {
 			return false;
 		}			
 		
+		if (chunk.xPosition == 18 && chunk.zPosition == -56)
+			FMLLog.info("SAVING CHUNK OF INTEREST");
+		
 		for (int k = 0; k < chunkStorageArrays.length; k++)
 		{
 			if (chunkStorageArrays[k] != null)
@@ -188,10 +201,16 @@ public class CLStorage {
 				
 				// Add our RGB arrays to it
 	    		try {
+	    			// TESTING: Force a known block to 100% red, 15 light level
+	    			chunk.setLightValue(EnumSkyBlock.Block, 0, 0, 0, CLApi.makeColorLightValue(1.0F, 0, 0, 15));
+	    			
 					rColorArray = (NibbleArray)methodGetRedColorArray.invoke(chunkStorageArrays[k]);
 					gColorArray = (NibbleArray)methodGetGreenColorArray.invoke(chunkStorageArrays[k]);
 					bColorArray = (NibbleArray)methodGetBlueColorArray.invoke(chunkStorageArrays[k]);
-										
+
+					// TESTING: Verify what we have. Should be "SAVE:111101111"
+					FMLLog.info("SAVE:%s",  Integer.toBinaryString(chunk.getBlockLightValue(0, 0, 0, 15)));
+					
 					nbtYCompound.setByteArray("RedColorArray", rColorArray.data);
 					nbtYCompound.setByteArray("GreenColorArray", gColorArray.data);
 					nbtYCompound.setByteArray("BlueColorArray", bColorArray.data);
@@ -204,6 +223,9 @@ public class CLStorage {
 					return false;
 				} catch (InvocationTargetException e) {
 					FMLLog.severe("%s.saveColorData()   Unexpected InvocationTargetException while getting RGB color data!", EVENT_SOURCE);
+					return false;
+				} catch (Exception e) {
+					FMLLog.severe("%s.saveColorData()   Unexpected Exception while getting RGB color data!", EVENT_SOURCE);
 					return false;
 				}
 			}
