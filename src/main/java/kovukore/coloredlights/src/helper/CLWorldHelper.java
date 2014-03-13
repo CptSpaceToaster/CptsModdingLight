@@ -1,5 +1,6 @@
 package kovukore.coloredlights.src.helper;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -62,10 +63,16 @@ public class CLWorldHelper {
                 {
                     y = 255;
                 }
-
+                
+                int cx = x >> 4;
+                int cz = z >> 4;
                 Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
                 x &= 15;
                 z &= 15;
+                
+                //FMLLog.info("NEWTEST %s,%s:%s", cx, cz, Integer.toBinaryString(chunk.getBlockLightValue(0, 0, 0, 15)));
+                
+                
                 return chunk.getBlockLightValue(x, y, z, world.skylightSubtracted);
             }
         }
@@ -82,25 +89,25 @@ public class CLWorldHelper {
 	@SideOnly(Side.CLIENT)
     public static int getLightBrightnessForSkyBlocks(World world, int x, int y, int z, int lightValue)
     {
-        int i1 = world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
-        int j1 = world.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
+        int skyBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
+        int blockBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
 
         lightValue = ((lightValue & 15)	|
    			 ((lightValue & 480) >> 1) 	|
    			 ((lightValue & 15360) >> 2)|
    			 ((lightValue & 491520) >> 3) );
    
-	    j1 =   ((j1 & 15)			|
-	      	   ((j1 & 480) >> 1) 	|
-	     	   ((j1 & 15360) >> 2)	|
-	     	   ((j1 & 491520) >> 3) );
+        blockBrightness =   ((blockBrightness & 15)			|
+	      	   ((blockBrightness & 480) >> 1) 	|
+	     	   ((blockBrightness & 15360) >> 2)	|
+	     	   ((blockBrightness & 491520) >> 3) );
         
-        if (j1 < lightValue)
+        if (blockBrightness < lightValue)
         {
-            j1 = lightValue;
+        	blockBrightness = lightValue;
         }
 
-        return i1 << 20 | j1 << 4;
+        return skyBrightness << 20 | blockBrightness << 4;
     }
 	
 	
@@ -215,14 +222,19 @@ public class CLWorldHelper {
             int x2;
             int z2;
             int y2;
+            
+            // Format of lightUpdateBlockList word:
+            // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
+            // x/y/z are relative offsets
 
-            if (computedLightValue > savedLightValue)
+            if ((computedLightValue&15) > (savedLightValue&15))
             {
-                CLWorldHelper.lightUpdateBlockList[i1++] = 133152;
+            	// Do nothing here, let the computed light take over
+                CLWorldHelper.lightUpdateBlockList[i1++] = 133152;   // x=32-32=0 y=32-32=0 z=32-32=0, no light value. It's a blank value.
             }
             else if (computedLightValue < savedLightValue)
             {
-                CLWorldHelper.lightUpdateBlockList[i1++] = 133152 | savedLightValue << 18;
+                CLWorldHelper.lightUpdateBlockList[i1++] = 133152 | savedLightValue << 18; // Store saved light value at rel(0,0,0)
 
                 while (l < i1)
                 {
@@ -230,14 +242,14 @@ public class CLWorldHelper {
                     x1 = (int)((l1 & 63) - 32 + x);
                     y1 = (int)((l1 >> 6 & 63) - 32 + y);
                     z1 = (int)((l1 >> 12 & 63) - 32 + z);
-                    lightEntry = (int)(l1 >> 18) & 15;
+                    lightEntry = (int)(l1 >> 18);
                     expectedEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1);
 
-                    if ((expectedEntryLight&15) == lightEntry)
-                    {
+                    if ((expectedEntryLight&15) == (lightEntry&15))
+                    {                    	
                         world.setLightValue(par1Enu, x1, y1, z1, 0);
 
-                        if (lightEntry > 0)
+                        if ((lightEntry&15) > 0)
                         {
                             x2 = MathHelper.abs_int(x1 - x);
                             y2 = MathHelper.abs_int(y1 - y);
@@ -245,6 +257,8 @@ public class CLWorldHelper {
 
                             if (x2 + y2 + z2 < 17)
                             {
+                            	// Calculate light values for all surrounding blocks
+                            	
                                 for (int faceIndex = 0; faceIndex < 6; ++faceIndex)
                                 {
                                     int xFace = x1 + Facing.offsetsXForSide[faceIndex];
@@ -254,20 +268,20 @@ public class CLWorldHelper {
                                     expectedEntryLight = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
                                     
                                     // heaton84 - RGB components are not needed here. See how lightEntry is set above.
-                                    int ll = lightEntry; //&15;
-                                    //int rl = lightEntry&480;
-                                    //int gl = lightEntry&15360;
-                                    //int bl = lightEntry&491520;
+                                    int ll = lightEntry&15;
+                                    int rl = lightEntry&480;
+                                    int gl = lightEntry&15360;
+                                    int bl = lightEntry&491520;
                                                                         
 	                               	ll-=opacity;
-	                               	//rl-=32*opacity;
-	                               	//gl-=1024*opacity;
-	                               	//bl-=32768*opacity;
+	                               	rl-=32*opacity;
+	                               	gl-=1024*opacity;
+	                               	bl-=32768*opacity;
                                	 
                                     if ((expectedEntryLight&15) == ll && i1 < CLWorldHelper.lightUpdateBlockList.length)
                                     {
-                                        //CLWorldHelper.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | (ll | rl | gl | bl) << 18;
-                                    	CLWorldHelper.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | ll  << 18;
+                                        CLWorldHelper.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | (ll | rl | gl | bl) << 18;
+                                    	//CLWorldHelper.lightUpdateBlockList[i1++] = xFace - x + 32 | yFace - y + 32 << 6 | zFace - z + 32 << 12 | ll  << 18;
                                     }
                                 }
                             }

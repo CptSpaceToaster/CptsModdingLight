@@ -23,6 +23,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 
 public final class ASMUtils
@@ -89,7 +90,62 @@ public final class ASMUtils
 		}
 		return found;
 	}	
-
+	
+	/**
+	 * Finds last occurance of LDC <ldcArgument>
+	 * 
+	 * @param method
+	 * @param ldcArgument
+	 * @return
+	 */
+	public static final LdcInsnNode findLastLDC(MethodNode method, String ldcArgument)
+	{
+		LdcInsnNode found = null;
+		LdcInsnNode candidate = null;
+		
+		for (int i = 0; i < method.instructions.size(); i++)
+		{
+			AbstractInsnNode insn = method.instructions.get(i);
+			if (insn.getOpcode() == Opcodes.LDC)
+			{
+				candidate = (LdcInsnNode)insn;
+				
+				if (ldcArgument.equals(candidate.cst))				
+					found = candidate;
+			}
+		}
+		return found;
+	}
+	
+	public static final MethodInsnNode findLastInvoke(MethodNode method, int opcode, String className, String methodName)
+	{
+		MethodInsnNode found = null;
+		MethodInsnNode candidate = null;
+		
+		for (int i = 0; i < method.instructions.size(); i++)
+		{
+			AbstractInsnNode insn = method.instructions.get(i);
+			if (insn.getOpcode() == opcode)
+			{
+				candidate = (MethodInsnNode)insn;
+				
+				if (candidate.owner.equals(className) && candidate.name.equals(methodName))			
+					found = candidate;
+				else
+				{
+					FMLLog.info("findLastInvoke: nope. class=%s|%s name=%s|%s", className, candidate.owner, methodName, candidate.name);
+					// findLastInvoke: nope. class=
+					// net/minecraft/network/NethandlerPlayServer
+					// net/minecraft/network/NetHandlerPlayServer
+					// sendPacket
+					// sendPacket
+				}
+			}
+		}
+		return found;
+		
+	}
+	
 	public static final String makeNameInternal(String name)
 	{
 		return name.replace('.', '/');

@@ -24,6 +24,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 public class ColoredLightsCoreDummyContainer extends DummyModContainer
 {
@@ -56,6 +57,5 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
 
     	// Hook into chunk events
     	MinecraftForge.EVENT_BUS.register(chunkDataEventHandler);
-    	
     }	
 }
