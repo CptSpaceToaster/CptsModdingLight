@@ -3,6 +3,7 @@ package kovukore.coloredlights.src.asm;
 import java.util.Arrays;
 
 import kovukore.coloredlights.fmlevents.ChunkDataEventHandler;
+import kovukore.coloredlights.network.ChannelHandler;
 import kovukore.coloredlights.src.api.CLStorage;
 import yamhaven.easycoloredlights.EasyColoredLights;
 import yamhaven.easycoloredlights.blocks.CLBlocksController;
@@ -55,6 +56,9 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
     @Subscribe
     public void preInit(FMLPreInitializationEvent evt) {
 
+    	// Spin up network handler
+    	ChannelHandler.INSTANCE = new ChannelHandler();
+    	
     	// Hook into chunk events
     	MinecraftForge.EVENT_BUS.register(chunkDataEventHandler);
     }	

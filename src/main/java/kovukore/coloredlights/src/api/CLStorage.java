@@ -157,8 +157,8 @@ public class CLStorage {
 	        		
 	        		//FMLLog.info("Loaded nibble array for %s %s %s", chunk.xPosition, chunk.zPosition, k);
 	            }
-	            else
-	            	FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
+	            //else
+	            	//FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
 			}
 		}
 		
@@ -230,8 +230,8 @@ public class CLStorage {
         		
         		//FMLLog.info("Loaded nibble array for %s %s %s", chunk.xPosition, chunk.zPosition, k);
             }
-            else
-            	FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
+            //else
+            	//FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
 		}
 		
 		// Redundnat?

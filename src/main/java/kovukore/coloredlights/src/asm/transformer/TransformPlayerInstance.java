@@ -52,7 +52,7 @@ public class TransformPlayerInstance extends MethodTransformer {
 		helperInvoke.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/server/management/PlayerManager$PlayerInstance", "chunkLocation", "Lnet/minecraft/world/ChunkCoordIntPair;"));
 
 		// Invoke helper function
-		helperInvoke.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "kovukore/coloredlights/serverPlayerManagerHelper", "sendToPlayerWatchingChunk", "(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/world/ChunkCoordIntPair;)V"));
+		helperInvoke.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "kovukore/coloredlights/server/PlayerManagerHelper", "sendToPlayerWatchingChunk", "(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/world/ChunkCoordIntPair;)V"));
 		//public static void sendToPlayerWatchingChunk(EntityPlayerMP player, ChunkCoordIntPair chunkLocation)
 
 		method.instructions.insert(insertionPoint, helperInvoke);

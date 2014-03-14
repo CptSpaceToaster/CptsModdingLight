@@ -1,5 +1,12 @@
 package kovukore.coloredlights.src.asm;
 
+/*
+ * TODO:
+<CptRageToaster> heaton84: we shouldn't replace getLightBrightness
+<CptRageToaster> heaton84: I had a wrong method name
+<CptRageToaster> heaton84: We need to asm getLightBrighessForSkyBlocks to simply return the vanilla light value.  Then, we need to make an additional getLightBrighnessValue in the helper method that everyone calls
+*/
+
 import java.util.Map;
 
 import kovukore.coloredlights.src.asm.transformer.*;
@@ -23,7 +30,8 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 				TransformTessellator.class.getName(),
 				TransformChunkCache.class.getName(),
 				TransformExtendedBlockStorage.class.getName(),
-				TransformPlayerInstance.class.getName()
+				TransformPlayerInstance.class.getName(),
+				TransformEntityPlayerMP.class.getName()
 				//TransformAnvilChunkLoader.class.getName()
 				};
 	}

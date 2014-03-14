@@ -1,8 +1,12 @@
 package kovukore.coloredlights.server;
 
+import java.util.ArrayList;
+
 import cpw.mods.fml.common.FMLLog;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.chunk.Chunk;
 
 public class PlayerManagerHelper {
 
@@ -21,14 +25,34 @@ public class PlayerManagerHelper {
     public static void sendToPlayerWatchingChunk(EntityPlayerMP player, ChunkCoordIntPair chunkLocation)
     {
     	FMLLog.info("Server just sent chunk (%s, %s) to player %s", chunkLocation.chunkXPos, chunkLocation.chunkZPos, player.getDisplayName());
-        /*for (int i = 0; i < instance.playersWatchingChunk.size(); ++i)
-        {
-            EntityPlayerMP entityplayermp = (EntityPlayerMP)instance.playersWatchingChunk.get(i);
-
-            if (!entityplayermp.loadedChunks.contains(instance.chunkLocation))
-            {
-                entityplayermp.playerNetServerHandler.sendPacket(p_151251_1_);
-            }
-        }*/
+    	
+    	sendChunkRGBDataToPlayer(player, chunkLocation.chunkXPos, chunkLocation.chunkZPos, null);
     }	
+    
+    public static void entityPlayerMP_onUpdate(ArrayList<Chunk> chunks, EntityPlayerMP player)
+    {
+    	for (Chunk c : chunks)
+    	{
+    		FMLLog.info("S26: Server just sent chunk (%s, %s) to player %s", c.xPosition, c.zPosition, player.getDisplayName());
+    		
+    		sendChunkRGBDataToPlayer(player, c.xPosition, c.zPosition, c);
+    	}
+    }
+    
+    public static void sendChunkRGBDataToPlayer(EntityPlayerMP player, int chunkX, int chunkZ, Chunk chunk)
+    {
+    	if (chunk == null)
+    	{
+    		// Pick out chunk from world
+    		chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(chunkX, chunkZ);
+    		
+    		if (chunk == null)
+    		{
+    			FMLLog.warning("Could not load chunk (%s, %s) for RGB color data!", chunkX, chunkZ);
+    			return;
+    		}    		
+    	}
+    	
+		kovukore.coloredlights.network.ChannelHandler.INSTANCE.SendChunkColorData(chunk, player);    	
+    }
 }

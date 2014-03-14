@@ -8,7 +8,7 @@ public class ChunkColorDataPacket implements IPacket {
 	public static int PACKET_ID = 0;
 		
 	// In order of packet layout:
-	public int packetId;
+	//public int packetId;
 	public int chunkXPosition;
 	public int chunkZPosition;	
 	public int arraySize;
@@ -23,13 +23,13 @@ public class ChunkColorDataPacket implements IPacket {
 
 	public int getPacketId()
 	{
-		return packetId;
+		return PACKET_ID;
 	}
 	
 	@Override
 	public void readBytes(ByteBuf bytes) {
 		
-		packetId = bytes.readInt();
+		//packetId = bytes.readInt();
 		chunkXPosition = bytes.readInt();
 		chunkZPosition = bytes.readInt();
 		arraySize = bytes.readInt();
@@ -77,6 +77,7 @@ public class ChunkColorDataPacket implements IPacket {
 	@Override
 	public void writeBytes(ByteBuf bytes) {
 		
+		//bytes.writeInt(PACKET_ID);
 		bytes.writeInt(chunkXPosition);
 		bytes.writeInt(chunkZPosition);
 		bytes.writeInt(arraySize);
