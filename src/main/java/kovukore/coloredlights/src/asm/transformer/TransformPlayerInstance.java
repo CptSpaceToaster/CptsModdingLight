@@ -1,8 +1,5 @@
 package kovukore.coloredlights.src.asm.transformer;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.ChunkCoordIntPair;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 

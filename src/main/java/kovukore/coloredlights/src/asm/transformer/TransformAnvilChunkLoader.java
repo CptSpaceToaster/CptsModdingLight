@@ -5,7 +5,6 @@ import org.objectweb.asm.tree.*;
 
 import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
-import cpw.mods.fml.common.FMLLog;
 import kovukore.coloredlights.src.asm.transformer.core.ASMUtils;
 import kovukore.coloredlights.src.asm.transformer.core.MethodTransformer;
 

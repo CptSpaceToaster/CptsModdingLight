@@ -10,24 +10,14 @@ public class CLChunkCacheHelper {
 	}
 
     /**
-     * Any Light rendered on a 1.8 Block goes through here
+     * Any Light rendered on a 1.8 Block goes through here, color is REMOVED!
      * 
      * Modified by CptSpaceToaster
      */
     public static int getLightBrightnessForSkyBlocks(ChunkCache instance, int par1, int par2, int par3, int par4)
     {
-        int i1 = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, par1, par2, par3);
-        int j1 = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Block, par1, par2, par3);
-
-        par4 = ((par4 & 15)			|
-           	   ((par4 & 480) >> 1) 	|
-          	   ((par4 & 15360) >> 2)|
-          	   ((par4 & 491520) >> 3) );
-         
-         j1 =  ((j1 & 15)			|
-        	   ((j1 & 480) >> 1) 	|
-           	   ((j1 & 15360) >> 2)	|
-           	   ((j1 & 491520) >> 3) );
+        int i1 = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, par1, par2, par3)&15;
+        int j1 = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Block, par1, par2, par3)&15;
         
         if (j1 < par4)
         {
@@ -35,8 +25,32 @@ public class CLChunkCacheHelper {
         }
 
         return i1 << 20 | j1 << 4;
-    }	
+    }
+
+	public static int getLightBrightnessForSkyBlocksWithColor(ChunkCache instance, int x, int y, int z, int lightValue) {
+		int skyBrightness = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
+        int blockBrightness = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
+
+        lightValue = ((lightValue & 15)	|
+   			 ((lightValue & 480) >> 1) 	|
+   			 ((lightValue & 15360) >> 2)|
+   			 ((lightValue & 491520) >> 3) );
+   
+        blockBrightness = ((blockBrightness & 15)	|
+	      	   ((blockBrightness & 480) >> 1) 		|
+	     	   ((blockBrightness & 15360) >> 2)		|
+	     	   ((blockBrightness & 491520) >> 3) 	);
+        
+        if (blockBrightness < lightValue)
+        {
+        	blockBrightness = lightValue;
+        }
+
+        return skyBrightness << 20 | blockBrightness << 4;
+	}
 	
+    
+    
     /**
      * Returns how bright the block is shown as which is the block's light value looked up in a lookup table (light
      * values aren't linear for brightness). Args: x, y, z

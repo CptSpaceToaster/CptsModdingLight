@@ -1,18 +1,11 @@
 package kovukore.coloredlights.src.helper;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.client.renderer.Tessellator;
-
 public class CLTesselatorHelper {
 
 	// This class pretty much does nothing
 	// It was used to find the ASM instructions for the replacement setBrightness on the Tessellator object
 	// Origional approach was to use reflection, which was abandonded in the name of performance
 		
-	private boolean hasBrightness;
-	private int brightness;
-	
 	public CLTesselatorHelper() {
 		
 	}
@@ -20,19 +13,6 @@ public class CLTesselatorHelper {
 	// Mock-up to get ASM for replacement method
     public void setBrightness(int par1)
     {
-        this.hasBrightness = true;
-        
-        /** 
-         * First: 								0000SSSS0000000000000000LLLL0000
-         * Old: 								0000SSSS0000BBBBGGGGRRRRLLLL0000
-         * Refactor: 							0000SSSS0BBBB0GGGG0RRRR0LLLL0000
-         * 
-         * Takes the lightValue in the Form 	000) 0000 SSSS BBBB GGGG RRRR LLLL 0000
-         * and formats it to the expected form: 0000 0000 SSSS 0000 0000 0000 LLLL 0000
-         * 
-         * CptSpaceToaster
-         */
-        this.brightness = par1 & 15728880;
         
         /* Resultant ASM:
          * 

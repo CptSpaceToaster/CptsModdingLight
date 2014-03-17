@@ -10,7 +10,7 @@ public class TransformRenderBlocks extends HelperMethodTransformer {
 	String methodsToReplace[] = {
 			"renderStandardBlockWithAmbientOcclusion",
 			"renderStandardBlockWithColorMultiplier"
-	};	
+	};
 	
 	public TransformRenderBlocks()
 	{
@@ -19,7 +19,6 @@ public class TransformRenderBlocks extends HelperMethodTransformer {
 	
 	@Override
 	protected Class<?> getHelperClass() {
-		
 		return kovukore.coloredlights.src.helper.CLRenderBlocksHelper.class;
 	}
 

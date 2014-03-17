@@ -1,6 +1,5 @@
 package kovukore.coloredlights.src.helper;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -64,8 +63,8 @@ public class CLWorldHelper {
                     y = 255;
                 }
                 
-                int cx = x >> 4;
-                int cz = z >> 4;
+                //int cx = x >> 4;
+                //int cz = z >> 4;
                 Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
                 x &= 15;
                 z &= 15;
@@ -82,12 +81,28 @@ public class CLWorldHelper {
         }
     }
 	
+	//Hands back the uncolored expected value.
+	@SideOnly(Side.CLIENT)
+    public static int getLightBrightnessForSkyBlocks(World world, int x, int y, int z, int lightValue)
+    {
+        int skyBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z)&15;
+        int blockBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z)&15;
+        
+        if (blockBrightness < lightValue)
+        {
+        	blockBrightness = lightValue;
+        }
+
+        return skyBrightness << 20 | blockBrightness << 4;
+    }
 	
 	//Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC
 	//Refactored variable names to match the method from the 1.6.4 source place cursor over variable and (Alt + Shift + r)
 	//Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
+	
+	//Use this one if you want color
 	@SideOnly(Side.CLIENT)
-    public static int getLightBrightnessForSkyBlocks(World world, int x, int y, int z, int lightValue)
+    public static int getLightBrightnessForSkyBlocksWithColor(World world, int x, int y, int z, int lightValue)
     {
         int skyBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
         int blockBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
@@ -124,7 +139,7 @@ public class CLWorldHelper {
 	
 	
 	//Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC, made it PUBLIC
-	//Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
+	//Added the parameter 'World world, ' and then replaces all instances of 'this', with world
 	public static int computeLightValue(World world, int x, int y, int z, EnumSkyBlock par4EnumSkyBlock)
     {
         if (par4EnumSkyBlock == EnumSkyBlock.Sky && world.canBlockSeeTheSky(x, y, z))
