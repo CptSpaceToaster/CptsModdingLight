@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -21,7 +20,6 @@ public class CLStorage {
 
 	private static String EVENT_SOURCE = "kovukore.coloredlights.src.api.CLStorage";
 	
-	private static Field fieldStorageArrays = null;	
 	private static Method methodSetRedColorArray = null;
 	private static Method methodSetGreenColorArray = null;
 	private static Method methodSetBlueColorArray = null;
@@ -32,21 +30,9 @@ public class CLStorage {
 	
 	private static void getReflectionData()	
 	{
-		if (CLStorage.fieldStorageArrays == null)
-		{
-			// TODO: Use access transformers instead
-			try {
-				CLStorage.fieldStorageArrays = Chunk.class.getDeclaredField("storageArrays");
-				CLStorage.fieldStorageArrays.setAccessible(true);
-			} catch (NoSuchFieldException e) {
-				FMLLog.severe("%s.getReflectionData()   Field \"storageArrays\" not found in Minecraft Chunk class!", EVENT_SOURCE);
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				FMLLog.severe("%s.getReflectionData()   Field \"storageArrays\" could not be made accessable!", EVENT_SOURCE);
-				e.printStackTrace();
-			}
-			
-			// We must use reflection for coremod-defined fields
+		if (CLStorage.methodSetRedColorArray == null)
+		{			
+			// We must use reflection for coremod-defined methods
 			for (Method m : ExtendedBlockStorage.class.getMethods())
 			{
 				if (m.getName().equals("setRedColorArray"))
@@ -100,25 +86,12 @@ public class CLStorage {
 		NibbleArray rColorArray;
 		NibbleArray gColorArray;
 		NibbleArray bColorArray;
-		ExtendedBlockStorage[] chunkStorageArrays = null;
+		ExtendedBlockStorage[] chunkStorageArrays = chunk.getBlockStorageArray();
 		NBTTagCompound level = data.getCompoundTag("Level");				
 		NBTTagList nbttaglist = level.getTagList("Sections", 10);	
 		boolean foundColorData = false;
 		
 		getReflectionData();
-		
-		try {
-			chunkStorageArrays = (ExtendedBlockStorage[])fieldStorageArrays.get(chunk);						
-		} catch (IllegalArgumentException e) {
-			FMLLog.severe("%s.loadColorData()   Could not access ExtendedBlockStorage.storageArrays due to IllegalArgumentException", EVENT_SOURCE);
-			return false;
-		} catch (IllegalAccessException e) {
-			FMLLog.severe("%s.loadColorData()   Could not access ExtendedBlockStorage.storageArrays due to IllegalAccessException", EVENT_SOURCE);
-			return false;
-		}		
-
-		// TESTING: Set chunk 0,0,0 to BLUE
-		chunk.setLightValue(EnumSkyBlock.Block, 0, 0, 0, CLApi.makeColorLightValue(0.0F, 0, 1.0F, 15));
 		
 		for (int k = 0; k < nbttaglist.tagCount(); ++k)
 		{
@@ -163,13 +136,13 @@ public class CLStorage {
 		}
 		
 		// Redundnat?
-		try {
+		/*try {
 			fieldStorageArrays.set(chunk, chunkStorageArrays);
 		} catch (IllegalArgumentException e) {
 			FMLLog.severe("%s.loadColorData()   Unexpected IllegalArgumentException while setting RGB color data!", EVENT_SOURCE);
 		} catch (IllegalAccessException e) {
 			FMLLog.severe("%s.loadColorData()   Unexpected IllegalAccessException while setting RGB color data!", EVENT_SOURCE);
-		}
+		}*/
 		
 		return foundColorData;
 	}
@@ -186,20 +159,10 @@ public class CLStorage {
 		NibbleArray rColorArray;
 		NibbleArray gColorArray;
 		NibbleArray bColorArray;
-		ExtendedBlockStorage[] chunkStorageArrays = null;
+		ExtendedBlockStorage[] chunkStorageArrays = chunk.getBlockStorageArray();
 		boolean foundColorData = false;
 		
 		getReflectionData();
-		
-		try {
-			chunkStorageArrays = (ExtendedBlockStorage[])fieldStorageArrays.get(chunk);						
-		} catch (IllegalArgumentException e) {
-			FMLLog.severe("%s.loadColorData()   Could not access ExtendedBlockStorage.storageArrays due to IllegalArgumentException", EVENT_SOURCE);
-			return false;
-		} catch (IllegalAccessException e) {
-			FMLLog.severe("%s.loadColorData()   Could not access ExtendedBlockStorage.storageArrays due to IllegalAccessException", EVENT_SOURCE);
-			return false;
-		}		
 		
 		for (int k = 0; k < arraySize; ++k)
 		{
@@ -233,16 +196,7 @@ public class CLStorage {
             //else
             	//FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
 		}
-		
-		// Redundnat?
-		try {
-			fieldStorageArrays.set(chunk, chunkStorageArrays);
-		} catch (IllegalArgumentException e) {
-			FMLLog.severe("%s.loadColorData()   Unexpected IllegalArgumentException while setting RGB color data!", EVENT_SOURCE);
-		} catch (IllegalAccessException e) {
-			FMLLog.severe("%s.loadColorData()   Unexpected IllegalAccessException while setting RGB color data!", EVENT_SOURCE);
-		}
-		
+				
 		return foundColorData;
 	}
 	
@@ -259,21 +213,11 @@ public class CLStorage {
 		NibbleArray rColorArray;
 		NibbleArray gColorArray;
 		NibbleArray bColorArray;
-		ExtendedBlockStorage[] chunkStorageArrays = null;
+		ExtendedBlockStorage[] chunkStorageArrays = chunk.getBlockStorageArray();
 		NBTTagCompound level = data.getCompoundTag("Level");				
 		NBTTagList nbttaglist = level.getTagList("Sections", 10);	
 		
 		getReflectionData();		
-		
-		try {
-			chunkStorageArrays = (ExtendedBlockStorage[])fieldStorageArrays.get(chunk);						
-		} catch (IllegalArgumentException e) {
-			FMLLog.severe("%s.saveColorData()   Could not access ExtendedBlockStorage.storageArrays due to IllegalArgumentException", EVENT_SOURCE);
-			return false;
-		} catch (IllegalAccessException e) {
-			FMLLog.severe("%s.saveColorData()   Could not access ExtendedBlockStorage.storageArrays due to IllegalAccessException", EVENT_SOURCE);
-			return false;
-		}			
 				
 		for (int k = 0; k < chunkStorageArrays.length; k++)
 		{
@@ -282,17 +226,11 @@ public class CLStorage {
 				NBTTagCompound nbtYCompound = nbttaglist.getCompoundTagAt(k);
 				
 				// Add our RGB arrays to it
-	    		try {
-	    			// TESTING: Force a known block to 100% red, 15 light level
-	    			chunk.setLightValue(EnumSkyBlock.Block, 0, 0, 0, CLApi.makeColorLightValue(1.0F, 0, 0, 15));
-	    			
+	    		try {	    			
 					rColorArray = (NibbleArray)methodGetRedColorArray.invoke(chunkStorageArrays[k]);
 					gColorArray = (NibbleArray)methodGetGreenColorArray.invoke(chunkStorageArrays[k]);
 					bColorArray = (NibbleArray)methodGetBlueColorArray.invoke(chunkStorageArrays[k]);
 
-					// TESTING: Verify what we have. Should be "SAVE:111101111"
-					//FMLLog.info("SAVE:%s",  Integer.toBinaryString(chunk.getBlockLightValue(0, 0, 0, 15)));
-					
 					nbtYCompound.setByteArray("RedColorArray", rColorArray.data);
 					nbtYCompound.setByteArray("GreenColorArray", gColorArray.data);
 					nbtYCompound.setByteArray("BlueColorArray", bColorArray.data);
@@ -318,20 +256,10 @@ public class CLStorage {
 
 	public static NibbleArray[] getRedColorArrays(Chunk chunk)
 	{
-		ExtendedBlockStorage[] chunkStorageArrays = null;
+		ExtendedBlockStorage[] chunkStorageArrays = chunk.getBlockStorageArray();
 		NibbleArray[] redColorArrays;
 		
 		getReflectionData();
-		
-		try {
-			chunkStorageArrays = (ExtendedBlockStorage[])fieldStorageArrays.get(chunk);						
-		} catch (IllegalArgumentException e) {
-			FMLLog.severe("%s.getRedColorArrays()   Could not access ExtendedBlockStorage.storageArrays due to IllegalArgumentException", EVENT_SOURCE);
-			return null;
-		} catch (IllegalAccessException e) {
-			FMLLog.severe("%s.getRedColorArrays()   Could not access ExtendedBlockStorage.storageArrays due to IllegalAccessException", EVENT_SOURCE);
-			return null;
-		}	
 		
 		redColorArrays = new NibbleArray[chunkStorageArrays.length];
 		
@@ -364,21 +292,11 @@ public class CLStorage {
 	
 	public static NibbleArray[] getGreenColorArrays(Chunk chunk)
 	{
-		ExtendedBlockStorage[] chunkStorageArrays = null;
+		ExtendedBlockStorage[] chunkStorageArrays = chunk.getBlockStorageArray();
 		NibbleArray[] greenColorArrays;
 		
 		getReflectionData();
-		
-		try {
-			chunkStorageArrays = (ExtendedBlockStorage[])fieldStorageArrays.get(chunk);						
-		} catch (IllegalArgumentException e) {
-			FMLLog.severe("%s.getGreenColorArrays()   Could not access ExtendedBlockStorage.storageArrays due to IllegalArgumentException", EVENT_SOURCE);
-			return null;
-		} catch (IllegalAccessException e) {
-			FMLLog.severe("%s.getGreenColorArrays()   Could not access ExtendedBlockStorage.storageArrays due to IllegalAccessException", EVENT_SOURCE);
-			return null;
-		}	
-		
+				
 		greenColorArrays = new NibbleArray[chunkStorageArrays.length];
 		
 		for (int i=0;i<chunkStorageArrays.length;i++)
@@ -410,20 +328,10 @@ public class CLStorage {
 	
 	public static NibbleArray[] getBlueColorArrays(Chunk chunk)
 	{
-		ExtendedBlockStorage[] chunkStorageArrays = null;
+		ExtendedBlockStorage[] chunkStorageArrays = chunk.getBlockStorageArray();
 		NibbleArray[] blueColorArrays;
 		
 		getReflectionData();
-		
-		try {
-			chunkStorageArrays = (ExtendedBlockStorage[])fieldStorageArrays.get(chunk);						
-		} catch (IllegalArgumentException e) {
-			FMLLog.severe("%s.getBlueColorArrays()   Could not access ExtendedBlockStorage.storageArrays due to IllegalArgumentException", EVENT_SOURCE);
-			return null;
-		} catch (IllegalAccessException e) {
-			FMLLog.severe("%s.getBlueColorArrays()   Could not access ExtendedBlockStorage.storageArrays due to IllegalAccessException", EVENT_SOURCE);
-			return null;
-		}	
 		
 		blueColorArrays = new NibbleArray[chunkStorageArrays.length];
 		

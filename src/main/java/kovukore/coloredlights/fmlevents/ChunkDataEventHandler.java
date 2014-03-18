@@ -7,6 +7,8 @@ import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ChunkDataEventHandler {
 
@@ -37,7 +39,7 @@ public class ChunkDataEventHandler {
 	@SubscribeEvent	
 	public void UnloadChunk(ChunkWatchEvent.UnWatch event)
 	{
-		FMLLog.info("UnloadChunk at (%s,%s) for %s", event.chunk.chunkXPos, event.chunk.chunkZPos, event.player.getDisplayName());
+		//FMLLog.info("UnloadChunk at (%s,%s) for %s", event.chunk.chunkXPos, event.chunk.chunkZPos, event.player.getDisplayName());
 	}		
 	
 }

@@ -23,7 +23,6 @@ public class TransformPlayerInstance extends MethodTransformer {
 		if (method.name.equals("sendToAllPlayersWatchingChunk"))
 		{
 			transformNewSendToAllPlayersWatchingChunk(method);
-			FMLLog.info("################### Transformed PlayerInstance");
 			return true;
 		}
 		else

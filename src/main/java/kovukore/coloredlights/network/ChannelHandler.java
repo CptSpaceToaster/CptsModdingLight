@@ -14,6 +14,7 @@ import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -23,12 +24,10 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 	
 	public EnumMap<Side, FMLEmbeddedChannel> channels;
 	public final String CHANNEL_NAME = "ColoredLightsCore";
-	WorldClient world;
 	
 	public ChannelHandler()
 	{
 		registerNetwork();
-		registerWorldClient();
 	}
 	
 	public void registerNetwork()
@@ -37,12 +36,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 		
 		this.addDiscriminator(ChunkColorDataPacket.PACKET_ID, ChunkColorDataPacket.class);
 	}
-	
-	public void registerWorldClient()
-	{
-		world = Minecraft.getMinecraft().theWorld;
-	}
-	
+		
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, IPacket msg, ByteBuf target) throws Exception {
 		
@@ -54,7 +48,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 		
 		msg.readBytes(source);
 	
-		ProcessColorDataPacket(msg); // NO NIBBLE ARRAY EXISTS FOR
+		ProcessColorDataPacket(msg);
 	}
 
 	public void SendChunkColorData(Chunk chunk, EntityPlayerMP player)
@@ -71,7 +65,6 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 				return;
 			}
 			
-			//packet.packetId = ChunkColorDataPacket.PACKET_ID;
 			packet.chunkXPosition = chunk.xPosition;
 			packet.chunkZPosition = chunk.zPosition;
 			packet.arraySize = redColorArray.length;
@@ -92,10 +85,11 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 	
 	}
 	
+	@SideOnly(Side.CLIENT)
 	private void ProcessColorDataPacket(IPacket packet)
 	{
 		ChunkColorDataPacket ccdPacket = (ChunkColorDataPacket)packet;
-		Chunk targetChunk;
+		Chunk targetChunk = null;
 		
 		targetChunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);
 				

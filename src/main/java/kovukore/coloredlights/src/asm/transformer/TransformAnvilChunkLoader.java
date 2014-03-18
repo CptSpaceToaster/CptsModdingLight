@@ -11,7 +11,10 @@ import kovukore.coloredlights.src.asm.transformer.core.MethodTransformer;
 public class TransformAnvilChunkLoader extends MethodTransformer {
 
 	/**
-	 * Sets hooks to store RGB color data with world save
+	 * This class is the ASM method of saving/loading chunk RGB data to disk.
+	 * IT IS CURRENTLY NOT USED!
+	 * 
+	 * The preferred method is via Forge's event hooks in src/api/CLStorage
 	 */
 	public TransformAnvilChunkLoader() {
 

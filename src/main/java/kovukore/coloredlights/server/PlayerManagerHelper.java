@@ -24,16 +24,17 @@ public class PlayerManagerHelper {
 	 */
     public static void sendToPlayerWatchingChunk(EntityPlayerMP player, ChunkCoordIntPair chunkLocation)
     {
-    	FMLLog.info("Server just sent chunk (%s, %s) to player %s", chunkLocation.chunkXPos, chunkLocation.chunkZPos, player.getDisplayName());
+    	//FMLLog.info("Server just sent chunk (%s, %s) to player %s", chunkLocation.chunkXPos, chunkLocation.chunkZPos, player.getDisplayName());
     	
-    	sendChunkRGBDataToPlayer(player, chunkLocation.chunkXPos, chunkLocation.chunkZPos, null);
+    	// TODO: Load chunk from server
+    	//sendChunkRGBDataToPlayer(player, chunkLocation.chunkXPos, chunkLocation.chunkZPos, null);
     }	
     
     public static void entityPlayerMP_onUpdate(ArrayList<Chunk> chunks, EntityPlayerMP player)
     {
     	for (Chunk c : chunks)
     	{
-    		FMLLog.info("S26: Server just sent chunk (%s, %s) to player %s", c.xPosition, c.zPosition, player.getDisplayName());
+    		//FMLLog.info("S26: Server just sent chunk (%s, %s) to player %s", c.xPosition, c.zPosition, player.getDisplayName());
     		
     		sendChunkRGBDataToPlayer(player, c.xPosition, c.zPosition, c);
     	}
@@ -44,7 +45,8 @@ public class PlayerManagerHelper {
     	if (chunk == null)
     	{
     		// Pick out chunk from world
-    		chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(chunkX, chunkZ);
+    		// TODO: This kills the server
+    		//chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(chunkX, chunkZ);
     		
     		if (chunk == null)
     		{
