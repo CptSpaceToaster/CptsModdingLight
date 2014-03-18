@@ -51,7 +51,7 @@ public class CLLamp extends CLBlock
 	public void registerBlockIcons(IIconRegister iconRegister) {	//registerIcons()
 		icons = new IIcon[16];
 		for (int i = 0; i< icons.length; i++) {
-			icons[i] = iconRegister.registerIcon(ModInfo.ID + ":" + BlockInfo.CLLamp+ (powered?"On":"") + i);
+			icons[i] = iconRegister.registerIcon(ModInfo.ID + ":" + BlockInfo.CLLamp + (powered?"On":"") + i);
 		}
 	}
 	

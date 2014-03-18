@@ -31,7 +31,8 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 				TransformChunkCache.class.getName(),
 				TransformExtendedBlockStorage.class.getName(),
 				TransformPlayerInstance.class.getName(),
-				TransformEntityPlayerMP.class.getName()
+				TransformEntityPlayerMP.class.getName(),
+				TransformEntityRenderer.class.getName()
 				//TransformAnvilChunkLoader.class.getName()
 				};
 	}
