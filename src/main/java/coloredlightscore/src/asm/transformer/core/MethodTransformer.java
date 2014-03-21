@@ -1,4 +1,4 @@
-package kovukore.coloredlights.src.asm.transformer.core;
+package coloredlightscore.src.asm.transformer.core;
 
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;

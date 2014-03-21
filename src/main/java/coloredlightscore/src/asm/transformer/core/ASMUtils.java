@@ -1,6 +1,7 @@
-package kovukore.coloredlights.src.asm.transformer.core;
+package coloredlightscore.src.asm.transformer.core;
 
-import static kovukore.coloredlights.src.asm.ColoredLightsCoreLoadingPlugin.CLASSLOADER;
+import static coloredlightscore.src.asm.ColoredLightsCoreDummyContainer.CLLog;
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLASSLOADER;
 import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
 
 import java.io.IOException;
@@ -11,19 +12,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import kovukore.coloredlights.src.asm.ColoredLightsCoreLoadingPlugin;
 import net.minecraft.launchwrapper.IClassNameTransformer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
+
+import coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 
 public final class ASMUtils
@@ -33,6 +43,138 @@ public final class ASMUtils
 	{
 	}
 
+	/**
+	 * Given a deobfuscated class name, returns the appropriate obfuscated/deobfuscated name ready to use
+	 * in transformer code.
+	 * 
+	 * @author heaton84
+	 * 
+	 * @param deobfuscatedClassName Eg: "net.minecraft.block.Block"
+	 * @return Deobfuscated name if running in eclipse. Obfuscated if running in production.
+	 * /
+	public static final String getClassName(String deobfuscatedClassName)
+	{
+		String internalName = ASMUtils.makeNameInternal(deobfuscatedClassName);
+		
+		return MCP_ENVIRONMENT ? internalName :  FMLDeobfuscatingRemapper.INSTANCE.unmap(internalName);
+	}
+	
+	public static final String getClassField(String deobfuscatedClassName, String deobfuscatedFieldName, String deobfuscatedFieldDescriptor)
+	{
+		String internalName = ASMUtils.makeNameInternal(deobfuscatedClassName);
+		
+		return MCP_ENVIRONMENT ? deobfuscatedFieldName :  FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(internalName, deobfuscatedFieldName, deobfuscatedFieldDescriptor);
+	}
+	
+	/ **
+	 * Given a deobfuscated type, returns the appropriate obfuscated/deobfuscated name ready to use
+	 * in transformer code.
+	 * 
+	 * @author heaton84
+	 * 
+	 * @param deobfuscatedTypeDescriptor Eg: "net.minecraft.world.chunk.NibbleArray"
+	 * @return Deobfuscated name if running in eclipse. Obfuscated if running in production.
+	 * /
+	public static final Type getType(String deobfuscatedTypeDescriptor)
+	{
+		String internalName = ASMUtils.makeNameInternal(deobfuscatedTypeDescriptor);
+
+		return Type.getType(MCP_ENVIRONMENT ? internalName : FMLDeobfuscatingRemapper.INSTANCE.mapType(internalName));
+	}
+	
+	public static final String getMethod(String owner, String method, String desc)
+	{
+		String internalOwner = ASMUtils.makeNameInternal(owner);
+		String internalMethod = ASMUtils.makeNameInternal(method);
+		String internalDesc = ASMUtils.makeNameInternal(desc);
+
+		if (!MCP_ENVIRONMENT)
+			return FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(internalOwner, internalMethod, internalDesc);
+		else
+			return internalMethod + " " + internalDesc;
+	}
+	
+	public static final boolean isMethod(MethodNode m, String owner, String method, String desc)
+	{
+		String internalOwner = ASMUtils.makeNameInternal(owner);
+		String internalMethod = ASMUtils.makeNameInternal(method);
+		String internalDesc = ASMUtils.makeNameInternal(desc);
+		
+		String descriptor = MCP_ENVIRONMENT ? internalMethod + " " + internalDesc : FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(internalOwner, internalMethod, internalDesc);
+		
+		FMLLog.info("TQ:%s ^ %s %s", descriptor, m.name, m.desc);
+		
+		return descriptor.equals(m.name + " " + m.desc);
+	}
+
+	public static final boolean isMethod(MethodNode m, String owner, String methodWithDescriptor)
+	{
+		String internalOwner = ASMUtils.makeNameInternal(owner);
+		String internalMethod = ASMUtils.makeNameInternal(methodWithDescriptor);
+
+		String methodParts[] = internalMethod.split("\\s+");
+		
+		String descriptor = MCP_ENVIRONMENT ? internalMethod : FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(internalOwner, methodParts[0], methodParts[1]);
+		
+		return descriptor.equals(m.name + " " + m.desc);
+	}	
+	
+	public static final String getMethodName(String methodAndDescriptor)
+	{
+		String methodParts[] = methodAndDescriptor.split("\\s+");
+		
+		return methodParts[0];
+	}
+
+	public static final String getMethodDescriptor(String methodAndDescriptor)
+	{
+		String methodParts[] = methodAndDescriptor.split("\\s+");
+		
+		return methodParts[1];
+	}
+	
+	/**
+	 * Given a JVM method/type descriptor such as "(Ljava/util/ArrayList;Lnet/minecraft/entity/player/EntityPlayerMP;)V",
+	 * returns an obfuscated descriptor like "(Ljava/util/ArrayList;Lmm;)V". Note: This method will return the
+	 * deobfuscated descriptor if running in Eclipse (MCP_ENVIRONMENT=true) 
+	 * 
+	 * @param descriptor The descriptor to decode
+	 * @return The proper descriptor
+	 * /
+	public static final String getJVMTypeObfuscated(String descriptor)
+	{
+		int i = 0, j;
+		String className = "";
+		String result = "";
+		
+		while (i < descriptor.length())
+		{
+			if (descriptor.substring(i, i + 1).equals("L"))
+			{
+				// Extract class name
+				j = i;
+				
+				while (!descriptor.substring(j, j + 1).equals(";"))
+					j++;
+				
+				className = descriptor.substring(i + 1, j);
+				
+				//FMLLog.info("getMethodDescriptorObfuscated - Found class %s", className);
+				
+				result = result + "L" + ASMUtils.getClassName(className) + ";";
+				
+				// Skip to end of class name
+				i = j;
+			}
+			else
+				result = result + descriptor.substring(i, i + 1);
+			
+			i++;
+		}
+		
+		return result;
+	}*/
+	
 	public static final String deobfuscate(String className, FieldNode field)
 	{
 		return deobfuscateField(className, field.name, field.desc);
@@ -94,9 +236,9 @@ public final class ASMUtils
 	/**
 	 * Finds last occurance of LDC <ldcArgument>
 	 * 
-	 * @param method
-	 * @param ldcArgument
-	 * @return
+	 * @param method Method to search
+	 * @param ldcArgument String literal to be found
+	 * @return LdcInsnNode instance when found, null if not found
 	 */
 	public static final LdcInsnNode findLastLDC(MethodNode method, String ldcArgument)
 	{
@@ -117,10 +259,14 @@ public final class ASMUtils
 		return found;
 	}
 	
-	public static final MethodInsnNode findLastInvoke(MethodNode method, int opcode, String className, String methodName)
+	public static final MethodInsnNode findLastInvoke(MethodNode method, int opcode, String className, String methodNameAndDescriptor, boolean dumpCandidates)
 	{
 		MethodInsnNode found = null;
 		MethodInsnNode candidate = null;
+		
+		String obfClass = NameMapper.getInstance().getClassName(className);
+		String obfName = NameMapper.getInstance().getMethodName(className, methodNameAndDescriptor);
+		String obfDesc = NameMapper.getInstance().getMethodDescriptor(className, methodNameAndDescriptor);
 		
 		for (int i = 0; i < method.instructions.size(); i++)
 		{
@@ -129,17 +275,13 @@ public final class ASMUtils
 			{
 				candidate = (MethodInsnNode)insn;
 				
-				if (candidate.owner.equals(className) && candidate.name.equals(methodName))			
-					found = candidate;
-				else
+				if (dumpCandidates)
 				{
-					FMLLog.info("findLastInvoke: nope. class=%s|%s name=%s|%s", className, candidate.owner, methodName, candidate.name);
-					// findLastInvoke: nope. class=
-					// net/minecraft/network/NethandlerPlayServer
-					// net/minecraft/network/NetHandlerPlayServer
-					// sendPacket
-					// sendPacket
+					CLLog.debug(String.format("   findLastInvoke@%s is %s/%s %s, looking for [%s|%s]/%s %s", i, candidate.owner, candidate.name, candidate.desc, className, obfClass, obfName, obfDesc));
 				}
+				
+				if ((candidate.owner.equals(obfClass) | candidate.owner.equals(className)) && candidate.name.equals(obfName) && candidate.desc.equals(obfDesc))			
+					found = candidate;
 			}
 		}
 		return found;
@@ -154,16 +296,6 @@ public final class ASMUtils
 	public static final String undoInternalName(String name)
 	{
 		return name.replace('/', '.');
-	}
-
-	public static final MethodInsnNode generateMethodCall(String targetClass, String methodName, Type returnType, Type... params)
-	{
-		return new MethodInsnNode(Opcodes.INVOKEVIRTUAL, makeNameInternal(targetClass), methodName, Type.getMethodDescriptor(returnType, params));
-	}
-
-	public static final MethodInsnNode generateStaticMethodCall(String targetClass, String methodName, Type returnType, Type... params)
-	{
-		return new MethodInsnNode(Opcodes.INVOKESTATIC, makeNameInternal(targetClass), methodName, Type.getMethodDescriptor(returnType, params));
 	}
 
 	public static final MethodInsnNode generateMethodCall(Method method)
@@ -343,7 +475,9 @@ public final class ASMUtils
 			}
 			else
 			{
-				return new ClassInfoFromClazz(Class.forName(ASMUtils.undoInternalName(className)));
+				// heaton84: This is a no-no. Class.forName is a minefield during class transformation
+				return null;
+				//return new ClassInfoFromClazz(Class.forName(ASMUtils.undoInternalName(className)));
 			}
 		}
 		catch (Exception e)

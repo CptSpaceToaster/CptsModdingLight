@@ -1,4 +1,4 @@
-package kovukore.coloredlights.src.helper;
+package coloredlightscore.src.helper;
 
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.EnumSkyBlock;

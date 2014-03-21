@@ -1,4 +1,4 @@
-package kovukore.coloredlights.network;
+package coloredlightscore.network;
 
 import io.netty.buffer.ByteBuf;
 

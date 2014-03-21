@@ -1,13 +1,20 @@
-package kovukore.coloredlights.src.asm.transformer.core;
+package coloredlightscore.src.asm.transformer.core;
 
 import java.io.IOException;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 public abstract class HelperMethodTransformer extends MethodTransformer {
 	
 	protected String className;
+	protected String classNameDeobfuscated;
 	
 	/**
 	 * When set, this class will check for the existance of the proper target function.
@@ -19,16 +26,17 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
 	public HelperMethodTransformer(String className) {
 
 		this.className = className;
-				
+		this.classNameDeobfuscated = NameMapper.getInstance().getClassName(className).replace('/', '.');	
+		
+		checkForHelperFunction = !NameMapper.getInstance().isObfuscated();
 	}
 	
 	protected abstract Class<?> getHelperClass();
 
 	@Override
 	protected boolean transforms(String className) {
-		
-		// TODO: Is the call to deobfuscateClass needed? Not tested yet.
-		return className.equals(this.className); // || ASMUtils.deobfuscateClass(className).equals(this.className);
+				
+		return className.equals(this.classNameDeobfuscated) || className.equals(this.className);		
 	}	
 	
 	/**
@@ -100,6 +108,9 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
 		int argIndex;
 		String helperMethodDescriptor;
 				
+		if (helperMethod.indexOf(' ') > -1)
+			helperMethod = helperMethod.substring(0, helperMethod.indexOf(' '));
+		
 		// Prepare helperMethodDescriptor
 		// Refer to add...Method documentation for proper method Descriptors of helper methods (or just read the comments below)
 						

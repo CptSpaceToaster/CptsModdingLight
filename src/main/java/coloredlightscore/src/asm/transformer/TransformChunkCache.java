@@ -1,9 +1,10 @@
-package kovukore.coloredlights.src.asm.transformer;
+package coloredlightscore.src.asm.transformer;
 
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import kovukore.coloredlights.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 
 public class TransformChunkCache extends HelperMethodTransformer {
 
@@ -13,19 +14,19 @@ public class TransformChunkCache extends HelperMethodTransformer {
 
 	@Override
 	protected Class<?> getHelperClass() {
-		return kovukore.coloredlights.src.helper.CLChunkCacheHelper.class;
+		return coloredlightscore.src.helper.CLChunkCacheHelper.class;
 	}
 	
 	@Override
 	protected boolean transforms(ClassNode clazz, MethodNode method) {
 		
-		return method.name.equals("getLightBrightnessForSkyBlocks");
+		return NameMapper.getInstance().isMethod(method, super.className, "getLightBrightnessForSkyBlocks (IIII)I");
 	}
 
 	@Override
 	protected boolean transform(ClassNode clazz, MethodNode method) {
 		
-		if (method.name.equals("getLightBrightnessForSkyBlocks"))
+		if (NameMapper.getInstance().isMethod(method, super.className, "getLightBrightnessForSkyBlocks (IIII)I"))
 		{
 			return redefineMethod(clazz, method, "getLightBrightnessForSkyBlocks");
 		}

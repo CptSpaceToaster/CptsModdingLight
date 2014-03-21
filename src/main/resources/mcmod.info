@@ -1,14 +1,14 @@
 [
 {
-  "modid": "easycoloredlights",
-  "name": "Easy Colored Lights",
-  "description": "Because Who Doesn't Like Colors!?!",
+  "modid": "coloredlightscore",
+  "name": "Colored Lights Core",
+  "description": "The coremod for Colored Lights",
   "credits": "",
   "logoFile": "",
   "mcversion": "1.7.2.05",
   "url": "",
   "updateUrl": "",
-  "authors": ["Mr. Walrus", "Kovoooooooo!", "CptSpaceToaster"],
+  "authors": ["AJWGeek", "Kovu", "CptSpaceToaster", "heaton84"],
   "screenshots": [ "" ],
   "dependencies": [
      "mod_MinecraftForge"

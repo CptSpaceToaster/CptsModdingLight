@@ -17,8 +17,8 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "0.2"
-group= "kovukore.coloredlightscore"
+version = "1.0.2"
+group= "coloredlightscore"
 archivesBaseName = "ColoredLightsCore"
 
 minecraft {
@@ -40,4 +40,10 @@ tasks.build.dependsOn('sourceJar', 'deobfJar')
 
 processResources {
     from (sourceSets.main.resources.srcDirs)
+}
+
+jar {
+  manifest {
+    attributes('FMLCorePlugin': 'coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin')
+  }
 }

@@ -1,4 +1,4 @@
-package kovukore.coloredlights.src.asm.transformer.core;
+package coloredlightscore.src.asm.transformer.core;
 
 public interface Consumer<T>
 {

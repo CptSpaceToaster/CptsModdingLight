@@ -1,10 +1,11 @@
-package kovukore.coloredlights.src.asm.transformer.core;
+package coloredlightscore.src.asm.transformer.core;
 
-import static kovukore.coloredlights.src.asm.transformer.core.ASMUtils.getClassInfo;
-import static kovukore.coloredlights.src.asm.transformer.core.ASMUtils.isAssignableFrom;
-import kovukore.coloredlights.src.asm.transformer.core.ASMUtils.ClassInfo;
+import static coloredlightscore.src.asm.transformer.core.ASMUtils.getClassInfo;
+import static coloredlightscore.src.asm.transformer.core.ASMUtils.isAssignableFrom;
 
 import org.objectweb.asm.ClassWriter;
+
+import coloredlightscore.src.asm.transformer.core.ASMUtils.ClassInfo;
 
 public class ExtendedClassWriter extends ClassWriter
 {
@@ -19,6 +20,13 @@ public class ExtendedClassWriter extends ClassWriter
 	{
 		ClassInfo cl1 = getClassInfo(type1);
 		ClassInfo cl2 = getClassInfo(type2);
+		
+		// heaton84: If we can't get one side of the compare, just return the side we're working on
+		if (cl1 == null)
+			return type2;
+		if (cl2 == null)
+			return type1;
+		
 		if (isAssignableFrom(cl1, cl2))
 		{
 			return type1;

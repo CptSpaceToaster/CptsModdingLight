@@ -1,10 +1,10 @@
-package kovukore.coloredlights.src.helper;
+package coloredlightscore.src.helper;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockGrass;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockGrass;
 import net.minecraft.util.IIcon;
 
 

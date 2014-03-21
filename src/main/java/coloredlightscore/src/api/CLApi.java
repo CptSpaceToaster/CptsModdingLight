@@ -1,4 +1,4 @@
-package kovukore.coloredlights.src.api;
+package coloredlightscore.src.api;
 
 import net.minecraft.block.Block;
 

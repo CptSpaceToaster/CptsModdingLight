@@ -1,12 +1,11 @@
-package kovukore.coloredlights.server;
+package coloredlightscore.server;
 
 import java.util.ArrayList;
 
-import cpw.mods.fml.common.FMLLog;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
+import cpw.mods.fml.common.FMLLog;
 
 public class PlayerManagerHelper {
 
@@ -55,6 +54,6 @@ public class PlayerManagerHelper {
     		}    		
     	}
     	
-		kovukore.coloredlights.network.ChannelHandler.INSTANCE.SendChunkColorData(chunk, player);    	
+		coloredlightscore.network.ChannelHandler.INSTANCE.SendChunkColorData(chunk, player);    	
     }
 }

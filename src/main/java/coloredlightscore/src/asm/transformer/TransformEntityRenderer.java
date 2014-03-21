@@ -1,15 +1,16 @@
-package kovukore.coloredlights.src.asm.transformer;
+package coloredlightscore.src.asm.transformer;
 
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import kovukore.coloredlights.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 
 public class TransformEntityRenderer extends HelperMethodTransformer {
 
 	// These methods will be replaced by statics in CLRenderBlocksHelper
 	String methodsToReplace[] = {
-			"updateLightmap"
+			"updateLightmap (F)V"
 	};
 
 	public TransformEntityRenderer()
@@ -19,7 +20,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
 	@Override
 	protected Class<?> getHelperClass() {
-		return kovukore.coloredlights.src.helper.CLEntityRendererHelper.class;
+		return coloredlightscore.src.helper.CLEntityRendererHelper.class;
 	}
 
 	@Override
@@ -27,7 +28,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
 		for(String name : methodsToReplace)
 		{
-			if (methodNode.name.equals(name))
+			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
 				return true;
 		}
 
@@ -39,7 +40,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
 		for(String name : methodsToReplace)
 		{
-			if (methodNode.name.equals(name))
+			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
 			{
 				return redefineMethod(classNode, methodNode, name);
 			}

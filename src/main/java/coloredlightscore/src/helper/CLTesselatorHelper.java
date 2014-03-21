@@ -1,4 +1,4 @@
-package kovukore.coloredlights.src.helper;
+package coloredlightscore.src.helper;
 
 public class CLTesselatorHelper {
 

@@ -1,6 +1,6 @@
-package kovukore.coloredlights.src.helper;
+package coloredlightscore.src.helper;
 
-import kovukore.coloredlights.src.api.CLApi;
+import coloredlightscore.src.api.CLApi;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.world.ChunkCache;

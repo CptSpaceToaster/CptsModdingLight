@@ -1,15 +1,17 @@
-package kovukore.coloredlights.src.asm.transformer;
+package coloredlightscore.src.asm.transformer;
 
-import kovukore.coloredlights.src.asm.transformer.core.HelperMethodTransformer;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
-import org.objectweb.asm.tree.*;
+import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 
 public class TransformRenderBlocks extends HelperMethodTransformer {
 
 	// These methods will be replaced by statics in CLRenderBlocksHelper
 	String methodsToReplace[] = {
-			"renderStandardBlockWithAmbientOcclusion",
-			"renderStandardBlockWithColorMultiplier"
+			"renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z",
+			"renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z"
 	};
 	
 	public TransformRenderBlocks()
@@ -19,7 +21,7 @@ public class TransformRenderBlocks extends HelperMethodTransformer {
 	
 	@Override
 	protected Class<?> getHelperClass() {
-		return kovukore.coloredlights.src.helper.CLRenderBlocksHelper.class;
+		return coloredlightscore.src.helper.CLRenderBlocksHelper.class;
 	}
 
 	
@@ -28,7 +30,7 @@ public class TransformRenderBlocks extends HelperMethodTransformer {
 
 		for(String name : methodsToReplace)
 		{
-			if (methodNode.name.equals(name))
+			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
 				return true;
 		}
 		
@@ -40,7 +42,7 @@ public class TransformRenderBlocks extends HelperMethodTransformer {
 		
 		for(String name : methodsToReplace)
 		{
-			if (methodNode.name.equals(name))
+			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
 			{
 				return redefineMethod(classNode, methodNode, name);
 			}

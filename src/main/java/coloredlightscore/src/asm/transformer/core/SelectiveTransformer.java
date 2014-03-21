@@ -1,4 +1,4 @@
-package kovukore.coloredlights.src.asm.transformer.core;
+package coloredlightscore.src.asm.transformer.core;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 
@@ -16,6 +16,8 @@ public abstract class SelectiveTransformer implements IClassTransformer
 	{
 		if (bytes != null && transforms(transformedName))
 		{
+			FMLLog.info("Class %s is a candidate for transforming", transformedName);
+			
 			try
 			{
 				ClassNode clazz = ASMUtils.getClassNode(bytes);
@@ -26,6 +28,8 @@ public abstract class SelectiveTransformer implements IClassTransformer
 					clazz.accept(writer);
 					bytes = writer.toByteArray();
 				}
+				else
+					FMLLog.warning("Did not transform %s", transformedName);
 			}
 			catch (Exception e)
 			{

@@ -1,20 +1,24 @@
-package kovukore.coloredlights.src.asm;
+package coloredlightscore.src.asm;
 
-/*
- * TODO:
-<CptRageToaster> heaton84: we shouldn't replace getLightBrightness
-<CptRageToaster> heaton84: I had a wrong method name
-<CptRageToaster> heaton84: We need to asm getLightBrighessForSkyBlocks to simply return the vanilla light value.  Then, we need to make an additional getLightBrighnessValue in the helper method that everyone calls
-*/
+
 
 import java.util.Map;
 
-import kovukore.coloredlights.src.asm.transformer.*;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import coloredlightscore.src.asm.transformer.TransformBlock;
+import coloredlightscore.src.asm.transformer.TransformChunkCache;
+import coloredlightscore.src.asm.transformer.TransformEntityPlayerMP;
+import coloredlightscore.src.asm.transformer.TransformEntityRenderer;
+import coloredlightscore.src.asm.transformer.TransformExtendedBlockStorage;
+import coloredlightscore.src.asm.transformer.TransformPlayerInstance;
+import coloredlightscore.src.asm.transformer.TransformRenderBlocks;
+import coloredlightscore.src.asm.transformer.TransformTessellator;
+import coloredlightscore.src.asm.transformer.TransformWorld;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 
 @MCVersion("1.7.2")
+//@SortingIndex(value=999)
 public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 {
 	public static LaunchClassLoader CLASSLOADER;
@@ -33,7 +37,6 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 				TransformPlayerInstance.class.getName(),
 				TransformEntityPlayerMP.class.getName(),
 				TransformEntityRenderer.class.getName()
-				//TransformAnvilChunkLoader.class.getName()
 				};
 	}
 
@@ -59,6 +62,6 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 	@Override
 	public String getAccessTransformerClass()
 	{
-		return null;
+		return ColoredLightsCoreAccessTransformer.class.getName();
 	}
 }

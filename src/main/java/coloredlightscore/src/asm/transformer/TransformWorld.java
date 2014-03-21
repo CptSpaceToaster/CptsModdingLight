@@ -1,17 +1,20 @@
-package kovukore.coloredlights.src.asm.transformer;
+package coloredlightscore.src.asm.transformer;
 
-import org.objectweb.asm.tree.*;
-import kovukore.coloredlights.src.asm.transformer.core.HelperMethodTransformer;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
+
+import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 
 public class TransformWorld extends HelperMethodTransformer {
 
 	// These methods will be replaced by statics in CLWorldHelper
 	String methodsToReplace[] = {
-			"getBlockLightValue_do",
-			"getLightBrightnessForSkyBlocks",
-			"getLightBrightness",
-			"computeLightValue",
-			"updateLightByType"
+			"getBlockLightValue_do (IIIZ)I",
+			"getLightBrightnessForSkyBlocks (IIII)I",
+			"getLightBrightness (III)F",
+			"computeLightValue (IIILnet/minecraft/world/EnumSkyBlock;)I",
+			"updateLightByType (Lnet/minecraft/world/EnumSkyBlock;III)Z"
 	};
 		
 	public TransformWorld() {
@@ -22,7 +25,7 @@ public class TransformWorld extends HelperMethodTransformer {
 	@Override
 	protected Class<?> getHelperClass() {
 		
-		return kovukore.coloredlights.src.helper.CLWorldHelper.class;
+		return coloredlightscore.src.helper.CLWorldHelper.class;
 	}
 
 	
@@ -33,7 +36,7 @@ public class TransformWorld extends HelperMethodTransformer {
 				
 		for(String name : methodsToReplace)
 		{
-			if (methodNode.name.equals(name))
+			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
 				return true;
 		}
 		
@@ -45,7 +48,7 @@ public class TransformWorld extends HelperMethodTransformer {
 		
 		for(String name : methodsToReplace)
 		{
-			if (methodNode.name.equals(name))
+			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
 			{
 				return redefineMethod(classNode, methodNode, name);
 			}

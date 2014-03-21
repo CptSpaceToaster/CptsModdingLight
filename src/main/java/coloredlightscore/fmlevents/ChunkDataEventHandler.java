@@ -1,14 +1,12 @@
-package kovukore.coloredlights.fmlevents;
+package coloredlightscore.fmlevents;
 
-import kovukore.coloredlights.src.api.CLStorage;
+import coloredlightscore.src.api.CLStorage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ChunkDataEventHandler {
 
@@ -23,7 +21,9 @@ public class ChunkDataEventHandler {
 		NBTTagCompound data = event.getData();
 		
 		if (!CLStorage.loadColorData(chunk, data))
-			FMLLog.warning("Failed to load color data for chunk at (%s, %s)", chunk.xPosition, chunk.zPosition);
+		{
+			//FMLLog.warning("Failed to load color data for chunk at (%s, %s)", chunk.xPosition, chunk.zPosition);
+		}
 	}
 
 	@SubscribeEvent	
@@ -33,7 +33,9 @@ public class ChunkDataEventHandler {
 		NBTTagCompound data = event.getData();
 
 		if (!CLStorage.saveColorData(chunk, data))
+		{
 			FMLLog.warning("Failed to save color data for chunk at (%s, %s)", chunk.xPosition, chunk.zPosition);
+		}
 	}		
 
 	@SubscribeEvent	

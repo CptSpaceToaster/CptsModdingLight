@@ -1,26 +1,32 @@
-package kovukore.coloredlights.src.asm.transformer;
+package coloredlightscore.src.asm.transformer;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 
-import kovukore.coloredlights.src.asm.transformer.core.ASMUtils;
-import kovukore.coloredlights.src.asm.transformer.core.SingleMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.ASMUtils;
+import coloredlightscore.src.asm.transformer.core.SingleMethodTransformer;
 
 public class TransformTessellator extends SingleMethodTransformer {
 
+	
+	
 	public TransformTessellator() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	protected String getMcpMethod() {
-		return "setBrightness";
+		return "setBrightness (I)V";
 	}
 
 	@Override
-	protected String getSrgMethod() {
-		// TODO Auto-generated method stub
-		return null;
+	protected String getClassName() {
+		return "net.minecraft.client.renderer.Tessellator";
 	}
 
 	@Override
@@ -55,7 +61,7 @@ public class TransformTessellator extends SingleMethodTransformer {
 
 	@Override
 	protected boolean transforms(String className) {
-		return className.equals("net.minecraft.client.renderer.Tessellator");
+		return className.equals(getClassName());
 	}
 
 }

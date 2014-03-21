@@ -1,4 +1,4 @@
-package kovukore.coloredlights.src.helper;
+package coloredlightscore.src.helper;
 
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;

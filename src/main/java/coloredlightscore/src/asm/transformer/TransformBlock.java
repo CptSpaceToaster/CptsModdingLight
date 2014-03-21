@@ -1,7 +1,10 @@
-package kovukore.coloredlights.src.asm.transformer;
+package coloredlightscore.src.asm.transformer;
 
-import kovukore.coloredlights.src.asm.transformer.core.HelperMethodTransformer;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
+
+import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 
 public class TransformBlock extends HelperMethodTransformer {
 	
@@ -14,21 +17,24 @@ public class TransformBlock extends HelperMethodTransformer {
 	protected Class<?> getHelperClass() {
 		
 		// We should promote a 1:1 correlation between vanilla classes and helper classes
-		return kovukore.coloredlights.src.helper.CLBlockHelper.class;
+		return coloredlightscore.src.helper.CLBlockHelper.class;
 	}
 
 	
 	@Override
 	protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
 
-		return methodNode.name.equals("setLightLevel");
+		//return NameMapper.getInstance().isMethod(methodNode, super.className, "setLightLevel (F)Lnet/minecraft/block/Block;");
 		
+		return NameMapper.getInstance().isMethod(methodNode, super.className, "setLightLevel (F)Lnet/minecraft/block/Block;");
+		//return (methodNode.name + " " + methodNode.desc).equals("setLightLevel (F)Lnet/minecraft/block/Block;");
 	}	
 
 	@Override
 	protected boolean transform(ClassNode classNode, MethodNode methodNode) {
 		
-		if (methodNode.name.equals("setLightLevel"))
+		if (NameMapper.getInstance().isMethod(methodNode, super.className, "setLightLevel (F)Lnet/minecraft/block/Block;"))
+		//if ((methodNode.name + " " + methodNode.desc).equals("setLightLevel (F)Lnet/minecraft/block/Block;"))
 		{
 			return addReturnMethod(classNode, methodNode, "setLightLevel");
 		}

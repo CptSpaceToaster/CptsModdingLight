@@ -1,13 +1,23 @@
-	package kovukore.coloredlights.src.asm.transformer;
+	package coloredlightscore.src.asm.transformer;
+
+import static coloredlightscore.src.asm.ColoredLightsCoreDummyContainer.CLLog;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
-import com.sun.xml.internal.ws.org.objectweb.asm.Type;
-
-import cpw.mods.fml.common.FMLLog;
-import kovukore.coloredlights.src.asm.transformer.core.ASMUtils;
-import kovukore.coloredlights.src.asm.transformer.core.MethodTransformer;
+import coloredlightscore.src.asm.transformer.core.ASMUtils;
+import coloredlightscore.src.asm.transformer.core.MethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 
 /**
  * Fields added to net.minecraft.world.chunk.storage.ExtendedBlockStorage:
@@ -38,12 +48,19 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 	private FieldNode bColorArray;
 	private FieldNode blockLSBArray;
 	
+	private final String NIBBLE_ARRAY = "Lnet.minecraft.world.chunk.NibbleArray;";
+	private final String EBS_CLASSNAME = "net.minecraft.world.chunk.storage.ExtendedBlockStorage";
+	private final String SET_BLOCK_LIGHT_VALUE = "setExtBlocklightValue (IIII)V";
+	private final String GET_BLOCK_LIGHT_VALUE = "getExtBlocklightValue (III)I";
+	
 	private boolean addedMethods = false;
 			
 	@Override
 	protected boolean transforms(ClassNode clazz, MethodNode method) {
 		
-		return method.name.equals("setExtBlocklightValue") | method.name.equals("getExtBlocklightValue") | method.name.equals("<init>");
+		return NameMapper.getInstance().isMethod(method, EBS_CLASSNAME, SET_BLOCK_LIGHT_VALUE)
+				| NameMapper.getInstance().isMethod(method, EBS_CLASSNAME, GET_BLOCK_LIGHT_VALUE)
+				| method.name.equals("<init>");
 	}
 
 	@Override
@@ -57,13 +74,13 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 			changed = true;
 		}
 						
-		if (method.name.equals("setExtBlocklightValue"))
+		if (NameMapper.getInstance().isMethod(method, EBS_CLASSNAME, SET_BLOCK_LIGHT_VALUE))
 		{
 			transformSetExtBlocklightValue(clazz, method);
 			changed = true;
 		}
 
-		if (method.name.equals("getExtBlocklightValue"))
+		if (NameMapper.getInstance().isMethod(method, EBS_CLASSNAME, GET_BLOCK_LIGHT_VALUE))
 		{
 			transformGetExtBlocklightValue(clazz, method);
 			changed = true;
@@ -92,16 +109,21 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 
 	@Override
 	protected boolean transforms(String className) {
-		return className.equals("net.minecraft.world.chunk.storage.ExtendedBlockStorage");
+		//return className.equals(NameMapper.getInstance().getClassName(EBS_CLASSNAME).replace('/', '.'));
+		return className.equals(EBS_CLASSNAME);
 	}
 
 	private void addRGBNibbleArrays(ClassNode clazz)
 	{
-		Type typeNibbleArray = Type.getType(net.minecraft.world.chunk.NibbleArray.class);
+		Type typeNibbleArray = NameMapper.getInstance().getType(NIBBLE_ARRAY);
+		//Type typeNibbleArray = Type.getType(net.minecraft.world.chunk.NibbleArray.class);
 		
 		for (FieldNode f : clazz.fields)
-			if (f.name.equals("blockLSBArray"))
+			if (f.name.equals("blockLSBArray") || f.name.equals("field_76680_d") || (f.name.equals("d") && f.desc.equals("[B")))
 				blockLSBArray = f;
+		
+		if (blockLSBArray == null)
+			CLLog.error("TransformExtendedBlockStorage: Failed to find blockLSBArray!");
 		
 		rColorArray = new FieldNode(Opcodes.ACC_PUBLIC, "rColorArray", typeNibbleArray.getDescriptor(), null, null);
 		gColorArray = new FieldNode(Opcodes.ACC_PUBLIC, "gColorArray", typeNibbleArray.getDescriptor(), null, null);
@@ -137,7 +159,8 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 	private void transformConstructor(ClassNode clazz, MethodNode m)
 	{
 		String ebsInternalName = clazz.name;
-		Type typeNibbleArray = Type.getType(net.minecraft.world.chunk.NibbleArray.class);
+		Type typeNibbleArray = NameMapper.getInstance().getType(NIBBLE_ARRAY);
+		//Type typeNibbleArray = Type.getType(net.minecraft.world.chunk.NibbleArray.class);
 				
 		// Initializes array the same length as blockLSBArray:
 //	    18  aload_0 [this]
@@ -156,7 +179,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		
 		if (returnNode == null)
 		{
-			FMLLog.severe("Failed to find RETURN statement on %s/%s %s", clazz.name, m.name, m.desc);
+			CLLog.error(String.format("Failed to find RETURN statement on %s/%s %s", clazz.name, m.name, m.desc));
 		}
 		else
 			m.instructions.remove(returnNode);
@@ -200,7 +223,8 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 	private void transformSetExtBlocklightValue(ClassNode clazz, MethodNode m)
 	{
 		String ebsInternalName = clazz.name;
-		Type typeNibbleArray = Type.getType(net.minecraft.world.chunk.NibbleArray.class);
+		Type typeNibbleArray = NameMapper.getInstance().getType(NIBBLE_ARRAY);
+		String nibbleArraySet = NameMapper.getInstance().getMethodName("net/minecraft/world/chunk/NibbleArray", "set (IIII)V");
 		
 		// Already in stock method:
 //		 0  aload_0 [this]
@@ -239,7 +263,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 //		25  iand
 		m.instructions.add(new InsnNode(Opcodes.IAND));
 //		26  invokevirtual net.minecraft.world.chunk.NibbleArray.set(int, int, int, int) : void [93]
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), "set", "(IIII)V"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), nibbleArraySet, "(IIII)V"));
 		
 		// Colored light mod: Store green value
 //		29  aload_0 [this]
@@ -263,7 +287,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 //		43  iand
 		m.instructions.add(new InsnNode(Opcodes.IAND));
 //		44  invokevirtual net.minecraft.world.chunk.NibbleArray.set(int, int, int, int) : void [93]
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), "set", "(IIII)V"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), nibbleArraySet, "(IIII)V"));
 		
 		// Colored light mod: Store blue value
 //		47  aload_0 [this]
@@ -287,7 +311,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 //		61  iand
 		m.instructions.add(new InsnNode(Opcodes.IAND));
 //		62  invokevirtual net.minecraft.world.chunk.NibbleArray.set(int, int, int, int) : void [93]
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), "set", "(IIII)V"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), nibbleArraySet, "(IIII)V"));
 		
 //		65  return
 		m.instructions.add(new InsnNode(Opcodes.RETURN));
@@ -298,7 +322,8 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 	private void transformGetExtBlocklightValue(ClassNode clazz, MethodNode m)
 	{
 		String ebsInternalName = clazz.name;
-		Type typeNibbleArray = Type.getType(net.minecraft.world.chunk.NibbleArray.class);
+		Type typeNibbleArray = NameMapper.getInstance().getType(NIBBLE_ARRAY);
+		String nibbleArrayGet = NameMapper.getInstance().getMethodName("net/minecraft/world/chunk/NibbleArray", "get (III)I");
 		
 		// Already in stock method:
 //       0  aload_0 [this]
@@ -324,7 +349,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 //      16  iload_3 [par3]
 		m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
 //      17  invokevirtual net.minecraft.world.chunk.NibbleArray.get(int, int, int) : int [110]
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), "get", "(III)I"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), nibbleArrayGet, "(III)I"));
 //      20  iconst_5
 		m.instructions.add(new InsnNode(Opcodes.ICONST_5));
 //      21  ishl
@@ -343,7 +368,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 //      29  iload_3 [par3]
 		m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
 //      30  invokevirtual net.minecraft.world.chunk.NibbleArray.get(int, int, int) : int [110]
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), "get", "(III)I"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), nibbleArrayGet, "(III)I"));
 //      33  bipush 10
 		m.instructions.add(new IntInsnNode(Opcodes.BIPUSH, 10));
 //      35  ishl
@@ -362,7 +387,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 //      43  iload_3 [par3]
 		m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
 //      44  invokevirtual net.minecraft.world.chunk.NibbleArray.get(int, int, int) : int [110]
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), "get", "(III)I"));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, typeNibbleArray.getInternalName(), nibbleArrayGet, "(III)I"));
 //      47  bipush 15
 		m.instructions.add(new IntInsnNode(Opcodes.BIPUSH, 15));
 //      49  ishl
