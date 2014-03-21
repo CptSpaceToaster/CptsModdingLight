@@ -1,4 +1,4 @@
-package coloredlightscore.src.api;
+package coloredlightscore.server;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,9 +15,9 @@ import cpw.mods.fml.common.FMLLog;
  * 
  * @author heaton84
  */
-public class CLStorage {
+public class ChunkStorageRGB {
 
-	private static String EVENT_SOURCE = "kovukore.coloredlights.src.api.CLStorage";
+	private static String EVENT_SOURCE = "coloredlightscore.server.ChunkStorageRGB";
 	
 	private static Method methodSetRedColorArray = null;
 	private static Method methodSetGreenColorArray = null;
@@ -26,10 +26,13 @@ public class CLStorage {
 	private static Method methodGetGreenColorArray = null;
 	private static Method methodGetBlueColorArray = null;
 	
-	
+	/**
+	 * Builds references to the getter/setter methods for each RGB Color Array.
+	 * These methods are built at runtime using ASM transformation.
+	 */
 	private static void getReflectionData()	
 	{
-		if (CLStorage.methodSetRedColorArray == null)
+		if (ChunkStorageRGB.methodSetRedColorArray == null)
 		{			
 			// We must use reflection for coremod-defined methods
 			for (Method m : ExtendedBlockStorage.class.getMethods())
@@ -63,10 +66,22 @@ public class CLStorage {
 		}
 	}
 
+	/**
+	 * Constructs a NibbleArray from a raw stream of byte data. If the
+	 * byte data is incomplete, returns an empty array.
+	 * 
+	 * @param rawdata The raw bytestream to build an array from.
+	 * @return Instance of a NibbleArray.
+	 */
 	private static NibbleArray checkedGetNibbleArray(byte[] rawdata)
 	{
 		if (rawdata.length == 0)
 		{
+			return new NibbleArray(4096, 4);
+		}
+		else if (rawdata.length < 2048)
+		{
+			FMLLog.warning("checkedGetNibbleArray: rawdata is too short: %s, expected 2048", rawdata.length);
 			return new NibbleArray(4096, 4);
 		}
 		else
@@ -110,11 +125,7 @@ public class CLStorage {
 						methodSetRedColorArray.invoke(chunkStorageArrays[k], rColorArray);
 						methodSetGreenColorArray.invoke(chunkStorageArrays[k], gColorArray);
 						methodSetBlueColorArray.invoke(chunkStorageArrays[k], bColorArray);
-												
-						// TESTING: Pull back the forced value we stored earlier.
-						// Should be "LOAD:111101111"
-						//FMLLog.info("LOAD %s,%s/%s:%s", chunk.xPosition, chunk.zPosition, k, Integer.toBinaryString(chunk.getBlockLightValue(0, 0, 0, 15)));
-						
+																		
 						foundColorData = true;
 					} catch (IllegalAccessException e) {
 						FMLLog.severe("%s.loadColorData()   Unexpected IllegalAccessException while setting RGB color data!", EVENT_SOURCE);
@@ -133,16 +144,7 @@ public class CLStorage {
 	            	//FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
 			}
 		}
-		
-		// Redundnat?
-		/*try {
-			fieldStorageArrays.set(chunk, chunkStorageArrays);
-		} catch (IllegalArgumentException e) {
-			FMLLog.severe("%s.loadColorData()   Unexpected IllegalArgumentException while setting RGB color data!", EVENT_SOURCE);
-		} catch (IllegalAccessException e) {
-			FMLLog.severe("%s.loadColorData()   Unexpected IllegalAccessException while setting RGB color data!", EVENT_SOURCE);
-		}*/
-		
+				
 		return foundColorData;
 	}
 
@@ -253,6 +255,12 @@ public class CLStorage {
 		return true;
 	}
 
+	/**
+	 * Extracts all the red color arrays from a chunk's extended block storage
+	 * 
+	 * @param chunk
+	 * @return An array of NibbleArrays containing red color data for the chunk
+	 */
 	public static NibbleArray[] getRedColorArrays(Chunk chunk)
 	{
 		ExtendedBlockStorage[] chunkStorageArrays = chunk.getBlockStorageArray();
@@ -289,6 +297,13 @@ public class CLStorage {
 		return redColorArrays;
 	}
 	
+	/**
+	 * Extracts all the green color arrays from a chunk's extended block storage
+	 * 
+	 * @param chunk
+	 * @return An array of NibbleArrays containing green color data for the chunk
+	 */
+	
 	public static NibbleArray[] getGreenColorArrays(Chunk chunk)
 	{
 		ExtendedBlockStorage[] chunkStorageArrays = chunk.getBlockStorageArray();
@@ -324,6 +339,13 @@ public class CLStorage {
 		
 		return greenColorArrays;
 	}	
+	
+	/**
+	 * Extracts all the blue color arrays from a chunk's extended block storage
+	 * 
+	 * @param chunk
+	 * @return An array of NibbleArrays containing blue color data for the chunk
+	 */
 	
 	public static NibbleArray[] getBlueColorArrays(Chunk chunk)
 	{

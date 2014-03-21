@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
-import coloredlightscore.src.api.CLStorage;
+import coloredlightscore.server.ChunkStorageRGB;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
@@ -56,9 +56,9 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 		try
 		{
 			ChunkColorDataPacket packet = new ChunkColorDataPacket();
-			NibbleArray[] redColorArray = CLStorage.getRedColorArrays(chunk);
-			NibbleArray[] greenColorArray = CLStorage.getGreenColorArrays(chunk);
-			NibbleArray[] blueColorArray = CLStorage.getBlueColorArrays(chunk);
+			NibbleArray[] redColorArray = ChunkStorageRGB.getRedColorArrays(chunk);
+			NibbleArray[] greenColorArray = ChunkStorageRGB.getGreenColorArrays(chunk);
+			NibbleArray[] blueColorArray = ChunkStorageRGB.getBlueColorArrays(chunk);
 			
 			if (redColorArray == null || greenColorArray == null || blueColorArray == null)
 			{
@@ -80,7 +80,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 		}
 		catch (Exception e)
 		{
-			FMLLog.severe("SendChunkColorData()  ERROR");			
+			FMLLog.getLogger().warn("SendChunkColorData()  ", e);
 		}
 	
 	}
@@ -95,7 +95,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 				
 		if (targetChunk != null)
 		{
-			CLStorage.loadColorData(targetChunk, ccdPacket.arraySize, ccdPacket.RedColorArray, ccdPacket.GreenColorArray, ccdPacket.BlueColorArray);
+			ChunkStorageRGB.loadColorData(targetChunk, ccdPacket.arraySize, ccdPacket.RedColorArray, ccdPacket.GreenColorArray, ccdPacket.BlueColorArray);
 			//FMLLog.info("ProcessColorDataPacket() loaded RGB for (%s,%s)", ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);			
 		}
 		else

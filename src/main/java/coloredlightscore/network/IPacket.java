@@ -7,5 +7,5 @@ public interface IPacket {
 		public int getPacketId();
 	
 	    public void readBytes(ByteBuf bytes);
-	    public void writeBytes(ByteBuf bytes);
+	    public void writeBytes(ByteBuf bytes) throws Exception;
 }

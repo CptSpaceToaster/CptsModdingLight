@@ -133,6 +133,8 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
 		clazz.fields.add(gColorArray);
 		clazz.fields.add(bColorArray);			
 		
+		CLLog.info("Added RGB color arrays to ExtendedBlockStorage, type " + typeNibbleArray.getDescriptor());
+		
 		addedFields = true;
 	}
 	

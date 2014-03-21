@@ -7,6 +7,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import net.minecraft.world.chunk.NibbleArray;
+import cpw.mods.fml.common.FMLLog;
 
 public class ChunkColorDataPacket implements IPacket {
 
@@ -23,6 +24,8 @@ public class ChunkColorDataPacket implements IPacket {
 	public NibbleArray[] GreenColorArray;
 	public NibbleArray[] BlueColorArray;
 		
+	private final boolean USE_COMPRESSION = true;
+	
 	public ChunkColorDataPacket() {
 	}
 
@@ -34,90 +37,118 @@ public class ChunkColorDataPacket implements IPacket {
 	@Override
 	public void readBytes(ByteBuf bytes) {
 		
-		//packetId = bytes.readInt();
-		byte[] rawColorData = new byte[(2048 + 2) * 16 * 3];
-		byte[] compressedColorData = new byte[32000];
-		int compressedSize;		
-		
-		chunkXPosition = bytes.readInt();
-		chunkZPosition = bytes.readInt();
-		arraySize = bytes.readInt();
-		compressedSize = bytes.readInt();
-		bytes.readBytes(compressedColorData, 0, compressedSize);
-		
-		RedColorArray = new NibbleArray[arraySize];
-		GreenColorArray = new NibbleArray[arraySize];
-		BlueColorArray = new NibbleArray[arraySize];
-		
-		Inflater inflater = new Inflater();
-		inflater.setInput(compressedColorData);
-		
-        try
-        {
-            inflater.inflate(rawColorData);
-        } catch (DataFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        finally
-        {
-            inflater.end();
-        }		
-
-		for (int i=0;i<arraySize;i++)
+		try
 		{
+			byte[] rawColorData = new byte[2048 * 16 * 3];
+			byte[] compressedColorData = new byte[32000];
+			byte[] nibbleData = new byte[2048];
+			int compressedSize;		
+			int arraysPresent;
+				
+			chunkXPosition = bytes.readInt();
+			chunkZPosition = bytes.readInt();
+			arraySize = bytes.readInt();
+			arraysPresent = bytes.readInt();
+	
+			RedColorArray = new NibbleArray[arraySize];
+			GreenColorArray = new NibbleArray[arraySize];
+			BlueColorArray = new NibbleArray[arraySize];
 			
-			// Write out # of bytes in an int
-			// Or, if it's null, write a zero length
-			
-			if (RedColorArray[i] != null)
-				System.arraycopy(rawColorData, i * (2048 * 3), RedColorArray[i], 0, 2048);
-			
-			if (GreenColorArray[i] != null)
-				System.arraycopy(rawColorData, i * (2048 * 3) + 2048, GreenColorArray[i], 0, 2048);
-
-			if (BlueColorArray[i] != null)
-				System.arraycopy(rawColorData, i * (2048 * 3) + 4096, BlueColorArray[i], 0, 2048);
+			if (USE_COMPRESSION)
+			{
+				compressedSize = bytes.readInt();
+				bytes.readBytes(compressedColorData, 0, compressedSize);
+	
+				Inflater inflater = new Inflater();
+				inflater.setInput(compressedColorData);
+				
+		        try
+		        {
+		            inflater.inflate(rawColorData);
+		        } catch (DataFormatException e) {
+					FMLLog.warning("ChunkColorDataPacket()  ", e);
+				}
+		        finally
+		        {
+		            inflater.end();
+		        }
+			}
+			else // !USE_COMPRESSION
+				bytes.readBytes(rawColorData);
+	
+			for (int i=0;i<arraySize;i++)
+			{
+				if ((arraysPresent & (1 << i)) != 0)
+				{
+					System.arraycopy(rawColorData, i * (2048 * 3), nibbleData, 0, 2048);
+					RedColorArray[i] = new NibbleArray(nibbleData, 4);
+		
+					System.arraycopy(rawColorData, i * (2048 * 3) + 2048, nibbleData, 0, 2048);
+					GreenColorArray[i] = new NibbleArray(nibbleData, 4);
+		
+					System.arraycopy(rawColorData, i * (2048 * 3)  + 4096, nibbleData, 0, 2048);
+					BlueColorArray[i] = new NibbleArray(nibbleData, 4);
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			FMLLog.getLogger().error("readBytes ", e);
 		}
 	}
 
 	@Override
 	public void writeBytes(ByteBuf bytes) {
 		
-		//bytes.writeInt(PACKET_ID);
-		
-		byte[] rawColorData = new byte[(2048 + 2) * 16 * 3];
-		byte[] compressedColorData = new byte[32000];
-		int compressedSize;
-		
-		bytes.writeInt(chunkXPosition);
-		bytes.writeInt(chunkZPosition);
-		bytes.writeInt(arraySize);
-		
-		// Crank out nibble arrays
-		for (int i=0;i<arraySize;i++)
+		try
 		{
+			byte[] rawColorData = new byte[2048 * 16 * 3];
+			byte[] compressedColorData = new byte[32000];
+			int compressedSize;
+			int arraysPresent = 0;
+					
+			bytes.writeInt(chunkXPosition);
+			bytes.writeInt(chunkZPosition);
+			bytes.writeInt(arraySize);
+					
+			// Crank out nibble arrays
+			for (int i=0;i<arraySize;i++)
+			{
+				if (RedColorArray[i] != null || GreenColorArray[i] != null || BlueColorArray[i] != null)
+					arraysPresent |= (1 << i);
+							
+				if (RedColorArray[i] != null)
+					System.arraycopy(RedColorArray[i].data, 0, rawColorData, i * (2048 * 3), 2048);
+				
+				if (GreenColorArray[i] != null)
+					System.arraycopy(GreenColorArray[i].data, 0, rawColorData, i * (2048 * 3) + 2048, 2048);
+	
+				if (BlueColorArray[i] != null)
+					System.arraycopy(BlueColorArray[i].data, 0, rawColorData, i * (2048 * 3) + 4096, 2048);
+			}
 			
-			// Write out # of bytes in an int
-			// Or, if it's null, write a zero length
-			
-			if (RedColorArray[i] != null)
-				System.arraycopy(RedColorArray[i], 0, rawColorData, i * (2048 * 3), 2048);
-			
-			if (GreenColorArray[i] != null)
-				System.arraycopy(GreenColorArray[i], 0, rawColorData, i * (2048 * 3) + 2048, 2048);
-
-			if (BlueColorArray[i] != null)
-				System.arraycopy(BlueColorArray[i], 0, rawColorData, i * (2048 * 3) + 4096, 2048);
+			bytes.writeInt(arraysPresent);
+	
+			if (USE_COMPRESSION)
+			{
+				Deflater deflate = new Deflater(-1);
+				deflate.setInput(rawColorData);
+				deflate.finish();
+				
+				compressedSize = deflate.deflate(compressedColorData);
+				
+				if (compressedSize == 0)
+					FMLLog.warning("writePacket compression failed");
+				
+				bytes.writeInt(compressedSize);
+				bytes.writeBytes(compressedColorData, 0, compressedSize);
+			}
+			else // !USE_COMPRESSION
+				bytes.writeBytes(rawColorData, 0, rawColorData.length);
 		}
-		
-		Deflater deflate = new Deflater(-1);
-		deflate.setInput(rawColorData);
-		deflate.finish();
-		
-		compressedSize = deflate.deflate(compressedColorData);
-		bytes.writeInt(compressedSize);
-		bytes.writeBytes(compressedColorData, 0, compressedSize);
+		catch (Exception e)
+		{
+			FMLLog.getLogger().error("writeBytes  ", e);
+		}
 	}
-
 }

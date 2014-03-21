@@ -11,7 +11,7 @@ public class CLBlockHelper
 {	
 	public static Block setLightLevel(Block interceptedReturnValue, Block instance, float par1)
 	{
-		return CLApi.injectCLV(instance, par1, par1, par1);
+		return CLApi.setBlockColorRGB(instance, par1, par1, par1);
 	}
 	
 	public static int getMixedBrightnessForBlockWithColor(IBlockAccess blockAccess, int x, int y, int z)

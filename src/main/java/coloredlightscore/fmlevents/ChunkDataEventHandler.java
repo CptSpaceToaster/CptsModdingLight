@@ -1,6 +1,6 @@
 package coloredlightscore.fmlevents;
 
-import coloredlightscore.src.api.CLStorage;
+import coloredlightscore.server.ChunkStorageRGB;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.world.ChunkDataEvent;
@@ -20,7 +20,7 @@ public class ChunkDataEventHandler {
 		Chunk chunk = event.getChunk();
 		NBTTagCompound data = event.getData();
 		
-		if (!CLStorage.loadColorData(chunk, data))
+		if (!ChunkStorageRGB.loadColorData(chunk, data))
 		{
 			//FMLLog.warning("Failed to load color data for chunk at (%s, %s)", chunk.xPosition, chunk.zPosition);
 		}
@@ -32,7 +32,7 @@ public class ChunkDataEventHandler {
 		Chunk chunk = event.getChunk();
 		NBTTagCompound data = event.getData();
 
-		if (!CLStorage.saveColorData(chunk, data))
+		if (!ChunkStorageRGB.saveColorData(chunk, data))
 		{
 			FMLLog.warning("Failed to save color data for chunk at (%s, %s)", chunk.xPosition, chunk.zPosition);
 		}
