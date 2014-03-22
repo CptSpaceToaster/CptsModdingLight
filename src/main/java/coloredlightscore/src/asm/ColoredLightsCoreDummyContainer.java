@@ -69,13 +69,14 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
     public void postInit(FMLPostInitializationEvent evt)
     {
 		// Inject RGB values into vanilla blocks		
-		CLApi.setBlockColorRGB(Blocks.lava, CLApi.l[15], CLApi.l[12], CLApi.l[10]);
-		CLApi.setBlockColorRGB(Blocks.flowing_lava, CLApi.l[15], CLApi.l[12], CLApi.l[10]);
-		CLApi.setBlockColorRGB(Blocks.torch, CLApi.l[14], CLApi.l[13], CLApi.l[12]);
-		CLApi.setBlockColorRGB(Blocks.fire, CLApi.l[15], CLApi.l[14], CLApi.l[11]);
-		CLApi.setBlockColorRGB(Blocks.redstone_ore, CLApi.l[9], CLApi.l[6], CLApi.l[6]);
-		CLApi.setBlockColorRGB(Blocks.redstone_torch, CLApi.l[7], CLApi.l[4], CLApi.l[4]);
-		CLApi.setBlockColorRGB(Blocks.portal, CLApi.l[6], CLApi.l[3], CLApi.l[12]);
-		CLApi.setBlockColorRGB(Blocks.powered_repeater, CLApi.l[9], CLApi.l[7], CLApi.l[7]);
+    	CLApi.setBlockColorRGB(Blocks.lava, 15, 11, 10);
+		CLApi.setBlockColorRGB(Blocks.flowing_lava, 15, 11, 10);
+		CLApi.setBlockColorRGB(Blocks.torch, 14, 13, 12);
+		CLApi.setBlockColorRGB(Blocks.fire, 15, 13, 11);
+		CLApi.setBlockColorRGB(Blocks.lit_redstone_ore, 9, 6, 6);
+		CLApi.setBlockColorRGB(Blocks.redstone_torch, 7, 4, 4);
+		CLApi.setBlockColorRGB(Blocks.portal, 6, 3, 11);
+		CLApi.setBlockColorRGB(Blocks.lit_furnace, 13, 13, 12);
+		CLApi.setBlockColorRGB(Blocks.powered_repeater, 9, 6, 7);
     }
 }
