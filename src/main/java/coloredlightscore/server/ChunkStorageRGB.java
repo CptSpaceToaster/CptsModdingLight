@@ -155,7 +155,7 @@ public class ChunkStorageRGB {
 	 * @param data Top-level NBTTag, must contain "Level" tag.
 	 * @return true if color data was loaded, false if not present or an error was encountered
 	 */
-	public static boolean loadColorData(Chunk chunk, int arraySize, NibbleArray[] redColorData, NibbleArray[] greenColorData, NibbleArray[] blueColorData)
+	public static boolean loadColorData(Chunk chunk, int arraySize, int[] yLocation, NibbleArray[] redColorData, NibbleArray[] greenColorData, NibbleArray[] blueColorData)
 	{
 		NibbleArray rColorArray;
 		NibbleArray gColorArray;
@@ -169,12 +169,15 @@ public class ChunkStorageRGB {
 		{
 			if (chunkStorageArrays[k] != null)
 			{
-        		rColorArray = redColorData[k];
-        		gColorArray = greenColorData[k];
-        		bColorArray = blueColorData[k];	          
-        		
+				if (chunkStorageArrays[k].getYLocation() != yLocation[k])
+					FMLLog.severe("EBS DATA OUT OF SEQUENCE. Expected %s, got %s", chunkStorageArrays[k].getYLocation(), yLocation[k]);
+				        		
         		try {
-        			// Set color arrays on chunk.storageArrays
+            		rColorArray = redColorData[k];
+            		gColorArray = greenColorData[k];
+            		bColorArray = blueColorData[k];	          
+
+            		// Set color arrays on chunk.storageArrays
         			
 					methodSetRedColorArray.invoke(chunkStorageArrays[k], rColorArray);
 					methodSetGreenColorArray.invoke(chunkStorageArrays[k], gColorArray);
@@ -190,6 +193,8 @@ public class ChunkStorageRGB {
 				} catch (InvocationTargetException e) {
 					FMLLog.severe("%s.loadColorData()   Unexpected InvocationTargetException while setting RGB color data!", EVENT_SOURCE);
 					return false;
+				} catch (Exception e) {
+					FMLLog.getLogger().error("loadColorData()  ", e);
 				}
         		
         		//FMLLog.info("Loaded nibble array for %s %s %s", chunk.xPosition, chunk.zPosition, k);
@@ -382,4 +387,20 @@ public class ChunkStorageRGB {
 		
 		return blueColorArrays;
 	}		
+	
+	public static int[] getYLocationArray(Chunk chunk)
+	{
+		ExtendedBlockStorage[] ebs = chunk.getBlockStorageArray();
+		int y[] = new int[ebs.length];
+		
+		for (int i=0;i<ebs.length;i++)
+		{
+			if (ebs[i] == null)
+				y[i] = -1;
+			else
+				y[i] = ebs[i].getYLocation();
+		}
+		
+		return y;
+	}
 }

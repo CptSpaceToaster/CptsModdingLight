@@ -68,6 +68,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 			packet.chunkXPosition = chunk.xPosition;
 			packet.chunkZPosition = chunk.zPosition;
 			packet.arraySize = redColorArray.length;
+			packet.yLocation = ChunkStorageRGB.getYLocationArray(chunk);
 			packet.RedColorArray = redColorArray;
 			packet.GreenColorArray = greenColorArray;
 			packet.BlueColorArray = blueColorArray;
@@ -95,7 +96,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 				
 		if (targetChunk != null)
 		{
-			ChunkStorageRGB.loadColorData(targetChunk, ccdPacket.arraySize, ccdPacket.RedColorArray, ccdPacket.GreenColorArray, ccdPacket.BlueColorArray);
+			ChunkStorageRGB.loadColorData(targetChunk, ccdPacket.arraySize, ccdPacket.yLocation, ccdPacket.RedColorArray, ccdPacket.GreenColorArray, ccdPacket.BlueColorArray);
 			//FMLLog.info("ProcessColorDataPacket() loaded RGB for (%s,%s)", ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);			
 		}
 		else
