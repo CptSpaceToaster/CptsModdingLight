@@ -26,7 +26,7 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
 	
 	public static int VERSION_MAJOR = 1;
 	public static int VERSION_MINOR = 1;
-	public static int VERSION_REVISION = 1;
+	public static int VERSION_REVISION = 2;
 	
 	public ColoredLightsCoreDummyContainer()
 	{
@@ -77,8 +77,5 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
 		CLApi.setBlockColorRGB(Blocks.redstone_torch, CLApi.l[7], CLApi.l[4], CLApi.l[4]);
 		CLApi.setBlockColorRGB(Blocks.portal, CLApi.l[6], CLApi.l[3], CLApi.l[12]);
 		CLApi.setBlockColorRGB(Blocks.powered_repeater, CLApi.l[9], CLApi.l[7], CLApi.l[7]);
-
-		CLApi.setBlockColorRGB(Blocks.glowstone, 0.0f, 1.0f, 0.0f);
-		CLApi.setBlockColorRGB(Blocks.lapis_block, 0.0f,  0.0f, 1.0f, 15);
     }
 }
