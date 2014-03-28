@@ -121,6 +121,20 @@ public class CLWorldHelper {
         {
         	blockBrightness = lightValue;
         }
+        
+        // heaton84: subtract daylight from RGB light
+        if (skyBrightness > 0)
+        {
+        	if (((lightValue & 480) >> 4) > skyBrightness)
+        		lightValue = lightValue - (skyBrightness << 4);
+
+        	if (((lightValue & 15360) >> 8) > skyBrightness)
+        		lightValue = lightValue - (skyBrightness << 8);
+        
+        	if (((lightValue & 491520) >> 12) > skyBrightness)
+        		lightValue = lightValue - (skyBrightness << 12);
+        	
+        }
 
         return skyBrightness << 20 | blockBrightness << 4;
     }
@@ -419,11 +433,14 @@ public class CLWorldHelper {
             
             if (compLightValue > savedLightValue)
             {
+            	// rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
+            	// push               100000100000100000  (0,0,0):black
                 CLWorldHelper.lightUpdateBlockList[i1++] = 133152;		//Save Entry at pos 0 (move i1)
             }
             else if (compLightValue < savedLightValue)
             {
             	// Do nothing here, let the computed light take over
+            	// push (0,0,0):savedLightVale
             	CLWorldHelper.lightUpdateBlockList[i1++] = 133152 | savedLightValue << 18;	//Save Entry at pos 0 with its Light Value (move i1)	
 
                 while (l < i1)
@@ -435,7 +452,7 @@ public class CLWorldHelper {
                     lightEntry = (int)(l1 >>> 18)&507375;				//Get Entry's saved Light
                     expectedEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1);	//Get the saved Light Level at the entry's location
                     
-                    if ((expectedEntryLight&15) >= (lightEntry&15))
+                    if ((expectedEntryLight&15) >= (lightEntry&15)) // if we pushed black earlier....
                     {
                     	world.setLightValue(par1Enu, x1, y1, z1, 0);
 
