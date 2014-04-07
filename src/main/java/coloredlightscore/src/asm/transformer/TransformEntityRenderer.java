@@ -1,10 +1,17 @@
 package coloredlightscore.src.asm.transformer;
 
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import coloredlightscore.src.asm.transformer.core.ASMUtils;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
+
+import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes;
+
+import cpw.mods.fml.common.FMLLog;
 
 public class TransformEntityRenderer extends HelperMethodTransformer {
 
@@ -12,6 +19,8 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 	String methodsToReplace[] = {
 			"updateLightmap (F)V"
 	};
+	
+	String constructorSignature = "<init> (Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/resources/IResourceManager;)V";
 
 	public TransformEntityRenderer()
 	{
@@ -31,6 +40,9 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
 				return true;
 		}
+		
+		if ((methodNode.name + " " + methodNode.desc).equals(constructorSignature))
+			return true;
 
 		return false;		
 	}	
@@ -46,7 +58,45 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 			}
 		}		
 
+		if ((methodNode.name + " " + methodNode.desc).equals(constructorSignature))
+			return transformConstructor(methodNode);
+		
+		
 		return false;
+	}
+	
+	protected boolean transformConstructor(MethodNode methodNode)
+	{
+		AbstractInsnNode dynamicTextureCtor = ASMUtils.findLastInvoke(methodNode, Opcodes.INVOKESPECIAL, "net/minecraft/client/renderer/texture/DynamicTexture", "<init> (II)V", false);
+		
+		if (dynamicTextureCtor == null)
+		{
+			FMLLog.severe("Could not find constructor call to DynamicTexture within EntityRenderer constructor!");
+			return false;
+		}
+		
+		// Prior 2 instructions should be BIPUSH 16
+		// These are the dimentions of the lightmap texture
+		// We want to modify them to SIPUSH 256
+		
+		try
+		{
+			IntInsnNode texY = (IntInsnNode)dynamicTextureCtor.getPrevious();
+			IntInsnNode texX = (IntInsnNode)texY.getPrevious();
+			
+			texX.setOpcode(Opcodes.SIPUSH);			
+			texX.operand = 256;
+
+			texY.setOpcode(Opcodes.SIPUSH);			
+			texY.operand = 256;
+						
+			return true;
+		}
+		catch (Exception e)
+		{
+			FMLLog.severe("Could not transform lightmap texture size: %s",  e);
+			return false;
+		}
 	}
 }
 

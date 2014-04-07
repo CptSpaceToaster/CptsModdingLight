@@ -1,75 +1,164 @@
 package coloredlightscore.src.helper;
 
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+
+import org.lwjgl.opengl.GL11;
+
 public class CLTesselatorHelper {
 
-	// This class pretty much does nothing
-	// It was used to find the ASM instructions for the replacement setBrightness on the Tessellator object
-	// Origional approach was to use reflection, which was abandonded in the name of performance
+	private static int nativeBufferSize = 0x200000;
+	public static float sunlightBrightness = 1.0f;
 		
 	public CLTesselatorHelper() {
 		
 	}
 	
 	// Mock-up to get ASM for replacement method
-    public void setBrightness(int par1)
+    public static void setBrightness(Tessellator instance, int par1)
     {
-        
-        /* Resultant ASM:
-         * 
-         * 0  aload_0 [this]
-         * 1  iconst_1
-         * 2  putfield kovukore.coloredlights.src.helper.CLTesselatorHelper.hasBrightness : boolean [20]
-         * 5  aload_0 [this]
-         * 6  iload_1 [par1]
-         * 7  ldc <Integer 15728880> [22]
-         * 9  iand
-         * 10  putfield kovukore.coloredlights.src.helper.CLTesselatorHelper.brightness : int [23]
-         * 13  return
-         * 
-         */
+    	int r;
+    	int g;
+    	int b;
+    	int sunlight;
+    	
+    	// Incoming brightness value is in form 0000SSSSRRRRGGGGBBBBLLLL
+    	// Convert this to..................... 00000000SSSSRRRRGGGGBBBB
+    	
+    	instance.hasBrightness = true;    	
+    	instance.brightness = par1 >> 4; // Get rid of torch lighting
+//    	
+//    	instance.brightness = par1&15728880; // Strip out RGB components so mojang light map works
+//    	
+//	    if((par1 & 1048320) >0)
+//	    {
+//	    	// RGB bits are non-zero
+//	    	// Extract each channel, and add sunlight as needed
+//	    	// Sunlight component of par1 specifies how strong sunlight should be applied to current block
+//	    	// THIS IS NOT THE TIME OF DAY
+//	    	// Sun intensity is set on sunlightBrightness via CLEntityRendererHelper.updateLightmap
+//	    	
+//	    	sunlight = (par1 >> 20); // Extract SSSS component from brightness
+//	    	sunlight = (int)Math.floor((float)sunlight * sunlightBrightness);
+//	    	
+//	    	if (sunlight > 15)
+//	    		sunlight = 15;
+//	    	else if (sunlight < 0)
+//	    		sunlight = 0;
+//	    	
+//	    	r = ((par1 >> 8) & 15) + sunlight;
+//	    	g = ((par1 >> 12) & 15) + sunlight;
+//	    	b = ((par1 >> 16) & 15) + sunlight;
+//	    	
+//	    	if (r > 15)
+//	    		r = 15;
+//
+//	    	if (g > 15)
+//	    		g = 15;
+//
+//	    	if (b > 15)
+//	    		b = 15;
+//	    	
+//	    	// Scale 0..15 to 0..240
+//	    	r *= 16 + 15;
+//	    	g *= 16 + 15;
+//	    	b *= 16 + 15;
+//	    		    	
+//	    	instance.setColorOpaque(r, g, b);
+//	    }
+
     }	
-	/*
-	 * 
-	 * REFLECTION APPROACH BELOW
 
-	static Field hasBrightness;
-	static Field brightness;
-	static boolean initialized = false;
-	
-	public static void initialize(Tessellator instance) throws NoSuchFieldException, SecurityException
-	{
-		hasBrightness = instance.getClass().getDeclaredField("hasBrightness");
-		brightness = instance.getClass().getDeclaredField("brightness");
-		
-		hasBrightness.setAccessible(true);
-		brightness.setAccessible(true);
-	}
-
-    public static void setBrightness(Tessellator instance, int par1) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException
+    public static int draw(Tessellator instance)
     {
-    	if (!initialized)
-    		initialize(instance);
-    	
-    	// Use reflection to set the field
-    	// This is absolutely ugly and slower than a direct assignment
-    	// Need to find a way around this!
-    	
-        hasBrightness.set(instance, true);
-    	
-        / ** 
-         * First: 								0000SSSS0000000000000000LLLL0000
-         * Old: 								0000SSSS0000BBBBGGGGRRRRLLLL0000
-         * Refactor: 							0000SSSS0BBBB0GGGG0RRRR0LLLL0000
-         * 
-         * Takes the lightValue in the Form 	000) 0000 SSSS BBBB GGGG RRRR LLLL 0000
-         * and formats it to the expected form: 0000 0000 SSSS 0000 0000 0000 LLLL 0000
-         * 
-         * CptSpaceToaster
-         * /
-    	//Visibility issues: instance.brightness = par1 & 15728880;
-        brightness.set(instance, par1 & 15728880);
-    }
-   	 * 
-   	 */
+        if (!instance.isDrawing)
+        {
+            throw new IllegalStateException("Not tesselating!");
+        }
+        else
+        {
+        	instance.isDrawing = false;
 
+            int offs = 0;
+            while (offs < instance.vertexCount)
+            {
+                int vtc = Math.min(instance.vertexCount - offs, nativeBufferSize >> 5);
+                Tessellator.intBuffer.clear();
+                Tessellator.intBuffer.put(instance.rawBuffer, offs * 8, vtc * 8);
+                Tessellator.byteBuffer.position(0);
+                Tessellator.byteBuffer.limit(vtc * 32);
+                offs += vtc;
+
+                if (instance.hasTexture)
+                {
+                    Tessellator.floatBuffer.position(3);
+                    GL11.glTexCoordPointer(2, 32, Tessellator.floatBuffer);
+                    GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                }
+
+                if (instance.hasBrightness)
+                {
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit); // GL13.glClientActiveTexture(par0);
+                	//OpenGlHelper.setClientActiveTexture(CLEntityRendererHelper.redLightTexture);
+                    Tessellator.shortBuffer.position(14);
+                    GL11.glTexCoordPointer(2, 32, Tessellator.shortBuffer);
+                    GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);  // GL13.glClientActiveTexture(par0);
+                }
+
+                if (instance.hasColor)
+                {
+                    Tessellator.byteBuffer.position(20);
+                    GL11.glColorPointer(4, true, 32, Tessellator.byteBuffer);
+                    GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+                }
+
+                if (instance.hasNormals)
+                {
+                    Tessellator.byteBuffer.position(24);
+                    GL11.glNormalPointer(32, Tessellator.byteBuffer);
+                    GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+                }
+
+                Tessellator.floatBuffer.position(0);
+                GL11.glVertexPointer(3, 32, Tessellator.floatBuffer);
+                GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+                GL11.glDrawArrays(instance.drawMode, 0, vtc);
+                GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+
+                if (instance.hasTexture)
+                {
+                    GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                }
+
+                if (instance.hasBrightness)
+                {
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+                	//OpenGlHelper.setClientActiveTexture(CLEntityRendererHelper.redLightTexture);
+                    GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                }
+
+                if (instance.hasColor)
+                {
+                    GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
+                }
+
+                if (instance.hasNormals)
+                {
+                    GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+                }
+            }
+
+            if (instance.rawBufferSize > 0x20000 && instance.rawBufferIndex < (instance.rawBufferSize << 3))
+            {
+            	instance.rawBufferSize = 0x10000;
+            	instance.rawBuffer = new int[instance.rawBufferSize];
+            }
+
+            int i = instance.rawBufferIndex * 4;
+            instance.reset();
+            return i;
+        }
+    }
 }

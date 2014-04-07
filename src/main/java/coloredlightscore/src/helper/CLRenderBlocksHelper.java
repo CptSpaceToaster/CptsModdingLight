@@ -32,7 +32,7 @@ public class CLRenderBlocksHelper {
 	 * @param par7 amount of blue
 	 */
 	public static boolean renderStandardBlockWithAmbientOcclusion(RenderBlocks renderBlocks, Block par1Block, int x, int y, int z, float par5, float par6, float par7)
-	{
+	{		
 		renderBlocks.enableAO = true;
 		boolean renderedSomething = false;
 		float topLeftaoLightValueAvg = 0.0F;
@@ -1199,7 +1199,7 @@ public class CLRenderBlocksHelper {
 			renderedSomething = true;
 		}
 
-		renderBlocks.enableAO = false;
+		renderBlocks.enableAO = false;		
 		return renderedSomething;
 	}
 
@@ -1465,8 +1465,32 @@ public class CLRenderBlocksHelper {
             p_147778_3_ = p_147778_4_;
         }
 
-        return (p_147778_1_ & 15728880) + (p_147778_2_ & 15728880) + (p_147778_3_ & 15728880) + (p_147778_4_ & 15728880) >> 2 & 15728880;
+        //return (p_147778_1_ & 15728880) + (p_147778_2_ & 15728880) + (p_147778_3_ & 15728880) + (p_147778_4_ & 15728880) >> 2 & 15728880;
+        
+        // Must mix all 5 channels now
+        return mixColorChannel(20, p_147778_1_, p_147778_2_, p_147778_3_, p_147778_4_) | // SSSS
+        	   mixColorChannel(16, p_147778_1_, p_147778_2_, p_147778_3_, p_147778_4_) | // RRRR
+        	   mixColorChannel(12, p_147778_1_, p_147778_2_, p_147778_3_, p_147778_4_) | // GGGG
+        	   mixColorChannel( 8, p_147778_1_, p_147778_2_, p_147778_3_, p_147778_4_) | // BBBB
+        	   mixColorChannel( 4, p_147778_1_, p_147778_2_, p_147778_3_, p_147778_4_);  // LLLL
     }	
+    
+    public static int mixColorChannel(int startBit, int p1, int p2, int p3, int p4)
+    {
+    	int avg;
+    	
+    	int q1 = (p1 >> startBit) & 15;
+    	int q2 = (p2 >> startBit) & 15;
+    	int q3 = (p3 >> startBit) & 15;
+    	int q4 = (p4 >> startBit) & 15;
+    	
+    	avg = (q1 + q2 + q3 + q4) >> 2;
+    	
+    	if (avg > 15)
+    		avg = 15; // Cap to 4 bits again
+    	
+    	return avg << startBit;
+    }
     
     private static class renderCacheEntry
     {

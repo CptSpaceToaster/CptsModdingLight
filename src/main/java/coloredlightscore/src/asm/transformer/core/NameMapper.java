@@ -43,6 +43,8 @@ public class NameMapper {
 		// EntityRenderer
 		registerSrgName("CL: net/minecraft/client/renderer/EntityRenderer bll");
 		registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/updateLightmap (F)V bll/h (F)V");
+		registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/disableLightmap (D)V bll/a (D)V");
+		registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/enableLightmap (D)V bll/b (D)V");
 		
 		// ExtendedBlockStorage
 		registerSrgName("CL: net/minecraft/world/chunk/storage/ExtendedBlockStorage aol");
@@ -63,6 +65,7 @@ public class NameMapper {
 		// Tessellator
 		registerSrgName("CL: net/minecraft/client/renderer/Tessellator blz");
 		registerSrgName("MD: net/minecraft/client/renderer/Tessellator/setBrightness (I)V blz/b (I)V");
+		registerSrgName("MD: net/minecraft/client/renderer/Tessellator/draw ()I blz/a ()I");
 		
 		// World
 		registerSrgName("CL: net/minecraft/world/World afn");
@@ -81,6 +84,8 @@ public class NameMapper {
 		registerSrgName("MD: net/minecraft/world/chunk/NibbleArray/get (III)I aoh/a (III)I");
 		registerSrgName("MD: net/minecraft/world/chunk/NibbleArray/set (IIII)V aoh/a (IIII)V");
 
+		// DynamicTexture
+		registerSrgName("CL: net/minecraft/client/renderer/texture/DynamicTexture bpi");
 				
 		// S26PacketMapChunkBulk
 		registerSrgName("CL: net/minecraft/network/play/server/S26PacketMapChunkBulk gq");

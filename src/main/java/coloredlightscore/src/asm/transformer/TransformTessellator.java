@@ -9,29 +9,59 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import coloredlightscore.src.asm.transformer.core.ASMUtils;
-import coloredlightscore.src.asm.transformer.core.SingleMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
+import coloredlightscore.src.helper.CLRenderBlocksHelper;
+import coloredlightscore.src.helper.CLTesselatorHelper;
+import cpw.mods.fml.common.FMLLog;
 
-public class TransformTessellator extends SingleMethodTransformer {
+public class TransformTessellator extends HelperMethodTransformer {
 
-	
+	protected String setBrightness = "setBrightness (I)V";
+	protected String draw = "draw ()I";
 	
 	public TransformTessellator() {
-		// TODO Auto-generated constructor stub
+		super("net.minecraft.client.renderer.Tessellator");
 	}
 
 	@Override
-	protected String getMcpMethod() {
-		return "setBrightness (I)V";
-	}
-
+	protected Class<?> getHelperClass() {
+		return CLTesselatorHelper.class;
+	}	
+	
 	@Override
-	protected String getClassName() {
-		return "net.minecraft.client.renderer.Tessellator";
-	}
+	protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
 
+		if (NameMapper.getInstance().isMethod(methodNode, super.className, setBrightness))
+			return true;
+
+		if (NameMapper.getInstance().isMethod(methodNode, super.className, draw))
+			return true;
+				
+		return false;		
+	}
 	@Override
 	protected boolean transform(ClassNode clazz, MethodNode method) {
 		
+		if (NameMapper.getInstance().isMethod(method, super.className, setBrightness))
+		{
+			int a = 15790080;
+			int b = 15790080;
+			int c = 15790080;
+			int d = 15790080;
+			FMLLog.info(">> %s", CLRenderBlocksHelper.getAoBrightness(a, b, c, d));
+			
+			return redefineMethod(clazz, method, "setBrightness"); // transformSetBrightness(method);
+		}
+		else if (NameMapper.getInstance().isMethod(method, super.className, draw))
+			return redefineMethod(clazz, method, "draw");
+		else
+			return false;
+
+	}
+
+	private boolean transformSetBrightness(MethodNode method)
+	{
         /* 
          * This ASM was taken from the mockup "CLTesselatorHelper.setBrightness", as compared to Tessellator.class
          * We want to insert the lines starting with '+':
@@ -57,11 +87,6 @@ public class TransformTessellator extends SingleMethodTransformer {
 		method.instructions.insertBefore(putBrightness, andOperation);
 						
 		return true;
-	}
-
-	@Override
-	protected boolean transforms(String className) {
-		return className.equals(getClassName());
 	}
 
 }

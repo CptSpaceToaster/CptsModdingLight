@@ -7,6 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 import coloredlightscore.fmlevents.ChunkDataEventHandler;
 import coloredlightscore.network.ChannelHandler;
 import coloredlightscore.src.api.CLApi;
+import coloredlightscore.src.helper.CLEntityRendererHelper;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -56,7 +57,7 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
     	CLLog = evt.getModLog();
 
     	CLLog.info("Starting up ColoredLightsCore");
-    	
+    	    	
     	// Spin up network handler
     	ChannelHandler.INSTANCE = new ChannelHandler();
     	
@@ -68,6 +69,8 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt)
     {
+    	CLEntityRendererHelper.Initialize();
+    	
 		// Inject RGB values into vanilla blocks		
     	CLApi.setBlockColorRGB(Blocks.lava, 15, 11, 10);
 		CLApi.setBlockColorRGB(Blocks.flowing_lava, 15, 11, 10);
