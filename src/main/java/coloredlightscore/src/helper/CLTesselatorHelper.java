@@ -14,59 +14,19 @@ public class CLTesselatorHelper {
 		
 	}
 	
-	// Mock-up to get ASM for replacement method
     public static void setBrightness(Tessellator instance, int par1)
     {
-    	int r;
-    	int g;
-    	int b;
-    	int sunlight;
-    	
-    	// Incoming brightness value is in form 0000SSSSRRRRGGGGBBBBLLLL
-    	// Convert this to..................... 00000000SSSSRRRRGGGGBBBB
-    	
-    	instance.hasBrightness = true;    	
-    	instance.brightness = par1 >> 4; // Get rid of torch lighting
-//    	
-//    	instance.brightness = par1&15728880; // Strip out RGB components so mojang light map works
-//    	
-//	    if((par1 & 1048320) >0)
-//	    {
-//	    	// RGB bits are non-zero
-//	    	// Extract each channel, and add sunlight as needed
-//	    	// Sunlight component of par1 specifies how strong sunlight should be applied to current block
-//	    	// THIS IS NOT THE TIME OF DAY
-//	    	// Sun intensity is set on sunlightBrightness via CLEntityRendererHelper.updateLightmap
-//	    	
-//	    	sunlight = (par1 >> 20); // Extract SSSS component from brightness
-//	    	sunlight = (int)Math.floor((float)sunlight * sunlightBrightness);
-//	    	
-//	    	if (sunlight > 15)
-//	    		sunlight = 15;
-//	    	else if (sunlight < 0)
-//	    		sunlight = 0;
-//	    	
-//	    	r = ((par1 >> 8) & 15) + sunlight;
-//	    	g = ((par1 >> 12) & 15) + sunlight;
-//	    	b = ((par1 >> 16) & 15) + sunlight;
-//	    	
-//	    	if (r > 15)
-//	    		r = 15;
-//
-//	    	if (g > 15)
-//	    		g = 15;
-//
-//	    	if (b > 15)
-//	    		b = 15;
-//	    	
-//	    	// Scale 0..15 to 0..240
-//	    	r *= 16 + 15;
-//	    	g *= 16 + 15;
-//	    	b *= 16 + 15;
-//	    		    	
-//	    	instance.setColorOpaque(r, g, b);
-//	    }
-
+    	// Lightmap Texture Coords are ........ 00000000XXXXXXXX00000000YYYYYYYY
+    	//
+    	// Incoming brightness value is in form 000000000000SSSSRRRRGGGGBBBBLLLL
+    	// Convert this to..................... 00000000SSSSRRRR00000000GGGGBBBB
+    	//
+    	// 16711680 is ........................ 00000000111111110000000000000000
+    	// 255 is ............................. 00000000000000000000000011111111
+    	    	
+    	instance.hasBrightness = true;    	    	
+    	instance.brightness = ((par1 << 4) & 16711680) | ((par1 >> 4) & 255);
+    	//debugging: instance.brightness = 15;
     }	
 
     public static int draw(Tessellator instance)
