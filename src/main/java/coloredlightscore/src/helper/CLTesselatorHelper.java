@@ -9,24 +9,25 @@ public class CLTesselatorHelper {
 
 	private static int nativeBufferSize = 0x200000;
 	public static float sunlightBrightness = 1.0f;
-		
+	
+	public static int test = 0;
+	
 	public CLTesselatorHelper() {
 		
 	}
 	
     public static void setBrightness(Tessellator instance, int par1)
     {
-    	// Lightmap Texture Coords are ........ 00000000XXXXXXXX00000000YYYYYYYY
+    	// Lightmap Texture Coords are ........ 00000000 XXXXXXXX 00000000 YYYYYYYY
     	//
-    	// Incoming brightness value is in form 000000000000SSSSRRRRGGGGBBBBLLLL
-    	// Convert this to..................... 00000000SSSSRRRR00000000GGGGBBBB
-    	//
-    	// 16711680 is ........................ 00000000111111110000000000000000
-    	// 255 is ............................. 00000000000000000000000011111111
+    	// Incoming brightness value is in form 00000000 0000SSSS RRRRGGGG BBBBLLLL
+    	// Convert this to..................... 00000000 SSSSRRRR 00000000 GGGGBBBB
     	    	
     	instance.hasBrightness = true;    	    	
-    	instance.brightness = ((par1 << 4) & 16711680) | ((par1 >> 4) & 255);
-    	//debugging: instance.brightness = 15;
+    	//instance.brightness = ((par1 & 1044480) << 4) | ((par1 & 240) >> 4);
+    	instance.brightness = 15;
+    	
+    	//test = (test + 1) % 16;
     }	
 
     public static int draw(Tessellator instance)
@@ -58,12 +59,11 @@ public class CLTesselatorHelper {
 
                 if (instance.hasBrightness)
                 {
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit); // GL13.glClientActiveTexture(par0);
-                	//OpenGlHelper.setClientActiveTexture(CLEntityRendererHelper.redLightTexture);
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
                     Tessellator.shortBuffer.position(14);
                     GL11.glTexCoordPointer(2, 32, Tessellator.shortBuffer);
                     GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);  // GL13.glClientActiveTexture(par0);
+                    OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                 }
 
                 if (instance.hasColor)
@@ -94,7 +94,6 @@ public class CLTesselatorHelper {
                 if (instance.hasBrightness)
                 {
                     OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-                	//OpenGlHelper.setClientActiveTexture(CLEntityRendererHelper.redLightTexture);
                     GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
                     OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                 }
