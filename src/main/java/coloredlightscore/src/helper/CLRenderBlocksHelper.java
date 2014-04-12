@@ -1252,83 +1252,33 @@ public class CLRenderBlocksHelper {
 		if (instance.renderAllFaces || par1Block.shouldSideBeRendered(instance.blockAccess, par2X, par3Y - 1, par4Z, 0))
 		{
 			int i = instance.renderMinY > 0.0D ? l : CLBlockHelper.getMixedBrightnessForBlockWithColor(instance.blockAccess, par2X, par3Y - 1, par4Z);
-			float rc = 1;
-			float gc = 1;
-			float bc = 1;
-			float lc = 1;
-
-			if ((i & 1048320) > 0) {
-				lc = 1f-(i & 240)/240f;
-				rc = (i & 3840)/3840f;
-				gc = (i & 61440)/61440f;
-				bc = (i & 983040)/983040f;
-
-				rc = (rc+lc>1)?1:rc+lc;
-				gc = (gc+lc>1)?1:gc+lc;
-				bc = (bc+lc>1)?1:bc+lc;
-			}
-
 			tessellator.setBrightness(i);
-			tessellator.setColorOpaque_F(f10*rc, f13*gc, f16*bc);
-			instance.renderFaceYNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, instance.getBlockIcon(par1Block, instance.blockAccess, par2X, par3Y, par4Z, 0));
+			tessellator.setColorOpaque_F(f10, f13, f16);
+			instance.renderFaceYNeg(par1Block, par2X, par3Y, par4Z, instance.getBlockIcon(par1Block, instance.blockAccess, par2X, par3Y, par4Z, 0));
 			flag = true;
 		}
 
 		if (instance.renderAllFaces || par1Block.shouldSideBeRendered(instance.blockAccess, par2X, par3Y + 1, par4Z, 1))
 		{
 			int i = instance.renderMaxY < 1.0D ? l : CLBlockHelper.getMixedBrightnessForBlockWithColor(instance.blockAccess, par2X, par3Y + 1, par4Z);
-
-			float rc = 1;
-			float gc = 1;
-			float bc = 1;
-			float lc = 1;
-
-			if ((i & 1048320) > 0) {
-				lc = 1f-(i & 240)/240f;
-				rc = (i & 3840)/3840f;
-				gc = (i & 61440)/61440f;
-				bc = (i & 983040)/983040f;
-
-				rc = (rc+lc>1)?1:rc+lc;
-				gc = (gc+lc>1)?1:gc+lc;
-				bc = (bc+lc>1)?1:bc+lc;
-			}
-
 			tessellator.setBrightness(i);
-			tessellator.setColorOpaque_F(f7*rc, f8*gc, f9*bc);
-			instance.renderFaceYPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, instance.getBlockIcon(par1Block, instance.blockAccess, par2X, par3Y, par4Z, 1));
+			tessellator.setColorOpaque_F(f7, f8, f9);
+			instance.renderFaceYPos(par1Block, par2X, par3Y, par4Z, instance.getBlockIcon(par1Block, instance.blockAccess, par2X, par3Y, par4Z, 1));
 			flag = true;
 		}
 
 		if (instance.renderAllFaces || par1Block.shouldSideBeRendered(instance.blockAccess, par2X, par3Y, par4Z - 1, 2))
 		{
 			int i = instance.renderMinZ > 0.0D ? l : CLBlockHelper.getMixedBrightnessForBlockWithColor(instance.blockAccess, par2X, par3Y, par4Z - 1);
-
-			float rc = 1;
-			float gc = 1;
-			float bc = 1;
-			float lc = 1;
-
-			if ((i & 1048320) > 0) {
-				lc = 1f-(i & 240)/240f;
-				rc = (i & 3840)/3840f;
-				gc = (i & 61440)/61440f;
-				bc = (i & 983040)/983040f;
-
-				rc = (rc+lc>1)?1:rc+lc;
-				gc = (gc+lc>1)?1:gc+lc;
-				bc = (bc+lc>1)?1:bc+lc;
-			}
-
 			tessellator.setBrightness(i);
-			tessellator.setColorOpaque_F(f11*rc, f14*gc, f17*bc);
+			tessellator.setColorOpaque_F(f11, f14, f17);
 			blockIcon = instance.getBlockIcon(par1Block, instance.blockAccess, par2X, par3Y, par4Z, 2);
-			instance.renderFaceZNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, blockIcon);
+			instance.renderFaceZNeg(par1Block, par2X, par3Y, par4Z, blockIcon);
 
 			if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !instance.hasOverrideBlockTexture())
 			{
-				tessellator.setColorOpaque_F(f11 * par5R*rc, f14 * par6G*gc, f17 * par7B*bc);
-				instance.renderFaceZNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, BlockGrass.getIconSideOverlay());
+				tessellator.setColorOpaque_F(f11 * par5R, f14 * par6G, f17 * par7B);
+				instance.renderFaceZNeg(par1Block, par2X, par3Y, par4Z, BlockGrass.getIconSideOverlay());
 			}
 
 			flag = true;
@@ -1337,33 +1287,15 @@ public class CLRenderBlocksHelper {
 		if (instance.renderAllFaces || par1Block.shouldSideBeRendered(instance.blockAccess, par2X, par3Y, par4Z + 1, 3))
 		{
 			int i = instance.renderMaxZ < 1.0D ? l : CLBlockHelper.getMixedBrightnessForBlockWithColor(instance.blockAccess, par2X, par3Y, par4Z + 1);
-
-
-			float rc = 1;
-			float gc = 1;
-			float bc = 1;
-			float lc = 1;
-
-			if ((i & 1048320) > 0) {
-				lc = 1f-(i & 240)/240f;
-				rc = (i & 3840)/3840f;
-				gc = (i & 61440)/61440f;
-				bc = (i & 983040)/983040f;
-
-				rc = (rc+lc>1)?1:rc+lc;
-				gc = (gc+lc>1)?1:gc+lc;
-				bc = (bc+lc>1)?1:bc+lc;
-			}
-
 			tessellator.setBrightness(i);
-			tessellator.setColorOpaque_F(f11*rc, f14*gc, f17*bc);
+			tessellator.setColorOpaque_F(f11, f14, f17);
 			blockIcon = instance.getBlockIcon(par1Block, instance.blockAccess, par2X, par3Y, par4Z, 3);
-			instance.renderFaceZPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, blockIcon);
+			instance.renderFaceZPos(par1Block, par2X, par3Y, par4Z, blockIcon);
 
 			if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !instance.hasOverrideBlockTexture())
 			{
-				tessellator.setColorOpaque_F(f11 * par5R*rc, f14 * par6G*gc, f17 * par7B*bc);
-				instance.renderFaceZPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, BlockGrass.getIconSideOverlay());
+				tessellator.setColorOpaque_F(f11 * par5R, f14 * par6G, f17 * par7B);
+				instance.renderFaceZPos(par1Block, par2X, par3Y, par4Z, BlockGrass.getIconSideOverlay());
 			}
 
 			flag = true;
@@ -1372,33 +1304,15 @@ public class CLRenderBlocksHelper {
 		if (instance.renderAllFaces || par1Block.shouldSideBeRendered(instance.blockAccess, par2X - 1, par3Y, par4Z, 4))
 		{
 			int i = instance.renderMinX > 0.0D ? l : CLBlockHelper.getMixedBrightnessForBlockWithColor(instance.blockAccess, par2X - 1, par3Y, par4Z);
-
-
-			float rc = 1;
-			float gc = 1;
-			float bc = 1;
-			float lc = 1;
-
-			if ((i & 1048320) > 0) {
-				lc = 1f-(i & 240)/240f;
-				rc = (i & 3840)/3840f;
-				gc = (i & 61440)/61440f;
-				bc = (i & 983040)/983040f;
-
-				rc = (rc+lc>1)?1:rc+lc;
-				gc = (gc+lc>1)?1:gc+lc;
-				bc = (bc+lc>1)?1:bc+lc;
-			}
-
 			tessellator.setBrightness(i);
-			tessellator.setColorOpaque_F(f12*rc, f15*gc, f18*bc);
+			tessellator.setColorOpaque_F(f12, f15, f18);
 			blockIcon = instance.getBlockIcon(par1Block, instance.blockAccess, par2X, par3Y, par4Z, 4);
-			instance.renderFaceXNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, blockIcon);
+			instance.renderFaceXNeg(par1Block, par2X, par3Y, par4Z, blockIcon);
 
 			if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !instance.hasOverrideBlockTexture())
 			{
-				tessellator.setColorOpaque_F(f12 * par5R*rc, f15 * par6G*gc, f18 * par7B*bc);
-				instance.renderFaceXNeg(par1Block, (double)par2X, (double)par3Y, (double)par4Z, BlockGrass.getIconSideOverlay());
+				tessellator.setColorOpaque_F(f12 * par5R, f15 * par6G, f18 * par7B);
+				instance.renderFaceXNeg(par1Block, par2X, par3Y, par4Z, BlockGrass.getIconSideOverlay());
 			}
 
 			flag = true;
@@ -1407,33 +1321,15 @@ public class CLRenderBlocksHelper {
 		if (instance.renderAllFaces || par1Block.shouldSideBeRendered(instance.blockAccess, par2X + 1, par3Y, par4Z, 5))
 		{
 			int i = instance.renderMaxX < 1.0D ? l : CLBlockHelper.getMixedBrightnessForBlockWithColor(instance.blockAccess, par2X + 1, par3Y, par4Z);
-
-
-			float rc = 1;
-			float gc = 1;
-			float bc = 1;
-			float lc = 1;
-
-			if ((i & 1048320) > 0) {
-				lc = 1f-(i & 240)/240f;
-				rc = (i & 3840)/3840f;
-				gc = (i & 61440)/61440f;
-				bc = (i & 983040)/983040f;
-
-				rc = (rc+lc>1)?1:rc+lc;
-				gc = (gc+lc>1)?1:gc+lc;
-				bc = (bc+lc>1)?1:bc+lc;
-			}
-
 			tessellator.setBrightness(i);
-			tessellator.setColorOpaque_F(f12*rc, f15*gc, f18*bc);
+			tessellator.setColorOpaque_F(f12, f15, f18);
 			blockIcon = instance.getBlockIcon(par1Block, instance.blockAccess, par2X, par3Y, par4Z, 5);
-			instance.renderFaceXPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, blockIcon);
+			instance.renderFaceXPos(par1Block, par2X, par3Y, par4Z, blockIcon);
 
 			if (RenderBlocks.fancyGrass && blockIcon.getIconName().equals("grass_side") && !instance.hasOverrideBlockTexture())
 			{
-				tessellator.setColorOpaque_F(f12 * par5R*rc, f15 * par6G*gc, f18 * par7B*bc);
-				instance.renderFaceXPos(par1Block, (double)par2X, (double)par3Y, (double)par4Z, BlockGrass.getIconSideOverlay());
+				tessellator.setColorOpaque_F(f12 * par5R, f15 * par6G, f18 * par7B);
+				instance.renderFaceXPos(par1Block, par2X, par3Y, par4Z, BlockGrass.getIconSideOverlay());
 			}
 
 			flag = true;
