@@ -17,7 +17,8 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
 	// These methods will be replaced by statics in CLRenderBlocksHelper
 	String methodsToReplace[] = {
-			"updateLightmap (F)V"
+			"updateLightmap (F)V",
+			"enableLightmap (D)V"
 	};
 	
 	String constructorSignature = "<init> (Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/resources/IResourceManager;)V";

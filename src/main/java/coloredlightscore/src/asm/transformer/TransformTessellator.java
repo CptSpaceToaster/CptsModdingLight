@@ -11,14 +11,11 @@ import org.objectweb.asm.tree.MethodNode;
 import coloredlightscore.src.asm.transformer.core.ASMUtils;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
-import coloredlightscore.src.helper.CLRenderBlocksHelper;
 import coloredlightscore.src.helper.CLTesselatorHelper;
-import cpw.mods.fml.common.FMLLog;
 
 public class TransformTessellator extends HelperMethodTransformer {
 
 	protected String setBrightness = "setBrightness (I)V";
-	protected String draw = "draw ()I";
 	
 	public TransformTessellator() {
 		super("net.minecraft.client.renderer.Tessellator");
@@ -34,9 +31,6 @@ public class TransformTessellator extends HelperMethodTransformer {
 
 		if (NameMapper.getInstance().isMethod(methodNode, super.className, setBrightness))
 			return true;
-
-		if (NameMapper.getInstance().isMethod(methodNode, super.className, draw))
-			return true;
 				
 		return false;		
 	}
@@ -44,17 +38,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 	protected boolean transform(ClassNode clazz, MethodNode method) {
 		
 		if (NameMapper.getInstance().isMethod(method, super.className, setBrightness))
-		{
-			int a = 15790080;
-			int b = 15790080;
-			int c = 15790080;
-			int d = 15790080;
-			FMLLog.info(">> %s", CLRenderBlocksHelper.getAoBrightness(a, b, c, d));
-			
 			return redefineMethod(clazz, method, "setBrightness"); // transformSetBrightness(method);
-		}
-		else if (NameMapper.getInstance().isMethod(method, super.className, draw))
-			return redefineMethod(clazz, method, "draw");
 		else
 			return false;
 

@@ -2,6 +2,7 @@ package coloredlightscore.src.helper;
 
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
 
 import org.lwjgl.opengl.GL11;
 
@@ -26,41 +27,66 @@ public class CLEntityRendererHelper {
             
 			for (int s=0;s<16;s++)
 				for (int r=0;r<16;r++)
-            	{                    
-	            	for (int g=0;g<16;g++)
-	    	            for (int b=0;b<16;b++)
-            			{
-                    		float sunlight = 0;//worldclient.provider.lightBrightnessTable[s] * sunlightBase;
-                            //float lightBrightnessWithTorchFlicker = worldclient.provider.lightBrightnessTable[s] * (er.torchFlickerX * 0.1F + 1.5F);
+            	{ 
+            		float sunlight = worldclient.provider.lightBrightnessTable[s] * sunlightBase;
 
-                            if (worldclient.lastLightningBolt > 0)
-                            {
-                            	// Restore to 100% sun brightness
-                            	sunlight = worldclient.provider.lightBrightnessTable[s];
-                            }
+                    if (worldclient.lastLightningBolt > 0)
+                    {
+                    	// Restore to 100% sun brightness
+                    	sunlight = worldclient.provider.lightBrightnessTable[s];
+                    }
+                    
+	            	for (int g=0;g<16;g++)
+		            	for (int b=0;b<16;b++)
+            			{
+                            //float lightBrightnessWithTorchFlicker = worldclient.provider.lightBrightnessTable[s] * (er.torchFlickerX * 0.1F + 1.5F);
             				
-                            short short1 = 255;
-                            
+		            		int short1 = 255;
                             // Mix sunlight into each color channel
-                            short red = (short)((((float)r / 15f) + sunlight) * 255f);
-                            short green = (short)((((float)g / 15f) + sunlight) * 255f);
-                            short blue = (short)((((float)b / 15f) + sunlight) * 255f);
+                            int red = (int)((((float)r / 15f) + sunlight) * 255f);
+                            int green = (int)((((float)g / 15f) + sunlight) * 255f);
+                            int blue = (int)((((float)b / 15f) + sunlight) * 255f);
                             
                             if (red > 255) red = 255;
                             if (green > 255) green = 255;
                             if (blue > 255) blue = 255;
+                            if (red < 0) red = 0;
+                            if (green < 0) green = 0;
+                            if (blue < 0) blue = 0;
                             
                             //ptr = b | g << 4 | r << 8 | s << 12;
                             
                             er.lightmapColors[ptr++] = short1 << 24 | red << 16 | green << 8 | blue;            				            				
             			}
             	}
-           
+			           
             er.lightmapTexture.updateDynamicTexture();
             er.lightmapUpdateNeeded = false;
             lightMapTexId = er.lightmapTexture.getGlTextureId();
         }
     }
+	
+	public static void enableLightmap(EntityRenderer instance, double par1)
+	{
+        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GL11.glMatrixMode(GL11.GL_TEXTURE);
+        GL11.glLoadIdentity();
+        float f = 0.00390625F; // 1/256
+        GL11.glScalef(f, f, f);
+        //GL11.glTranslatef(8.0F, 8.0F, 8.0F);
+        GL11.glTranslatef(2.0F, 2.0F, 2.0F);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        instance.mc.getTextureManager().bindTexture(instance.locationLightMap);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);		
+	}
 	
 	public static void debugLightmap()
 	{

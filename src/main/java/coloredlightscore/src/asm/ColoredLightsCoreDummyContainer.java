@@ -18,6 +18,9 @@ import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
 public class ColoredLightsCoreDummyContainer extends DummyModContainer
 {
@@ -82,4 +85,14 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
 		CLApi.setBlockColorRGB(Blocks.lit_furnace, 13, 13, 12);
 		CLApi.setBlockColorRGB(Blocks.powered_repeater, 9, 6, 7);
     }
+    
+    @SubscribeEvent
+    public void onRender(TickEvent.RenderTickEvent event) {
+
+    	if (event.phase == Phase.END)
+    	{
+    		CLEntityRendererHelper.debugLightmap();
+    	}
+    }
+    
 }
