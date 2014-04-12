@@ -23,8 +23,10 @@ public class CLTesselatorHelper {
     	instance.hasBrightness = true;    	    	
     	//instance.brightness = ((par1 & 1044480) << 4) | ((par1 & 240) >> 4);
     	instance.brightness = ((par1 & 16711680)) | ((par1 & 65280)>>8);
-    	//instance.brightness = test << 16; // << 20 | 15;
-    	    	
+
+    	//instance.brightness = 15 << 20 | test << 16; // Test red channel    	    	    
+    	//instance.brightness = 15 << 20 | test << 4; // Test green channel    	    	    
+    	//instance.brightness = 15 << 20 | test; // Test blue channel    	    	    
     	//test = (test + 1) & 15;
     }
 }

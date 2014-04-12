@@ -21,7 +21,6 @@ public class CLEntityRendererHelper {
 
         if (worldclient != null)
         {            
-            CLTesselatorHelper.sunlightBrightness = worldclient.getSunBrightness(1.0F);
             float sunlightBase = worldclient.getSunBrightness(1.0F) * 0.95F + 0.05F;
             int ptr = 0;
             
@@ -72,12 +71,13 @@ public class CLEntityRendererHelper {
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         GL11.glLoadIdentity();
         float f = 0.00390625F; // 1/256
+        float t = 0.5f;
         GL11.glScalef(f, f, f);
         //GL11.glTranslatef(8.0F, 8.0F, 8.0F);
-        GL11.glTranslatef(2.0F, 2.0F, 2.0F);
+        GL11.glTranslatef(t, t, t);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         instance.mc.getTextureManager().bindTexture(instance.locationLightMap);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11 .GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
