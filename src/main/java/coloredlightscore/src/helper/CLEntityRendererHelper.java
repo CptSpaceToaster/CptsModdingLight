@@ -25,7 +25,7 @@ public class CLEntityRendererHelper {
             int ptr = 0;
                         
 			for (int s=0;s<16;s++)
-				for (int r=0;r<16;r++)
+				for (int b=0;b<16;b++)
             	{ 
             		float sunlight = worldclient.provider.lightBrightnessTable[s] * sunlightBase;            		
             		
@@ -36,7 +36,7 @@ public class CLEntityRendererHelper {
                     }
                     
 	            	for (int g=0;g<16;g++)
-		            	for (int b=0;b<16;b++)
+		            	for (int r=0;r<16;r++)
             			{
                             //float lightBrightnessWithTorchFlicker = worldclient.provider.lightBrightnessTable[s] * (er.torchFlickerX * 0.1F + 1.5F);
             				
