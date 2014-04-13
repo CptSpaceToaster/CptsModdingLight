@@ -23,12 +23,12 @@ public class CLEntityRendererHelper {
         {            
             float sunlightBase = worldclient.getSunBrightness(1.0F) * 0.95F + 0.05F;
             int ptr = 0;
-            
+                        
 			for (int s=0;s<16;s++)
 				for (int r=0;r<16;r++)
             	{ 
-            		float sunlight = worldclient.provider.lightBrightnessTable[s] * sunlightBase;
-
+            		float sunlight = worldclient.provider.lightBrightnessTable[s] * sunlightBase;            		
+            		
                     if (worldclient.lastLightningBolt > 0)
                     {
                     	// Restore to 100% sun brightness
@@ -42,9 +42,14 @@ public class CLEntityRendererHelper {
             				
 		            		int short1 = 255;
                             // Mix sunlight into each color channel
-                            int red = (int)((((float)r / 15f) + sunlight) * 255f);
-                            int green = (int)((((float)g / 15f) + sunlight) * 255f);
-                            int blue = (int)((((float)b / 15f) + sunlight) * 255f);
+		            				            				            		
+		            		float rc = Math.max((float)r / 15f, sunlight);
+		            		float gc = Math.max((float)g / 15f, sunlight);
+		            		float bc = Math.max((float)b / 15f, sunlight);
+		            		
+                            int red = (int)(rc * 255f);
+                            int green = (int)(gc * 255f);
+                            int blue = (int)(bc * 255f);
                             
                             if (red > 255) red = 255;
                             if (green > 255) green = 255;
