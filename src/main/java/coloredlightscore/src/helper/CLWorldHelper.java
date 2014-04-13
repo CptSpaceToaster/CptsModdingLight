@@ -81,25 +81,34 @@ public class CLWorldHelper {
         }
     }
 	
-	//Hands back the uncolored expected value.
+	//Use this one if you want color
 	@SideOnly(Side.CLIENT)
-    public static int getLightBrightnessForSkyBlocks(World world, int x, int y, int z, int lightValue)
+	public static int getLightBrightnessForSkyBlocks(World world, int x, int y, int z, int lightValue)
     {
-        int skyBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z)&15;
-        int blockBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z)&15;
+        int skyBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
+        int blockBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
+
+        lightValue = ((lightValue & 15)	|
+   			 ((lightValue & 480) >> 1) 	|
+   			 ((lightValue & 15360) >> 2)|
+   			 ((lightValue & 491520) >> 3) );
+   
+        blockBrightness =   ((blockBrightness & 15)			|
+	      	   ((blockBrightness & 480) >> 1) 	|
+	     	   ((blockBrightness & 15360) >> 2)	|
+	     	   ((blockBrightness & 491520) >> 3) );
         
         if (blockBrightness < lightValue)
         {
         	blockBrightness = lightValue;
         }
-
         return skyBrightness << 20 | blockBrightness << 4;
     }
 	
 	//Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC
 	//Refactored variable names to match the method from the 1.6.4 source place cursor over variable and (Alt + Shift + r)
 	//Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
-	
+	/*
 	//Use this one if you want color
 	@SideOnly(Side.CLIENT)
     public static int getLightBrightnessForSkyBlocksWithColor(World world, int x, int y, int z, int lightValue)
@@ -121,24 +130,9 @@ public class CLWorldHelper {
         {
         	blockBrightness = lightValue;
         }
-        
-        // heaton84: subtract daylight from RGB light
-        if (skyBrightness > 0)
-        {
-        	if (((lightValue & 480) >> 4) > skyBrightness)
-        		lightValue = lightValue - (skyBrightness << 4);
-
-        	if (((lightValue & 15360) >> 8) > skyBrightness)
-        		lightValue = lightValue - (skyBrightness << 8);
-        
-        	if (((lightValue & 491520) >> 12) > skyBrightness)
-        		lightValue = lightValue - (skyBrightness << 12);
-        	
-        }
-
         return skyBrightness << 20 | blockBrightness << 4;
     }
-	
+	*/
 	
 	//getBrightness(x,y,z) appears to be missing... not sure what's up there
 	

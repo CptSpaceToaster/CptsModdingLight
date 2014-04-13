@@ -14,20 +14,7 @@ public class CLChunkCacheHelper {
      * 
      * Modified by CptSpaceToaster
      */
-    public static int getLightBrightnessForSkyBlocks(ChunkCache instance, int par1, int par2, int par3, int par4)
-    {
-        int i1 = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, par1, par2, par3)&15;
-        int j1 = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Block, par1, par2, par3)&15;
-        
-        if (j1 < par4)
-        {
-            j1 = par4;
-        }
-
-        return i1 << 20 | j1 << 4;
-    }
-
-	public static int getLightBrightnessForSkyBlocksWithColor(ChunkCache instance, int x, int y, int z, int lightValue) {
+	public static int getLightBrightnessForSkyBlocks(ChunkCache instance, int x, int y, int z, int lightValue) {
 		int skyBrightness = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
         int blockBrightness = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
 

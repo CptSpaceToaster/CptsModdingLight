@@ -19,18 +19,18 @@ public class CLBlockHelper
 		int l;
         Block block = blockAccess.getBlock(x, y, z);
         if (blockAccess instanceof World)
-        	l = CLWorldHelper.getLightBrightnessForSkyBlocksWithColor((World) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
+        	l = CLWorldHelper.getLightBrightnessForSkyBlocks((World) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
         else 
-        	l = CLChunkCacheHelper.getLightBrightnessForSkyBlocksWithColor((ChunkCache) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
+        	l = CLChunkCacheHelper.getLightBrightnessForSkyBlocks((ChunkCache) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
         
         if (l == 0 && block instanceof BlockSlab)
         {
             --y;
             block = blockAccess.getBlock(x, y, z);
             if (blockAccess instanceof World)
-            	return CLWorldHelper.getLightBrightnessForSkyBlocksWithColor((World) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
+            	return CLWorldHelper.getLightBrightnessForSkyBlocks((World) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
             else 
-            	return CLChunkCacheHelper.getLightBrightnessForSkyBlocksWithColor((ChunkCache) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
+            	return CLChunkCacheHelper.getLightBrightnessForSkyBlocks((ChunkCache) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
         }
         else
         {
