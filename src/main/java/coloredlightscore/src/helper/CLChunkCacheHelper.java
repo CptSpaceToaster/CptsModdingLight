@@ -10,7 +10,8 @@ public class CLChunkCacheHelper {
 	}
 
     /**
-     * Any Light rendered on a 1.8 Block goes through here, color is REMOVED!
+     * Any Light rendered on a 1.8 Block goes through here
+     * Light value returned is SSSS RRRR GGGG BBBB LLLL
      * 
      * Modified by CptSpaceToaster
      */
@@ -32,7 +33,7 @@ public class CLChunkCacheHelper {
         {
         	blockBrightness = lightValue;
         }
-
+        
         return skyBrightness << 20 | blockBrightness << 4;
 	}
 	

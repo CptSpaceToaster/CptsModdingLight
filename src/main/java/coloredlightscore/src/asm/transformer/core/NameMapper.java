@@ -61,6 +61,7 @@ public class NameMapper {
 		registerSrgName("CL: net/minecraft/client/renderer/RenderBlocks ble");
 		registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z ble/a (Lahu;IIIFFF)Z");
 		registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z ble/d (Lahu;IIIFFF)Z");
+		registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/getAoBrightness (IIII)I ble/a (IIII)I");
 		
 		// Tessellator
 		registerSrgName("CL: net/minecraft/client/renderer/Tessellator blz");
