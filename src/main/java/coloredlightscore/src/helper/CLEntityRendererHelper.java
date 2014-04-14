@@ -64,7 +64,7 @@ public class CLEntityRendererHelper {
             			}
             	}
 			           
-            er.lightmapTexture.updateDynamicTexture();
+			DynamicTextureHelper.updateDynamicTexture(er.lightmapTexture);
             er.lightmapUpdateNeeded = false;
             lightMapTexId = er.lightmapTexture.getGlTextureId();
         }
