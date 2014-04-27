@@ -77,16 +77,16 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 		}
 		
 		// Prior 2 instructions should be BIPUSH 16
-		// These are the dimentions of the lightmap texture
-		// We want to modify them to SIPUSH 256
+		// These are the dimensions of the lightmap texture
+		// We want to modify them to BIPUSH 16 and SIPUSH 256, for a 16x16x16 3D texture
 		
 		try
 		{
 			IntInsnNode texY = (IntInsnNode)dynamicTextureCtor.getPrevious();
 			IntInsnNode texX = (IntInsnNode)texY.getPrevious();
 			
-			texX.setOpcode(Opcodes.SIPUSH);			
-			texX.operand = 256;
+			texX.setOpcode(Opcodes.BIPUSH);			
+			texX.operand = 16;				//Ya know... this technically isn't doing anything... deal with it ._.
 
 			texY.setOpcode(Opcodes.SIPUSH);			
 			texY.operand = 256;

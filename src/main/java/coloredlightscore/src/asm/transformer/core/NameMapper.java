@@ -65,8 +65,9 @@ public class NameMapper {
 		
 		// Tessellator
 		registerSrgName("CL: net/minecraft/client/renderer/Tessellator blz");
-		registerSrgName("MD: net/minecraft/client/renderer/Tessellator/setBrightness (I)V blz/b (I)V");
-		registerSrgName("MD: net/minecraft/client/renderer/Tessellator/draw ()I blz/a ()I");
+		//registerSrgName("MD: net/minecraft/client/renderer/Tessellator/setBrightness (I)V blz/b (I)V");
+		registerSrgName("MD: net/minecraft/client/renderer/Tessellator/addVertex (DDD)V blz/a (DDD)V");
+		//registerSrgName("MD: net/minecraft/client/renderer/Tessellator/draw ()I blz/a ()I");
 		
 		// World
 		registerSrgName("CL: net/minecraft/world/World afn");

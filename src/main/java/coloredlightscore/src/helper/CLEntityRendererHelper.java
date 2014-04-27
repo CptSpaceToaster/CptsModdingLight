@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 
 public class CLEntityRendererHelper {
-		
+	
 	private static int lightMapTexId;
 	
 	public static void Initialize()
@@ -24,25 +24,27 @@ public class CLEntityRendererHelper {
             float sunlightBase = worldclient.getSunBrightness(1.0F) * 0.95F + 0.05F;
             int ptr = 0;
                         
-			for (int s=0;s<16;s++)
-				for (int b=0;b<16;b++)
-            	{ 
-            		float sunlight = worldclient.provider.lightBrightnessTable[s] * sunlightBase;            		
-            		
-                    if (worldclient.lastLightningBolt > 0)
-                    {
-                    	// Restore to 100% sun brightness
-                    	sunlight = worldclient.provider.lightBrightnessTable[s];
-                    }
-                    
+			for (int s=0;s<16;s++) {
+				float sunlight = worldclient.provider.lightBrightnessTable[s] * sunlightBase;            		
+    		
+	            if (worldclient.lastLightningBolt > 0)
+	            {
+	            	// Restore to 100% sun brightness, because lightning...
+	            	sunlight = worldclient.provider.lightBrightnessTable[s];
+	            }
+	            
+				for (int b=0;b<16;b++)  
 	            	for (int g=0;g<16;g++)
 		            	for (int r=0;r<16;r++)
             			{
+		            		
+		            		//TODO: Fill 3D textures with color data
+		            		
                             //float lightBrightnessWithTorchFlicker = worldclient.provider.lightBrightnessTable[s] * (er.torchFlickerX * 0.1F + 1.5F);
             				
 		            		int short1 = 255;
                             // Mix sunlight into each color channel
-		            				            				            		
+		            		/*
 		            		float rc = Math.max((float)r / 15f, sunlight);
 		            		float gc = Math.max((float)g / 15f, sunlight);
 		            		float bc = Math.max((float)b / 15f, sunlight);
@@ -60,11 +62,12 @@ public class CLEntityRendererHelper {
                             
                             //ptr = b | g << 4 | r << 8 | s << 12;
                             
-                            er.lightmapColors[ptr++] = short1 << 24 | red << 16 | green << 8 | blue;            				            				
+                            er.lightmapColors[ptr++] = short1 << 24 | red << 16 | green << 8 | blue;
+                            */            				            				
             			}
             	}
 			           
-			DynamicTextureHelper.updateDynamicTexture(er.lightmapTexture);
+			CLDynamicTextureHelper.updateDynamicTexture(er.lightmapTexture);
             er.lightmapUpdateNeeded = false;
             lightMapTexId = er.lightmapTexture.getGlTextureId();
         }
