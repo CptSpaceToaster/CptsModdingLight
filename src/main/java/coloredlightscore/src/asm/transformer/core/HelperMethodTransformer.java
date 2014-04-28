@@ -164,16 +164,20 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
 		staticInvoke.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				
 		// Push all calling arguments from target method onto stack
-		for (argIndex = 0; argIndex < args.length; argIndex++)
-		{
-			int LoadOpCode = args[argIndex].getOpcode(Opcodes.ILOAD);
+		int index = 0;
+		
+		for (Type argument : args) {
+			int LoadOpCode = argument.getOpcode(Opcodes.ILOAD);
 			
-			staticInvoke.add(new VarInsnNode(LoadOpCode, argIndex + 1));
+			staticInvoke.add(new VarInsnNode(LoadOpCode, index + 1));
 			
 			//  If we load a Double, or a Long, we need to bump up the argument index
-			// by 1 to account for 64 bits being split into 2, 32 bit stacks
-			if(LoadOpCode == Opcodes.DLOAD || LoadOpCode == Opcodes.LLOAD)
-				argIndex++;
+			// by 2 to account for 64 bits being split into 2, 32 bit stacks
+			if(LoadOpCode == Opcodes.DLOAD || LoadOpCode == Opcodes.LLOAD) {
+				index+=2;
+			} else {
+				index++;
+			}
 		}
 				
 		// Now prepare a call to a static method (did I mention the helper method should be static?)
