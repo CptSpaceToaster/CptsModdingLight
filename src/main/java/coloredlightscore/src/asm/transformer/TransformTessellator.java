@@ -10,7 +10,9 @@ public class TransformTessellator extends HelperMethodTransformer {
 
 	// These methods will be replaced by statics in CLRenderBlocksHelper
 	String methodsToReplace[] = {
-			"addVertex (DDD)V"
+			"addVertex (DDD)V",
+			"setBrightness (I)V"
+			
 	};
 	
 	public TransformTessellator()

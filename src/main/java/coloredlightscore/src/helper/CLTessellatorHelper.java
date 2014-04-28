@@ -10,9 +10,16 @@ public class CLTessellatorHelper {
 	public static float sunlightBrightness = 1.0f;
 	
 	public CLTessellatorHelper() {
-		
+		// TODO Auto-generated constructor stub
 	}
     
+	 public void setBrightness(Tessellator instance, int par1)
+    {
+	 	instance.hasBrightness = true;
+        instance.brightness = par1;
+    }
+
+	
     public static void addVertex(Tessellator junkthis, double par1, double par3, double par5)
     {
     	//Crutch
@@ -59,11 +66,11 @@ public class CLTessellatorHelper {
         	*/
         	
         	/* 0000 0000 SSSS 0000 0000 0000 LLLL 0000 */
-        	Tessellator.instance.rawBuffer[Tessellator.instance.rawBufferIndex + 9] = Tessellator.instance.brightness & 15728880;
+        	Tessellator.instance.rawBuffer[Tessellator.instance.rawBufferIndex + 7] = Tessellator.instance.brightness & 15728880;
         	/* 0000 0000 BBBB 0000 0000 0000 RRRR 0000 */
-        	Tessellator.instance.rawBuffer[Tessellator.instance.rawBufferIndex + 7] = (Tessellator.instance.brightness<<4 & 15728640) | (Tessellator.instance.brightness>>8 & 240);
+        	Tessellator.instance.rawBuffer[Tessellator.instance.rawBufferIndex + 8] = (Tessellator.instance.brightness<<4 & 15728640) | (Tessellator.instance.brightness>>8 & 240);
         	/* 0000 0000 GGGG 0000 0000 0000 SSSS 0000 */
-        	Tessellator.instance.rawBuffer[Tessellator.instance.rawBufferIndex + 8] = (Tessellator.instance.brightness<<8 & 15728640) | (Tessellator.instance.brightness>>16 & 240);
+        	Tessellator.instance.rawBuffer[Tessellator.instance.rawBufferIndex + 9] = (Tessellator.instance.brightness<<8 & 15728640) | (Tessellator.instance.brightness>>16 & 240);
         	
         }
 
