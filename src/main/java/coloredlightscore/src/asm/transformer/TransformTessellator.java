@@ -14,15 +14,12 @@ import coloredlightscore.src.asm.transformer.core.ASMUtils;
 import coloredlightscore.src.asm.transformer.core.ExtendedClassWriter;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
+import coloredlightscore.src.interfaces.CLTessellatorInterface;
 import cpw.mods.fml.common.FMLLog;
 
 public class TransformTessellator extends HelperMethodTransformer {
 
-	// These methods will be replaced by statics in CLRenderBlocksHelper
-	String appliedInterface = "coloredlightscore.src.interfaces.CLTessellatorInterface";
-	String fieldName = "rawBufferSize";
-	String fieldDescriptor = "I";
-	
+	// These methods will be replaced by statics in CLTessellatorHelper
 	String methodsToReplace[] = {
 			"addVertex (DDD)V"
 	};
@@ -43,18 +40,20 @@ public class TransformTessellator extends HelperMethodTransformer {
 			{
 				ClassNode clazz = ASMUtils.getClassNode(bytes);
 				
-				clazz.interfaces.add(appliedInterface);
+				clazz.interfaces.add(CLTessellatorInterface.appliedInterface);
 				
-				MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, fieldName, "()" + fieldDescriptor, null, null);
+				//Don't mind this.  Just cramming a getter and setter into the Tesellator for later use
+				//getter
+				MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.getterName, "()" + CLTessellatorInterface.fieldDescriptor, null, null);
 				getter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, clazz.name, fieldName, fieldDescriptor));
+				getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, clazz.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
 				getter.instructions.add(new InsnNode(Opcodes.IRETURN));
 				clazz.methods.add(getter);
-				
-				MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, fieldName, "(" + fieldDescriptor + ")V", null, null);
+				//setter
+				MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.setterName, "(" + CLTessellatorInterface.fieldDescriptor + ")V", null, null);
 				setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				setter.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
-				setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, clazz.name, fieldName, fieldDescriptor));
+				setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, clazz.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
 				setter.instructions.add(new InsnNode(Opcodes.RETURN));
 				clazz.methods.add(setter);
 				

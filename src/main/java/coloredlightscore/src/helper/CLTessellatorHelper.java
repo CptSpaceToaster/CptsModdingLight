@@ -14,7 +14,7 @@ public class CLTessellatorHelper {
 		// TODO Auto-generated constructor stub
 	}
     
-	 public void setBrightness(Tessellator instance, int par1)
+	public void setBrightness(Tessellator instance, int par1)
     {
 	 	instance.hasBrightness = true;
         instance.brightness = par1;
@@ -23,10 +23,7 @@ public class CLTessellatorHelper {
 	
     public static void addVertex(Tessellator instance, double par1, double par3, double par5)
     {
-    	//Crutch
-    	int cl_rawBufferSize = ((CLTessellatorInterface)instance).getRawBufferSize();
-    	
-    	
+    	int cl_rawBufferSize = ((CLTessellatorInterface)instance).getRawBufferSize();	
     	
         if (instance.rawBufferIndex >= cl_rawBufferSize - 32) 
         {
