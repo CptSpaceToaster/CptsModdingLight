@@ -159,7 +159,7 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
 			}
 
 		}
-		
+				
 		// Push reference to target class onto stack : aload_0 [this]
 		staticInvoke.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				

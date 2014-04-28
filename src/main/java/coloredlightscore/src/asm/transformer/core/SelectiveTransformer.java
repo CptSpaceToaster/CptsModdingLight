@@ -22,7 +22,7 @@ import cpw.mods.fml.common.FMLLog;
 public abstract class SelectiveTransformer implements IClassTransformer
 {
 	@Override
-	public final byte[] transform(String name, String transformedName, byte[] bytes)
+	public byte[] transform(String name, String transformedName, byte[] bytes)
 	{
 		if (bytes != null && transforms(transformedName))
 		{
