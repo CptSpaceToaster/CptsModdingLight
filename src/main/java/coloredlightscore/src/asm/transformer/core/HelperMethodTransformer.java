@@ -167,7 +167,13 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
 		for (argIndex = 0; argIndex < args.length; argIndex++)
 		{
 			int LoadOpCode = args[argIndex].getOpcode(Opcodes.ILOAD);
+			
 			staticInvoke.add(new VarInsnNode(LoadOpCode, argIndex + 1));
+			
+			//  If we load a Double, or a Long, we need to bump up the argument index
+			// by 1 to account for 64 bits being split into 2, 32 bit stacks
+			if(LoadOpCode == Opcodes.DLOAD || LoadOpCode == Opcodes.LLOAD)
+				argIndex++;
 		}
 				
 		// Now prepare a call to a static method (did I mention the helper method should be static?)

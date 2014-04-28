@@ -487,7 +487,7 @@ public final class ASMUtils
 			}
 			else
 			{
-				// heaton84: This is a no-no. Class.forName is a minefield during class transformation
+				//heaton84: This is a no-no. Class.forName is a minefield during class transformation
 				return null;
 				//return new ClassInfoFromClazz(Class.forName(ASMUtils.undoInternalName(className)));
 			}
