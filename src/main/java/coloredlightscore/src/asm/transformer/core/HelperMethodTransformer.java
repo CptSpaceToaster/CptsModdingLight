@@ -115,7 +115,6 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
 		Type helperClassType = Type.getType(getHelperClass());		
 		Type[] args = Type.getArgumentTypes(targetMethod.desc);
 
-		int argIndex;
 		String helperMethodDescriptor;
 				
 		if (helperMethod.indexOf(' ') > -1)

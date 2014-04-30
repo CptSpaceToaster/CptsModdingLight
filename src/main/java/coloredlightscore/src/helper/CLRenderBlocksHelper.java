@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
 
 // 56-59 fps w/o renderCache
 
@@ -2184,7 +2183,9 @@ public class CLRenderBlocksHelper {
     	
     	return avg << startBit;
     }
-    
+    /* 
+     * Unused
+     *  
     private static class renderCacheEntry
     {
     	public boolean isEmpty;
@@ -2210,4 +2211,5 @@ public class CLRenderBlocksHelper {
     		isEmpty = true;
     	}
     }
+    */
 }

@@ -40,7 +40,7 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
 		meta.name = "Colored Lights Core";
 		meta.version = String.format("%s.%s.%s", VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION);
 		meta.credits = "";
-		meta.authorList = Arrays.asList("AJWGeek", "Kovu", "CptSpaceToaster", "heaton84");
+		meta.authorList = Arrays.asList("heaton84", "CptSpaceToaster", "Kovu");
 		meta.description = "The coremod for Colored Lights " + (((VERSION_REVISION & 1) != 0) ? "(Unstable Revision)" : "");
 		
 		chunkDataEventHandler = new ChunkDataEventHandler();
