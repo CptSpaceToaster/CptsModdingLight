@@ -33,7 +33,7 @@ public abstract class SelectiveTransformer implements IClassTransformer
 				ClassNode clazz = ASMUtils.getClassNode(bytes);
 				if (transform(clazz, transformedName))
 				{
-					FMLLog.info("Transforming class " + transformedName);
+					FMLLog.info("Finished Transforming class " + transformedName);
 					ClassWriter writer = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 					clazz.accept(writer);
 					bytes = writer.toByteArray();

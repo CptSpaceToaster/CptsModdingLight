@@ -1,10 +1,15 @@
 package coloredlightscore.src.asm.transformer;
 
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -18,11 +23,16 @@ import coloredlightscore.src.interfaces.CLTessellatorInterface;
 import cpw.mods.fml.common.FMLLog;
 
 public class TransformTessellator extends HelperMethodTransformer {
-
+	String unObfBrightness = "hasBrightness";
+	String obfBrightness = "field_78414_p"; //It could also be field_147580_e
+	
+	
 	// These methods will be replaced by statics in CLTessellatorHelper
 	String methodsToReplace[] = {
 			"addVertex (DDD)V"
 	};
+	
+	String drawSignature = "draw ()I";
 	
 	public TransformTessellator()
 	{
@@ -60,7 +70,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 				
 				if (transform(clazz, transformedName))
 				{
-					FMLLog.info("Transforming class " + transformedName);
+					FMLLog.info("Finished Transforming class " + transformedName);
 					ClassWriter writer = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 					clazz.accept(writer);
 					bytes = writer.toByteArray();
@@ -93,6 +103,10 @@ public class TransformTessellator extends HelperMethodTransformer {
 				return true;
 		}
 		
+		if ((methodNode.name + " " + methodNode.desc).equals(drawSignature))
+			return true;
+
+		
 		return false;
 	}	
 
@@ -105,8 +119,56 @@ public class TransformTessellator extends HelperMethodTransformer {
 			{
 				return redefineMethod(classNode, methodNode, name);
 			}
-		}		
+		}
+		
+		if ((methodNode.name + " " + methodNode.desc).equals(drawSignature))
+			return transformDraw(methodNode);
 		
 		return false;
+	}
+	
+	/*
+	 * There isn't a good way around this that I can see, but we'll look for the reference to hasBrightness,  
+	 * and then we'll blindly change the next instance of a 2... to a 3...
+	 * 
+	 * GL11.glTexCoordPointer( **3** , 32, this.shortBuffer); on line 140
+	 */
+	protected boolean transformDraw(MethodNode methodNode)
+	{	
+		boolean hasFoundBrightness = false;
+		boolean replacedTwoWithThree = false;
+		
+	    for (ListIterator<AbstractInsnNode> it = methodNode.instructions.iterator(); it.hasNext();) {
+	        AbstractInsnNode insn = it.next();
+	        if (insn.getOpcode() == Opcodes.GETFIELD && !hasFoundBrightness) {
+		        try {
+		        	if (((FieldInsnNode)insn).name.equals(obfBrightness) || ((FieldInsnNode)insn).name.equals(unObfBrightness)) {
+		        		hasFoundBrightness = true;
+		        	}
+		        } catch (ClassCastException e) {
+		        	FMLLog.severe("There was an issue casting the Instruction to a FieldInsnNode for some reason?");
+		        	e.printStackTrace();
+		        }
+	        }
+	        
+	        if (hasFoundBrightness && insn.getOpcode() == Opcodes.ICONST_2) {
+	        	it.set(new InsnNode(Opcodes.ICONST_3));
+	        	replacedTwoWithThree = true;
+	        }
+	        
+	        if (insn.getOpcode() == Opcodes.BIPUSH) {
+	        	if (((IntInsnNode)insn).operand == 32) {
+	        		((IntInsnNode)insn).operand = 40;
+	        	}
+	        }
+	    }
+	    
+	    if (!hasFoundBrightness) {
+	    	FMLLog.severe("Could not find " + unObfBrightness + " or " + obfBrightness + " while transforming Tessellator.draw!");
+	    } else if (!replacedTwoWithThree) {
+	    	FMLLog.severe("Reached the end of the list without finding a 2 to replace while transforming Tessellator.draw!");
+	    }
+	    
+		return (hasFoundBrightness && replacedTwoWithThree);
 	}
 }

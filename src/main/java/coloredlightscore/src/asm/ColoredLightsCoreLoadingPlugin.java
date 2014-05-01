@@ -19,7 +19,6 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 
 @MCVersion("1.7.2")
-@SortingIndex(value=1007)
 public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 {
 	public static LaunchClassLoader CLASSLOADER;

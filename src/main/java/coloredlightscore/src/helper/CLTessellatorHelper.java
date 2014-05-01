@@ -62,7 +62,7 @@ public class CLTessellatorHelper {
         	  GS
         	
         	 << and >> take precedence over &
-        	  http://docs.oracle.com/javase/tutorial/java/nutsandbolts/operators.html
+        	 
         	*/
         	
         	/* 0000 0000 SSSS 0000 0000 0000 LLLL 0000 */
