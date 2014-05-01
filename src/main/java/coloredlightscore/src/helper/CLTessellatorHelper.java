@@ -68,9 +68,9 @@ public class CLTessellatorHelper {
         	/* 0000 0000 SSSS 0000 0000 0000 LLLL 0000 */
         	instance.rawBuffer[instance.rawBufferIndex + 7] = instance.brightness & 15728880;
         	/* 0000 0000 BBBB 0000 0000 0000 RRRR 0000 */
-        	instance.rawBuffer[instance.rawBufferIndex + 8] = (instance.brightness<<4 & 15728640) | (instance.brightness>>8 & 240);
+        	//instance.rawBuffer[instance.rawBufferIndex + 8] = (instance.brightness<<4 & 15728640) | (instance.brightness>>8 & 240);
         	/* 0000 0000 GGGG 0000 0000 0000 SSSS 0000 */
-        	instance.rawBuffer[instance.rawBufferIndex + 9] = (instance.brightness<<8 & 15728640) | (instance.brightness>>16 & 240);
+        	//instance.rawBuffer[instance.rawBufferIndex + 9] = (instance.brightness<<8 & 15728640) | (instance.brightness>>16 & 240);
         	
         }
 

@@ -135,13 +135,35 @@ public class TransformTessellator extends HelperMethodTransformer {
 	 */
 	protected boolean transformDraw(MethodNode methodNode)
 	{	
+		boolean fixedFive = false;
+		boolean replacedShift = false;
 		boolean hasFoundBrightness = false;
 		boolean replacedTwoWithThree = false;
 		
+		int replace32 = 0;
+		int replace8 = 0;
+		int newStride = 40;
+		int newInts = 10;
+		
 	    for (ListIterator<AbstractInsnNode> it = methodNode.instructions.iterator(); it.hasNext();) {
 	        AbstractInsnNode insn = it.next();
+	        
+	        //replace the only instance of '>> 5' with '/ 40'
+	        if (insn.getOpcode() == Opcodes.ICONST_5 && !fixedFive) {
+	        	FMLLog.info("Replaced a 5 with 40");
+	        	it.set(new IntInsnNode(Opcodes.BIPUSH, 40));
+	        	fixedFive = true;
+	        }
+	        if (insn.getOpcode() == Opcodes.ISHR && !replacedShift) {
+	        	FMLLog.info("Dividing instead of shifting");
+	        	it.set(new InsnNode(Opcodes.IDIV));
+	        	replacedShift = true;
+	        }
+	        
+	        //replace the 2 that follows 'hasBrighness' with a 3
 	        if (insn.getOpcode() == Opcodes.GETFIELD && !hasFoundBrightness) {
 		        try {
+		        	//check to see if it's 'hasBrightness'
 		        	if (((FieldInsnNode)insn).name.equals(obfBrightness) || ((FieldInsnNode)insn).name.equals(unObfBrightness)) {
 		        		hasFoundBrightness = true;
 		        	}
@@ -150,15 +172,21 @@ public class TransformTessellator extends HelperMethodTransformer {
 		        	e.printStackTrace();
 		        }
 	        }
-	        
+	        //put a 3 there instead of a 2
 	        if (hasFoundBrightness && insn.getOpcode() == Opcodes.ICONST_2) {
 	        	it.set(new InsnNode(Opcodes.ICONST_3));
 	        	replacedTwoWithThree = true;
 	        }
 	        
+	        //replace all instances of 32 with 40 and replace all instances of 8 with 10
 	        if (insn.getOpcode() == Opcodes.BIPUSH) {
 	        	if (((IntInsnNode)insn).operand == 32) {
-	        		((IntInsnNode)insn).operand = 40;
+	        		((IntInsnNode)insn).operand = newStride;
+	        		replace32++;
+	        	}
+	        	if (((IntInsnNode)insn).operand == 8) {
+	        		((IntInsnNode)insn).operand = newInts;
+	        		replace8++;
 	        	}
 	        }
 	    }
@@ -168,7 +196,9 @@ public class TransformTessellator extends HelperMethodTransformer {
 	    } else if (!replacedTwoWithThree) {
 	    	FMLLog.severe("Reached the end of the list without finding a 2 to replace while transforming Tessellator.draw!");
 	    }
+	    FMLLog.info("Replaced " + replace32 + " instances of 32 with " + newStride + ".");
+	    FMLLog.info("Replaced " + replace8 + " instances of 8 with " + newInts + ".");
 	    
-		return (hasFoundBrightness && replacedTwoWithThree);
+		return (fixedFive && replacedShift && hasFoundBrightness && replacedTwoWithThree);
 	}
 }

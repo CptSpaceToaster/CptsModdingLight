@@ -22,17 +22,17 @@ public class CLDynamicTextureHelper {
     {
 		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, par0);
 		GL11.glBindTexture(GL12.GL_TEXTURE_3D, par0);
-        uploadTextureSub(0, data, width, height, 0, 0, false, false, false);
-    }
-	
-	private static void uploadTextureSub(int level, int[] data, int width, int heightNdepth, int xoffset, int yoffset, boolean p_147947_6_, boolean p_147947_7_, boolean isMoreThanOnePixel)
-    {	
-        TextureUtil.func_147954_b(p_147947_6_, isMoreThanOnePixel);
-        TextureUtil.setTextureClamped(p_147947_7_);
         
+		int level = 0;
+		
+		boolean p_147947_6_ = false;
+		boolean isMoreThanOnePixel = false;
+		boolean p_147947_7_ = false;
+		
+		
+		TextureUtil.func_147954_b(p_147947_6_, isMoreThanOnePixel);
+        TextureUtil.setTextureClamped(p_147947_7_);
         //So, we're just going to upload the texture in one lump sump
         GL12.glTexSubImage3D(GL12.GL_TEXTURE_3D, level, 0, 0, 0, 16, 16, 16, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
-        
-        
     }
 }
