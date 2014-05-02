@@ -75,7 +75,7 @@ public class CLEntityRendererHelper {
         				if (blue > 255) blue = 255;
                         if (blue < 0) blue = 0;
                         
-                        ptr2 = g << 16 | s << 8 | b;
+                        ptr2 = b << 16 | s << 8 | g;
                         //er.lightmapColors[ptr2] = alpha << 24 | 255 << 16 | g << 8 | b;
         			}
             	}
@@ -116,6 +116,8 @@ public class CLEntityRendererHelper {
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 	}
 	
+	
+	/*
 	public static void debugLightmap()
 	{
         // Render it on the screen
@@ -131,8 +133,8 @@ public class CLEntityRendererHelper {
 
 
         GL11.glColor3f(1,1,1);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, lightMapTexId);
+        GL11.glEnable(GL12.GL_TEXTURE_3D);
+        GL11.glBindTexture(GL12.GL_TEXTURE_3D, lightMapTexId);
 
         // Draw a textured quad
         GL11.glBegin(GL11.GL_QUADS);
@@ -143,7 +145,7 @@ public class CLEntityRendererHelper {
         GL11.glEnd();
 
 
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL12.GL_TEXTURE_3D);
         GL11.glPopMatrix();
 
 
@@ -152,4 +154,5 @@ public class CLEntityRendererHelper {
 
         GL11.glMatrixMode(GL11.GL_MODELVIEW);            		
 	}
+	*/
 }

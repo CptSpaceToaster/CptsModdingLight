@@ -33,6 +33,9 @@ public class TransformTessellator extends HelperMethodTransformer {
 	};
 	
 	String drawSignature = "draw ()I";
+	String obfDrawSignature = "blz/a ()I";
+	String vertexSignature = "getVertexState (FFF)Lnet/minecraft/client/shader/TesselatorVertexState;";
+	String obfVertexSignature = "blz/a (FFF)Lnet/minecraft/client/shader/TesselatorVertexState;";
 	
 	public TransformTessellator()
 	{
@@ -99,11 +102,15 @@ public class TransformTessellator extends HelperMethodTransformer {
 		
 		for(String name : methodsToReplace)
 		{
+			//System.out.println(" : " + (methodNode.name + " " + methodNode.desc));
 			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
 				return true;
 		}
 		
-		if ((methodNode.name + " " + methodNode.desc).equals(drawSignature))
+		if ((methodNode.name + " " + methodNode.desc).equals(drawSignature) || (methodNode.name + " " + methodNode.desc).equals(obfDrawSignature))
+			return true;
+		
+		if ((methodNode.name + " " + methodNode.desc).equals(vertexSignature) || (methodNode.name + " " + methodNode.desc).equals(obfVertexSignature))
 			return true;
 
 		
@@ -121,17 +128,17 @@ public class TransformTessellator extends HelperMethodTransformer {
 			}
 		}
 		
-		if ((methodNode.name + " " + methodNode.desc).equals(drawSignature))
+		if ((methodNode.name + " " + methodNode.desc).equals(drawSignature) || (methodNode.name + " " + methodNode.desc).equals(obfDrawSignature))
 			return transformDraw(methodNode);
+		
+		if ((methodNode.name + " " + methodNode.desc).equals(vertexSignature) || (methodNode.name + " " + methodNode.desc).equals(obfVertexSignature))
+			return transformGetVertexState(methodNode);
 		
 		return false;
 	}
 	
 	/*
-	 * There isn't a good way around this that I can see, but we'll look for the reference to hasBrightness,  
-	 * and then we'll blindly change the next instance of a 2... to a 3...
-	 * 
-	 * GL11.glTexCoordPointer( **3** , 32, this.shortBuffer); on line 140
+	 * This does stuff...
 	 */
 	protected boolean transformDraw(MethodNode methodNode)
 	{	
@@ -200,5 +207,20 @@ public class TransformTessellator extends HelperMethodTransformer {
 	    FMLLog.info("Replaced " + replace8 + " instances of 8 with " + newInts + ".");
 	    
 		return (fixedFive && replacedShift && hasFoundBrightness && replacedTwoWithThree);
+	}
+	
+	boolean transformGetVertexState(MethodNode methodNode) {
+		for (ListIterator<AbstractInsnNode> it = methodNode.instructions.iterator(); it.hasNext();) {
+	        AbstractInsnNode insn = it.next();
+	        //replace the only instance of 32 with 40
+	        if (insn.getOpcode() == Opcodes.BIPUSH) {
+	        	if (((IntInsnNode)insn).operand == 32) {
+	        		((IntInsnNode)insn).operand = 40;
+	        		return true;
+	        	}
+	        }
+		}
+	    FMLLog.severe("Could not find a 32 to transform to a 40");
+		return false;
 	}
 }
