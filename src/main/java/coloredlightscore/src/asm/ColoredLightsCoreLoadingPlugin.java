@@ -1,7 +1,5 @@
 package coloredlightscore.src.asm;
 
-
-
 import java.util.Map;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -16,7 +14,6 @@ import coloredlightscore.src.asm.transformer.TransformTessellator;
 import coloredlightscore.src.asm.transformer.TransformWorld;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 
 @MCVersion("1.7.2")
 public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin

@@ -1,10 +1,10 @@
 	package coloredlightscore.src.helper;
 	
 	import net.minecraft.client.renderer.texture.DynamicTexture;
-	import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.texture.TextureUtil;
 	
 	import org.lwjgl.opengl.GL11;
-	import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL12;
 	
 	/*
 	 * An odd mess to gain control over the load of the lightmap into GL11...
@@ -35,3 +35,5 @@
 	        GL12.glTexSubImage3D(GL12.GL_TEXTURE_3D, level, 0, 0, 0, 16, 16, 16, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
 	    }
 	}
+	
+	

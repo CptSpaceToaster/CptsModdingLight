@@ -3,13 +3,16 @@ package coloredlightscore.src.helper;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 public class CLEntityRendererHelper {
 	
-	private static int lightMapTexId;
+	private static ITextureObject lightMap1;
 	
 	public static void Initialize()
 	{
@@ -24,7 +27,7 @@ public class CLEntityRendererHelper {
         {            
             float sunlightBase = worldclient.getSunBrightness(1.0F) * 0.95F + 0.05F;
             int ptr1 = 0;
-            int ptr2 = 0;
+            //int ptr2 = 0;
                         
 			for (int s=0;s<16;s++) {
 				float sunlight = worldclient.provider.lightBrightnessTable[s] * sunlightBase;            		
@@ -75,17 +78,17 @@ public class CLEntityRendererHelper {
         				if (blue > 255) blue = 255;
                         if (blue < 0) blue = 0;
                         
-                        ptr2 = b << 16 | s << 8 | g;
+                        //ptr2 = b << 16 | s << 8 | g;
                         //er.lightmapColors[ptr2] = alpha << 24 | 255 << 16 | g << 8 | b;
         			}
             	}
         		
         		
         	}
-			           
+			
 			CLDynamicTextureHelper.updateDynamicTexture(er.lightmapTexture);
             er.lightmapUpdateNeeded = false;
-            lightMapTexId = er.lightmapTexture.getGlTextureId();
+            er.lightmapTexture.getGlTextureId();
         }
     }
 	
@@ -100,7 +103,7 @@ public class CLEntityRendererHelper {
         //GL11.glTranslatef(8.0F, 8.0F, 8.0F);
         GL11.glTranslatef(t, t, t);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        instance.mc.getTextureManager().bindTexture(instance.locationLightMap);
+        bindTexture(instance, instance.locationLightMap);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         
@@ -115,6 +118,24 @@ public class CLEntityRendererHelper {
         GL11.glEnable(GL12.GL_TEXTURE_3D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 	}
+	
+	public static void disableLightmap(EntityRenderer instance, double par1)
+    {
+        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GL11.glDisable(GL12.GL_TEXTURE_3D);
+        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+    }
+	
+	public static void bindTexture(EntityRenderer instance, ResourceLocation par1ResourceLocation)
+    {
+        if (lightMap1 == null)
+        {
+        	lightMap1 = new SimpleTexture(par1ResourceLocation);
+        	instance.mc.getTextureManager().loadTexture(par1ResourceLocation, lightMap1);
+        }
+
+        GL11.glBindTexture(GL12.GL_TEXTURE_3D, lightMap1.getGlTextureId());
+    }
 	
 	
 	/*

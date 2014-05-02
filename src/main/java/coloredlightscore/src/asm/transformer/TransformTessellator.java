@@ -1,8 +1,6 @@
 package coloredlightscore.src.asm.transformer;
 
 import java.util.ListIterator;
-import java.util.NoSuchElementException;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AbstractInsnNode;
