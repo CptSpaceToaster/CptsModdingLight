@@ -128,13 +128,19 @@ public class CLEntityRendererHelper {
 	
 	public static void bindTexture(EntityRenderer instance, ResourceLocation par1ResourceLocation)
     {
+		System.out.println(" :1: ");
+		
         if (lightMap1 == null)
         {
         	lightMap1 = new SimpleTexture(par1ResourceLocation);
-        	instance.mc.getTextureManager().loadTexture(par1ResourceLocation, lightMap1);
+        	System.out.println(" :2: ");
+        	instance.mc.getTextureManager().mapTextureObjects.put(par1ResourceLocation, lightMap1);
+        	System.out.println(" :3: ");
         }
-
+        
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, lightMap1.getGlTextureId());
+        
+        
     }
 	
 	
