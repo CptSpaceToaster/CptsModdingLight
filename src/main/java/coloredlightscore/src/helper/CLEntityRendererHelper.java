@@ -5,14 +5,13 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 public class CLEntityRendererHelper {
-	
-	private static ITextureObject lightMap1;
 	
 	public static void Initialize()
 	{
@@ -103,7 +102,7 @@ public class CLEntityRendererHelper {
         //GL11.glTranslatef(8.0F, 8.0F, 8.0F);
         GL11.glTranslatef(t, t, t);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        bindTexture(instance, instance.locationLightMap);
+        bindTexture(instance.mc.getTextureManager(), instance.locationLightMap);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         
@@ -126,21 +125,18 @@ public class CLEntityRendererHelper {
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 	
-	public static void bindTexture(EntityRenderer instance, ResourceLocation par1ResourceLocation)
-    {
-		System.out.println(" :1: ");
+	public static void bindTexture(TextureManager instance, ResourceLocation par1ResourceLocation)
+    {	
+		Object lightMap1 = (ITextureObject)instance.mapTextureObjects.get(par1ResourceLocation);
 		
         if (lightMap1 == null)
         {
         	lightMap1 = new SimpleTexture(par1ResourceLocation);
-        	System.out.println(" :2: ");
-        	instance.mc.getTextureManager().mapTextureObjects.put(par1ResourceLocation, lightMap1);
-        	System.out.println(" :3: ");
+        	instance.mapTextureObjects.put(par1ResourceLocation, lightMap1);
         }
+        GL11.glBindTexture(GL12.GL_TEXTURE_3D, ((ITextureObject) lightMap1).getGlTextureId());
         
-        GL11.glBindTexture(GL12.GL_TEXTURE_3D, lightMap1.getGlTextureId());
-        
-        
+        org.lwjgl.opengl.Util.checkGLError();
     }
 	
 	
