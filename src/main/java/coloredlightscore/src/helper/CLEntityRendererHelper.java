@@ -3,6 +3,7 @@ package coloredlightscore.src.helper;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -13,14 +14,17 @@ import org.lwjgl.opengl.GL12;
 
 public class CLEntityRendererHelper {
 	
+	public static int lightMap1 = -1;
+	public static int lightMap2 = -1;
+	
 	public static void Initialize()
 	{
 		// Redefine daylight
 	}
 		    
-	public static void updateLightmap(EntityRenderer er, float par1)
+	public static void updateLightmap(EntityRenderer instance, float par1)
     {
-        WorldClient worldclient = er.mc.theWorld;
+        WorldClient worldclient = instance.mc.theWorld;
 
         if (worldclient != null)
         {            
@@ -55,7 +59,7 @@ public class CLEntityRendererHelper {
                         
                         // Place  Does this work?
                         ptr1 = rave << 8 | s << 4 | r;
-                        er.lightmapColors[ptr1] = alpha << 24 | red << 16 | 255 << 8 | 255;          				            				
+                        instance.lightmapColors[ptr1] = alpha << 24 | red << 16 | 255 << 8 | 255;          				            				
         			}
 				}
             	
@@ -85,9 +89,8 @@ public class CLEntityRendererHelper {
         		
         	}
 			
-			CLDynamicTextureHelper.updateDynamicTexture(er.lightmapTexture);
-            er.lightmapUpdateNeeded = false;
-            er.lightmapTexture.getGlTextureId();
+			CLDynamicTextureHelper.updateDynamicTexture(instance.lightmapTexture);
+            instance.lightmapUpdateNeeded = false;
         }
     }
 	
@@ -102,7 +105,7 @@ public class CLEntityRendererHelper {
         //GL11.glTranslatef(8.0F, 8.0F, 8.0F);
         GL11.glTranslatef(t, t, t);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        bindTexture(instance.mc.getTextureManager(), instance.locationLightMap);
+        bindTexture(instance.lightmapTexture.getGlTextureId());
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         
@@ -125,16 +128,10 @@ public class CLEntityRendererHelper {
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 	
-	public static void bindTexture(TextureManager instance, ResourceLocation par1ResourceLocation)
-    {	
-		Object lightMap1 = (ITextureObject)instance.mapTextureObjects.get(par1ResourceLocation);
-		
-        if (lightMap1 == null)
-        {
-        	lightMap1 = new SimpleTexture(par1ResourceLocation);
-        	instance.mapTextureObjects.put(par1ResourceLocation, lightMap1);
-        }
-        GL11.glBindTexture(GL12.GL_TEXTURE_3D, ((ITextureObject) lightMap1).getGlTextureId());
+	public static void bindTexture(int textureID)
+    {   
+		System.out.println(textureID);
+        GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
         
         org.lwjgl.opengl.Util.checkGLError();
     }
@@ -162,7 +159,7 @@ public class CLEntityRendererHelper {
         // Draw a textured quad
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glTexCoord2f(0, 0); GL11.glVertex3f(0, 0, 0);
-        GL11.glTexCoord2f(0, 1); GL11.glVertex3f(0, 100, 0);
+        GL11.glTexCoord2f(0, 1); GL11.glVertex3f(0, 	100, 0);
         GL11.glTexCoord2f(1, 1); GL11.glVertex3f(100, 100, 0);
         GL11.glTexCoord2f(1, 0); GL11.glVertex3f(100, 0, 0);
         GL11.glEnd();
@@ -174,7 +171,7 @@ public class CLEntityRendererHelper {
 
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glPopMatrix();
-
+	
         GL11.glMatrixMode(GL11.GL_MODELVIEW);            		
 	}
 	*/

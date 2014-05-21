@@ -1,4 +1,4 @@
-package coloredlightscore.src.interfaces;
+package coloredlightscore.src.types;
 
 /*
  * Need access to rawBufferSize after Forge adds it?
@@ -7,7 +7,7 @@ package coloredlightscore.src.interfaces;
  */
 
 public interface CLTessellatorInterface {
-	public static final String appliedInterface = "coloredlightscore/src/interfaces/CLTessellatorInterface";
+	public static final String appliedInterface = "coloredlightscore/src/types/CLTessellatorInterface";
 	public static final String getterName = "getRawBufferSize";
 	public static final String setterName = "setRawBufferSize";
 	public static final String fieldName = "rawBufferSize";

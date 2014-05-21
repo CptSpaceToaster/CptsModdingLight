@@ -1,14 +1,16 @@
 package coloredlightscore.src.asm.transformer;
 
+import java.util.ListIterator;
+
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 
-import coloredlightscore.src.asm.transformer.core.ASMUtils;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
-
 import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes;
 
 import cpw.mods.fml.common.FMLLog;
@@ -23,7 +25,9 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 	};
 	
 	String constructorSignature = "<init> (Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/resources/IResourceManager;)V";
-
+	String oldLightmapDesc = "net/minecraft/client/renderer/texture/DynamicTexture";
+	String newLightmapDesc = "coloredlightscore/src/types/CLDynamicTexture3D";
+	
 	public TransformEntityRenderer()
 	{
 		super("net.minecraft.client.renderer.EntityRenderer");
@@ -69,36 +73,34 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 	
 	protected boolean transformConstructor(MethodNode methodNode)
 	{
-		AbstractInsnNode dynamicTextureCtor = ASMUtils.findLastInvoke(methodNode, Opcodes.INVOKESPECIAL, "net/minecraft/client/renderer/texture/DynamicTexture", "<init> (II)V", false);
-		
-		if (dynamicTextureCtor == null)
-		{
-			FMLLog.severe("Could not find constructor call to DynamicTexture within EntityRenderer constructor!");
-			return false;
+		for (ListIterator<AbstractInsnNode> it = methodNode.instructions.iterator(); it.hasNext();) {
+	        AbstractInsnNode insn = it.next();
+	        if (insn.getOpcode() == Opcodes.NEW) {
+	        	if (((TypeInsnNode)insn).desc.equals(oldLightmapDesc)) {
+		        	FMLLog.info("We found the 2D monster captain!");
+		        	((TypeInsnNode)insn).desc = newLightmapDesc;
+		        	FMLLog.info("Set Entityrenderer.lightmapTexture to a " + newLightmapDesc);
+		        	it.next(); //DUP
+		        	it.next(); //BIPUSH 16
+		        	it.next(); //BIPUSH 16
+		        	it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
+		        	FMLLog.info("Added third argument!");
+		        	insn = it.next(); //Constructor call to the CLDynamicTexture3D - INVOKESPECIAL
+		        	((MethodInsnNode)insn).owner = "coloredlightscore/src/types/CLDynamicTexture3D";
+		        	((MethodInsnNode)insn).name = "<init>"; 
+		        	((MethodInsnNode)insn).desc = "(III)V";
+		        	FMLLog.info("Called the new constructor!!");
+		        	//Delete the next line?  I should probably be a little cleaner about this... but whatever...
+		        	for (int i=0; i<9; i++) {
+			        	it.next();
+			        	it.remove();
+		        	}
+		        	FMLLog.info("Removed the call to the Texture Manager!!!   PREPARE FOR FAILURE");
+		        	return true;
+	        	}
+	        }
 		}
-		
-		// Prior 2 instructions should be BIPUSH 16
-		// These are the dimensions of the lightmap texture
-		// We want to modify them to BIPUSH 16 and SIPUSH 256, for a 16x16x16 3D texture
-		
-		try
-		{
-			IntInsnNode texY = (IntInsnNode)dynamicTextureCtor.getPrevious();
-			IntInsnNode texX = (IntInsnNode)texY.getPrevious();
-			
-			texX.setOpcode(Opcodes.BIPUSH);			
-			texX.operand = 16;				//Ya know... this technically isn't doing anything... deal with it ._.
-
-			texY.setOpcode(Opcodes.SIPUSH);			
-			texY.operand = 256;
-						
-			return true;
-		}
-		catch (Exception e)
-		{
-			FMLLog.severe("Could not transform lightmap texture size: %s",  e);
-			return false;
-		}
+		return false;
 	}
 }
 

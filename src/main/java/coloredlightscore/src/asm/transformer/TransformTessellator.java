@@ -21,7 +21,7 @@ import coloredlightscore.src.asm.transformer.core.ASMUtils;
 import coloredlightscore.src.asm.transformer.core.ExtendedClassWriter;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
-import coloredlightscore.src.interfaces.CLTessellatorInterface;
+import coloredlightscore.src.types.CLTessellatorInterface;
 import cpw.mods.fml.common.FMLLog;
 
 public class TransformTessellator extends HelperMethodTransformer {
@@ -62,6 +62,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 				
 				//Don't mind this.  Just cramming a getter and setter into the Tesellator for later use
 				//getter
+				
 				MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.getterName, "()" + CLTessellatorInterface.fieldDescriptor, null, null);
 				getter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, clazz.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
@@ -151,8 +152,8 @@ public class TransformTessellator extends HelperMethodTransformer {
 		boolean replacedShift = false;
 		boolean hasFoundBrightness = false;
 		boolean replacedTwoWithThree = false;
-		boolean enabled3D = false;
-		boolean disabled3D = false;
+		//boolean enabled3D = false;
+		//boolean disabled3D = false;
 		
 		int replace32 = 0;
 		int replace8 = 0;
@@ -183,7 +184,6 @@ public class TransformTessellator extends HelperMethodTransformer {
 		        		it.add(new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/opengl/GL12", "GL_TEXTURE_3D", "I"));
 		        		it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/lwjgl/opengl/GL11", "glEnable", "(I)V"));
 		        		enabled3D = true;
-		        		FMLLog.info("WHEEEE DAD AATTTT!");
 		        	}
 		        } catch (ClassCastException e) {
 		        	FMLLog.severe("There was an issue casting the Instruction to a FieldInsnNode for some reason?");
@@ -195,7 +195,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 	        //replace the 2 that follows 'hasBrighness' with a 3
 	        if (insn.getOpcode() == Opcodes.GETFIELD && !hasFoundBrightness) {
 		        try {
-		        	//check to see if it's 'hasBrightness'
+		        	//check to see if it is 'hasBrightness' or if we found some other GETFIELD opcode
 		        	if (((FieldInsnNode)insn).name.equals(obfBrightness) || ((FieldInsnNode)insn).name.equals(unObfBrightness)) {
 		        		hasFoundBrightness = true;
 		        	}
@@ -219,7 +219,6 @@ public class TransformTessellator extends HelperMethodTransformer {
 		        		it.add(new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/opengl/GL12", "GL_TEXTURE_3D", "I"));
 		        		it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/lwjgl/opengl/GL11", "glDisable", "(I)V"));
 		        		disabled3D = true;
-		        		FMLLog.info("WHEEEE DAD AATTTT ARGARNNNN!");
 		        	}
 		        } catch (ClassCastException e) {
 		        	FMLLog.severe("There was an issue casting the Instruction to a FieldInsnNode for some reason?");

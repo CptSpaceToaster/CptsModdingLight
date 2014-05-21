@@ -14,10 +14,10 @@ import org.lwjgl.opengl.GL12;
 		
 		public static void updateDynamicTexture(DynamicTexture instance)
 	    {
-	        uploadTexture(instance.getGlTextureId(), instance.getTextureData(), instance.width, instance.height);
+	        uploadTexture(instance.getGlTextureId(), instance.getTextureData());
 	    }
 		
-		public static void uploadTexture(int par0, int[] data, int width, int height)
+		public static void uploadTexture(int par0, int[] data)
 	    {
 			//GL11.glBindTexture(GL11.GL_TEXTURE_2D, par0);
 			GL11.glBindTexture(GL12.GL_TEXTURE_3D, par0);

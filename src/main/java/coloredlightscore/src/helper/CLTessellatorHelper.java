@@ -3,7 +3,7 @@ package coloredlightscore.src.helper;
 import java.util.Arrays;
 
 import net.minecraft.client.renderer.Tessellator;
-import coloredlightscore.src.interfaces.CLTessellatorInterface;
+import coloredlightscore.src.types.CLTessellatorInterface;
 
 public class CLTessellatorHelper {
 
