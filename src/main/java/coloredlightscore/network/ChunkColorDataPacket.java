@@ -1,18 +1,24 @@
 package coloredlightscore.network;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import coloredlightscore.server.ChunkStorageRGB;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
+import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class ChunkColorDataPacket implements IPacket {
+public class ChunkColorDataPacket implements IMessage, IMessageHandler<ChunkColorDataPacket, IMessage> {
 
-	public static int PACKET_ID = 0;
-		
+	
 	// In order of packet layout:
 	//public int packetId;
 	public int chunkXPosition;
@@ -27,17 +33,40 @@ public class ChunkColorDataPacket implements IPacket {
 		
 	private final boolean USE_COMPRESSION = true;
 	
+	
 	public ChunkColorDataPacket() {
-	}
-
-	public int getPacketId()
-	{
-		return PACKET_ID;
+		
 	}
 	
 	@Override
-	public void readBytes(ByteBuf bytes) {
+	public IMessage onMessage(ChunkColorDataPacket packet, MessageContext context) {
+		if(context.side == Side.CLIENT)
+			processColorDataPacket(packet);
 		
+		return null;
+	}
+
+	
+	@SideOnly(Side.CLIENT)
+	private void processColorDataPacket(ChunkColorDataPacket packet)
+	{
+		ChunkColorDataPacket ccdPacket = (ChunkColorDataPacket)packet;
+		Chunk targetChunk = null;
+		
+		targetChunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);
+				
+		if (targetChunk != null)
+		{
+			ChunkStorageRGB.loadColorData(targetChunk, ccdPacket.arraySize, ccdPacket.yLocation, ccdPacket.RedColorArray, ccdPacket.GreenColorArray, ccdPacket.BlueColorArray);
+			//FMLLog.info("ProcessColorDataPacket() loaded RGB for (%s,%s)", ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);			
+		}
+		else
+			FMLLog.warning("ProcessColorDataPacket()  Chunk located at (%s, %s) could not be found in the local world!", ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);
+	}
+	
+
+	@Override
+	public void fromBytes(ByteBuf bytes) {
 		try
 		{
 			byte[] rawColorData = new byte[2048 * 16 * 3];
@@ -121,13 +150,12 @@ public class ChunkColorDataPacket implements IPacket {
 		}
 		catch (Exception e)
 		{
-			FMLLog.getLogger().error("readBytes ", e);
+			FMLLog.getLogger().error("fromBytes ", e);
 		}
 	}
 
 	@Override
-	public void writeBytes(ByteBuf bytes) {
-		
+	public void toBytes(ByteBuf bytes) {
 		try
 		{
 			byte[] rawColorData = new byte[2048 * 16 * 3];
@@ -181,7 +209,8 @@ public class ChunkColorDataPacket implements IPacket {
 		}
 		catch (Exception e)
 		{
-			FMLLog.getLogger().error("writeBytes  ", e);
+			FMLLog.getLogger().error("toBytes  ", e);
 		}
 	}
+
 }

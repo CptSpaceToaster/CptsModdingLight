@@ -54,6 +54,6 @@ public class PlayerManagerHelper {
     		}    		
     	}
     	
-		coloredlightscore.network.ChannelHandler.INSTANCE.SendChunkColorData(chunk, player);    	
+		coloredlightscore.network.PacketHandler.sendChunkColorData(chunk, player);    	
     }
 }

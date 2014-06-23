@@ -5,7 +5,7 @@ import java.util.Arrays;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import coloredlightscore.fmlevents.ChunkDataEventHandler;
-import coloredlightscore.network.ChannelHandler;
+import coloredlightscore.network.PacketHandler;
 import coloredlightscore.src.api.CLApi;
 import coloredlightscore.src.helper.CLEntityRendererHelper;
 
@@ -59,7 +59,7 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer
     	CLLog.info("Starting up ColoredLightsCore");
     	    	
     	// Spin up network handler
-    	ChannelHandler.INSTANCE = new ChannelHandler();
+    	PacketHandler.init();
     	
     	// Hook into chunk events
     	MinecraftForge.EVENT_BUS.register(chunkDataEventHandler);
