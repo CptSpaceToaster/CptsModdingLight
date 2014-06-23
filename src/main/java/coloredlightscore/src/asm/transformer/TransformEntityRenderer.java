@@ -1,9 +1,13 @@
 package coloredlightscore.src.asm.transformer;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -40,7 +44,14 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
 	@Override
 	protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
-
+		for (Iterator<FieldNode> it = classNode.fields.iterator(); it.hasNext();) {
+			FieldNode insn = it.next();
+			if (insn.desc.equals("L" + oldLightmapDesc + ";")) {
+				FMLLog.info("Replaced lightmapTexture field type");
+				insn.desc = "L" + newLightmapDesc + ";";
+			}
+		}
+		
 		for(String name : methodsToReplace)
 		{
 			if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
@@ -73,34 +84,64 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 	
 	protected boolean transformConstructor(MethodNode methodNode)
 	{
+		//Actions
+		boolean replace2DLightmap = false;
+		boolean removeTextureLocation = false;
+		boolean fixGetTextureData = false;
+			
 		for (ListIterator<AbstractInsnNode> it = methodNode.instructions.iterator(); it.hasNext();) {
-	        AbstractInsnNode insn = it.next();
-	        if (insn.getOpcode() == Opcodes.NEW) {
-	        	if (((TypeInsnNode)insn).desc.equals(oldLightmapDesc)) {
-		        	FMLLog.info("We found the 2D monster captain!");
+			AbstractInsnNode insn = it.next();
+			System.out.println(" . " + Integer.toHexString(insn.getOpcode()));
+			
+	        if (insn.getOpcode() == Opcodes.NEW && !replace2DLightmap) {
+	        	if (((TypeInsnNode)insn).desc.equals(oldLightmapDesc) ) {
+		        	FMLLog.info("Replacing 2D lighmap texture");
+		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
 		        	((TypeInsnNode)insn).desc = newLightmapDesc;
-		        	FMLLog.info("Set Entityrenderer.lightmapTexture to a " + newLightmapDesc);
-		        	it.next(); //DUP
-		        	it.next(); //BIPUSH 16
-		        	it.next(); //BIPUSH 16
+		        	FMLLog.info("Fixing Arguments on stack - CLDynamicTexture3D(16, 16, 16)");
+		        	insn = it.next(); //DUP
+		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
+		        	insn = it.next(); //BIPUSH 16
+		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
+		        	insn = it.next(); //BIPUSH 16
+		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
 		        	it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
-		        	FMLLog.info("Added third argument!");
+		        	FMLLog.info("Setting Entityrenderer.lightmapTexture to a " + newLightmapDesc);
 		        	insn = it.next(); //Constructor call to the CLDynamicTexture3D - INVOKESPECIAL
-		        	((MethodInsnNode)insn).owner = "coloredlightscore/src/types/CLDynamicTexture3D";
+		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
+		        	((MethodInsnNode)insn).owner = newLightmapDesc;
 		        	((MethodInsnNode)insn).name = "<init>"; 
 		        	((MethodInsnNode)insn).desc = "(III)V";
-		        	FMLLog.info("Called the new constructor!!");
-		        	//Delete the next line?  I should probably be a little cleaner about this... but whatever...
-		        	for (int i=0; i<9; i++) {
-			        	it.next();
-			        	it.remove();
-		        	}
-		        	FMLLog.info("Removed the call to the Texture Manager!!!   PREPARE FOR FAILURE");
-		        	return true;
+		        	insn = it.next(); //Storing the value to the local field - PUTFIELD
+		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
+		        	((FieldInsnNode)insn).desc = "L" + newLightmapDesc + ";";	
+		        	replace2DLightmap = true;
 	        	}
 	        }
+	        
+	        /* This is a bit lazy, but the next line is 10 instructions long and needs to be removed */ 
+	        if (!removeTextureLocation && replace2DLightmap) {
+	        	FMLLog.info("Removing locationLightMap");
+	        	for (int i=0; i<10; i++) {
+	        		insn = it.next();
+	        		System.out.println(" - " + Integer.toHexString(insn.getOpcode()));
+	        		it.remove();
+	        	}
+        		removeTextureLocation = true;
+        	}
+	        
+	        /* Still lazy here, after deleting the last line, the next instruction will be the next available GETFIELD instruction */
+	        if (insn.getOpcode() == Opcodes.GETFIELD && !fixGetTextureData && removeTextureLocation && replace2DLightmap) {
+	        	FMLLog.info("Getting texture data from CLDynamicTexture3D instead");
+	        	((FieldInsnNode)insn).desc = "L" + newLightmapDesc + ";";
+	        	insn = it.next();
+	        	((MethodInsnNode)insn).owner = newLightmapDesc;
+	        	fixGetTextureData = true;
+	        }
 		}
-		return false;
+		
+		System.out.println("Returned: " + (replace2DLightmap && removeTextureLocation && fixGetTextureData));
+		return (replace2DLightmap && removeTextureLocation && fixGetTextureData);
 	}
 }
 
