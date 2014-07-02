@@ -3,11 +3,13 @@ package coloredlightscore.server;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
 /**
@@ -25,6 +27,7 @@ public class ChunkStorageRGB {
 	private static Method methodGetRedColorArray = null;
 	private static Method methodGetGreenColorArray = null;
 	private static Method methodGetBlueColorArray = null;
+	private static Method methodGetValueArray = null;
 	
 	/**
 	 * Builds references to the getter/setter methods for each RGB Color Array.
@@ -49,6 +52,14 @@ public class ChunkStorageRGB {
 					methodGetGreenColorArray = m;
 				else if (m.getName().equals("getBlueColorArray"))
 					methodGetBlueColorArray = m;
+			}
+			
+			try {
+				methodGetValueArray = NibbleArray.class.getMethod("getValueArray");
+			} catch (NoSuchMethodException e) {
+				FMLLog.info("Unable to hook getValueArray, Ignore if not running cauldron");
+			} catch (SecurityException e) {
+				e.printStackTrace();
 			}
 			
 			if (methodSetRedColorArray == null)
@@ -232,14 +243,23 @@ public class ChunkStorageRGB {
 				NBTTagCompound nbtYCompound = nbttaglist.getCompoundTagAt(k);
 				
 				// Add our RGB arrays to it
-	    		try {	    			
+	    		try {	    		
 					rColorArray = (NibbleArray)methodGetRedColorArray.invoke(chunkStorageArrays[k]);
 					gColorArray = (NibbleArray)methodGetGreenColorArray.invoke(chunkStorageArrays[k]);
 					bColorArray = (NibbleArray)methodGetBlueColorArray.invoke(chunkStorageArrays[k]);
-
-					nbtYCompound.setByteArray("RedColorArray", rColorArray.data);
-					nbtYCompound.setByteArray("GreenColorArray", gColorArray.data);
-					nbtYCompound.setByteArray("BlueColorArray", bColorArray.data);
+					
+	    			if(FMLCommonHandler.instance().getModName().contains("cauldron"))
+	    			{//cauldron has a patch that will cause a crash if we don't do this instead..
+	    				nbtYCompound.setByteArray("RedColorArray",  (byte[]) methodGetValueArray.invoke(rColorArray));
+						nbtYCompound.setByteArray("GreenColorArray", (byte[]) methodGetValueArray.invoke(gColorArray));
+						nbtYCompound.setByteArray("BlueColorArray", (byte[]) methodGetValueArray.invoke(bColorArray));
+	    			}
+	    			else
+	    			{//run as base forge/mc
+	    				nbtYCompound.setByteArray("RedColorArray", rColorArray.data);
+	    				nbtYCompound.setByteArray("GreenColorArray", gColorArray.data);
+	    				nbtYCompound.setByteArray("BlueColorArray", bColorArray.data);
+	    			}
 					
 				} catch (IllegalAccessException e) {
 					FMLLog.severe("%s.saveColorData()   Unexpected IllegalAccessException while getting RGB color data!", EVENT_SOURCE);

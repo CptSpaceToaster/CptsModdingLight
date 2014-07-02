@@ -1,5 +1,7 @@
 package coloredlightscore.network;
 
+import java.lang.reflect.Method;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
@@ -13,18 +15,28 @@ import cpw.mods.fml.relauncher.Side;
 public class PacketHandler {
 	
 	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("ColoredLightsCore");
+	private static Method methodGetValueArray = null;//Cauldron Compatibility
 	
 	public static void init()
 	{
 		INSTANCE.registerMessage(ChunkColorDataPacket.class, ChunkColorDataPacket.class, 0, Side.SERVER);
 		INSTANCE.registerMessage(ChunkColorDataPacket.class, ChunkColorDataPacket.class, 0, Side.CLIENT);
+		
+		//Cauldron Compatibility
+		try {
+			methodGetValueArray = NibbleArray.class.getMethod("getValueArray");
+		} catch (NoSuchMethodException e) {
+			FMLLog.info("Unable to hook getValueArray, Ignore if not running cauldron");
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void sendChunkColorData(Chunk chunk, EntityPlayerMP player)
 	{
 		try
 		{
-			ChunkColorDataPacket packet = new ChunkColorDataPacket();
+			ChunkColorDataPacket packet = new ChunkColorDataPacket(methodGetValueArray);
 			NibbleArray[] redColorArray = ChunkStorageRGB.getRedColorArrays(chunk);
 			NibbleArray[] greenColorArray = ChunkStorageRGB.getGreenColorArrays(chunk);
 			NibbleArray[] blueColorArray = ChunkStorageRGB.getBlueColorArrays(chunk);
@@ -47,7 +59,7 @@ public class PacketHandler {
 			//this.channels.get(Side.SERVER).writeOutbound(packet);		
 			
 			//Think this is right 
-			INSTANCE.sendToServer(packet);
+			INSTANCE.sendToAll(packet);
 	
 			//FMLLog.info("SendChunkColorData()  Sent for %s, %s", chunk.xPosition, chunk.zPosition);
 		}
