@@ -14,8 +14,7 @@ import coloredlightscore.src.asm.transformer.TransformTessellator;
 import coloredlightscore.src.asm.transformer.TransformWorld;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
-
-@MCVersion("1.7.2")
+	
 public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin
 {
 	public static LaunchClassLoader CLASSLOADER;

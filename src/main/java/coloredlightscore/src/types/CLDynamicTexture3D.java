@@ -1,27 +1,36 @@
 package coloredlightscore.src.types;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL30;
 
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class CLDynamicTexture3D extends AbstractTexture {
+public class CLDynamicTexture3D extends DynamicTexture {
 
     private final int[] dynamicTextureData;
-    /** width of this icon in pixels */
+    private ByteBuffer buffer;
+    
+    /* width of this icon in pixels */
     public final int width;
-    /** height of this icon in pixels */
+    /* height of this icon in pixels */
     public final int height;
-    /** height of this icon in pixels */
+    /* height of this icon in pixels */
     public final int depth;
+    /* TextureID */
+    public int myID = -1;
     
     /* I sure hope no one wants this...
     public CLDynamicTexture3D(BufferedImage par1BufferedImage)
@@ -34,17 +43,42 @@ public class CLDynamicTexture3D extends AbstractTexture {
 
     public CLDynamicTexture3D(int par1, int par2, int par3)
     {
+    	super(par1, par2*par3);	//Hopefully we can fix what this does after it's all messed up!  ._.
         this.width = par1;
         this.height = par2;
         this.depth = par3;
-        this.dynamicTextureData = new int[par1 * par2 * par3];
+        this.dynamicTextureData = new int[par1 * par2 * par3];		//This was duplicated :<  ooops
+        
+        buffer = ByteBuffer.allocateDirect(dynamicTextureData.length * 4);
+        buffer.order(ByteOrder.nativeOrder());
+
+        buffer.asIntBuffer().put(dynamicTextureData);	
+        
+        //GL12.glTexImage3D(GL12.GL_TEXTURE_3D, 0, GL30.GL_RGBA32I, 16, 16, 16, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
+        
         allocateTextureImpl(this.getGlTextureId(), 0, par1, par2, par3, 1.0F);
+    }
+    
+    @Override
+    public int getGlTextureId()
+    {
+        if (this.myID == -1)
+        {	
+            this.myID =  GL11.glGenTextures();
+            System.out.println("Generated a new TextureID: " + myID);
+        }
+        
+        return this.myID;
     }
     
     public static void allocateTextureImpl(int textureID, int mipmapLevel, int pHeight, int pWidth, int pDepth, float anUnusedFloatFromDynamicTexture)
     {
+    	
+    	System.out.println("Baleet");
     	GL11.glDeleteTextures(textureID);
-    	GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
+    	System.out.println("Binding");
+    	//GL13.glActiveTexture(GL13.GL_TEXTURE1);
+    	GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);	
 
         /* Looks to be some sort of wizardry for anisotropic filtering on all 2D textures... Not sure if I need this...
     	if (OpenGlHelper.anisotropicFilteringSupported)
@@ -70,6 +104,7 @@ public class CLDynamicTexture3D extends AbstractTexture {
 
     public void updateDynamicTexture()
     {
+    	
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, this.getGlTextureId());
         
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
@@ -83,7 +118,7 @@ public class CLDynamicTexture3D extends AbstractTexture {
         /* This probably won't support 3D texture anyway
         int[] aint1 = par0ArrayOfInteger;
 
-        if (Minecraft.getMinecraft().gameSettings.anaglyph)
+        if (Minecraft.getMinecraft().gameSettings.anaglyph)	
         {
             aint1 = TextureUtil.updateAnaglyph(par0ArrayOfInteger);
         }

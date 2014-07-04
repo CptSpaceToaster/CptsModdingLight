@@ -44,6 +44,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
 	@Override
 	protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
+		/*   THIS IS BAD, DON'T DO THIS
 		for (Iterator<FieldNode> it = classNode.fields.iterator(); it.hasNext();) {
 			FieldNode insn = it.next();
 			if (insn.desc.equals("L" + oldLightmapDesc + ";")) {
@@ -51,6 +52,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 				insn.desc = "L" + newLightmapDesc + ";";
 			}
 		}
+		*/
 		
 		for(String name : methodsToReplace)
 		{
@@ -87,50 +89,45 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 		//Actions
 		boolean replace2DLightmap = false;
 		boolean removeTextureLocation = false;
-		boolean fixGetTextureData = false;
+		boolean fixGetTextureData = true;
 			
 		for (ListIterator<AbstractInsnNode> it = methodNode.instructions.iterator(); it.hasNext();) {
 			AbstractInsnNode insn = it.next();
-			System.out.println(" . " + Integer.toHexString(insn.getOpcode()));
 			
 	        if (insn.getOpcode() == Opcodes.NEW && !replace2DLightmap) {
 	        	if (((TypeInsnNode)insn).desc.equals(oldLightmapDesc) ) {
-		        	FMLLog.info("Replacing 2D lighmap texture");
-		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
+	        		FMLLog.info("Replacing 2D lighmap texture");
 		        	((TypeInsnNode)insn).desc = newLightmapDesc;
 		        	FMLLog.info("Fixing Arguments on stack - CLDynamicTexture3D(16, 16, 16)");
 		        	insn = it.next(); //DUP
-		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
 		        	insn = it.next(); //BIPUSH 16
-		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
 		        	insn = it.next(); //BIPUSH 16
-		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
 		        	it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
 		        	FMLLog.info("Setting Entityrenderer.lightmapTexture to a " + newLightmapDesc);
 		        	insn = it.next(); //Constructor call to the CLDynamicTexture3D - INVOKESPECIAL
-		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
 		        	((MethodInsnNode)insn).owner = newLightmapDesc;
 		        	((MethodInsnNode)insn).name = "<init>"; 
 		        	((MethodInsnNode)insn).desc = "(III)V";
 		        	insn = it.next(); //Storing the value to the local field - PUTFIELD
-		        	System.out.println(" ~ " + Integer.toHexString(insn.getOpcode()));
-		        	((FieldInsnNode)insn).desc = "L" + newLightmapDesc + ";";	
+		        	/* MAY NOT NEED THIS
+		        	((FieldInsnNode)insn).desc = "L" + newLightmapDesc + ";";
+		        	*/
 		        	replace2DLightmap = true;
 	        	}
 	        }
 	        
-	        /* This is a bit lazy, but the next line is 10 instructions long and needs to be removed */ 
+	        /* This is a bit lazy, but the next line is 10 instructions long and 'needs' to be removed */ 
 	        if (!removeTextureLocation && replace2DLightmap) {
 	        	FMLLog.info("Removing locationLightMap");
 	        	for (int i=0; i<10; i++) {
 	        		insn = it.next();
-	        		System.out.println(" - " + Integer.toHexString(insn.getOpcode()));
 	        		it.remove();
 	        	}
         		removeTextureLocation = true;
         	}
 	        
 	        /* Still lazy here, after deleting the last line, the next instruction will be the next available GETFIELD instruction */
+	        /* MAY NOT NEED THIS
 	        if (insn.getOpcode() == Opcodes.GETFIELD && !fixGetTextureData && removeTextureLocation && replace2DLightmap) {
 	        	FMLLog.info("Getting texture data from CLDynamicTexture3D instead");
 	        	((FieldInsnNode)insn).desc = "L" + newLightmapDesc + ";";
@@ -138,10 +135,10 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 	        	((MethodInsnNode)insn).owner = newLightmapDesc;
 	        	fixGetTextureData = true;
 	        }
+	        */
+	        
 		}
-		
-		System.out.println("Returned: " + (replace2DLightmap && removeTextureLocation && fixGetTextureData));
-		return (replace2DLightmap && removeTextureLocation && fixGetTextureData);
+		return (replace2DLightmap && removeTextureLocation && fixGetTextureData); // && fixGetTextureData
 	}
 }
 
