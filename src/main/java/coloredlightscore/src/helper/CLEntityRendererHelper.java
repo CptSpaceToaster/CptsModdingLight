@@ -133,10 +133,10 @@ public class CLEntityRendererHelper {
 	
 	public static void bindTexture(int textureID)
     {   
-		System.out.println(textureID);
+		//System.out.println(textureID);
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
         
-        //org.lwjgl.opengl.Util.checkGLError();
+        org.lwjgl.opengl.Util.checkGLError();
     }
 	
 	

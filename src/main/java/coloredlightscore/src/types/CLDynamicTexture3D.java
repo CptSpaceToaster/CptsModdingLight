@@ -1,16 +1,15 @@
 package coloredlightscore.src.types;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 
-import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
@@ -21,8 +20,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class CLDynamicTexture3D extends DynamicTexture {
 
     private final int[] dynamicTextureData;
-    private ByteBuffer buffer;
-    
+    public static IntBuffer localBuffer;
+    		
     /* width of this icon in pixels */
     public final int width;
     /* height of this icon in pixels */
@@ -48,13 +47,7 @@ public class CLDynamicTexture3D extends DynamicTexture {
         this.height = par2;
         this.depth = par3;
         this.dynamicTextureData = new int[par1 * par2 * par3];		//This was duplicated :<  ooops
-        
-        buffer = ByteBuffer.allocateDirect(dynamicTextureData.length * 4);
-        buffer.order(ByteOrder.nativeOrder());
-
-        buffer.asIntBuffer().put(dynamicTextureData);	
-        
-        //GL12.glTexImage3D(GL12.GL_TEXTURE_3D, 0, GL30.GL_RGBA32I, 16, 16, 16, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
+        localBuffer = GLAllocation.createDirectIntBuffer(16*16*16);
         
         allocateTextureImpl(this.getGlTextureId(), 0, par1, par2, par3, 1.0F);
     }
@@ -78,8 +71,9 @@ public class CLDynamicTexture3D extends DynamicTexture {
     	GL11.glDeleteTextures(textureID);
     	System.out.println("Binding");
     	//GL13.glActiveTexture(GL13.GL_TEXTURE1);
-    	GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);	
-
+    	GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
+    	org.lwjgl.opengl.Util.checkGLError();
+    	
         /* Looks to be some sort of wizardry for anisotropic filtering on all 2D textures... Not sure if I need this...
     	if (OpenGlHelper.anisotropicFilteringSupported)
         {
@@ -95,8 +89,12 @@ public class CLDynamicTexture3D extends DynamicTexture {
             GL11.glTexParameterf(GL12.GL_TEXTURE_3D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
         }
         
+        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, GL30.GL_RGBA32UI, 16, 16, 16, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8, localBuffer);
+        org.lwjgl.opengl.Util.checkGLError();
+        
         //we might want to replace highestMipmapLevel with a 0... not sure...
-        GL12.glTexSubImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, 0, 0, 0, pWidth, pHeight, pDepth, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
+        GL12.glTexSubImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, 0, 0, 0, pWidth, pHeight, pDepth, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8, TextureUtil.dataBuffer);
+        org.lwjgl.opengl.Util.checkGLError();
     }
     
     /* Dynamic Texture had this... I don't even... */
