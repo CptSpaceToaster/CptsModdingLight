@@ -59,7 +59,7 @@ public class PacketHandler {
 			//this.channels.get(Side.SERVER).writeOutbound(packet);		
 			
 			//Think this is right 
-			INSTANCE.sendToAll(packet);
+			INSTANCE.sendTo(packet, player);
 	
 			//FMLLog.info("SendChunkColorData()  Sent for %s, %s", chunk.xPosition, chunk.zPosition);
 		}
