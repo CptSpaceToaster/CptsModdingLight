@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import coloredlightscore.src.types.CLDynamicTexture3D;
+import cpw.mods.fml.common.FMLLog;
 
 public class CLEntityRendererHelper {
 	
@@ -133,7 +134,7 @@ public class CLEntityRendererHelper {
 	
 	public static void bindTexture(int textureID)
     {   
-		//System.out.println(textureID);
+		FMLLog.info("" + textureID);
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
         
         org.lwjgl.opengl.Util.checkGLError();

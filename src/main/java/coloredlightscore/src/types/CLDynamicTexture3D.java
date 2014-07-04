@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -49,6 +50,8 @@ public class CLDynamicTexture3D extends DynamicTexture {
         this.dynamicTextureData = new int[par1 * par2 * par3];		//This was duplicated :<  ooops
         localBuffer = GLAllocation.createDirectIntBuffer(16*16*16);
         
+        //FMLLog.info(GL11.glGetString(GL11.GL_VERSION));
+        
         allocateTextureImpl(this.getGlTextureId(), 0, par1, par2, par3, 1.0F);
     }
     
@@ -67,7 +70,7 @@ public class CLDynamicTexture3D extends DynamicTexture {
     public static void allocateTextureImpl(int textureID, int mipmapLevel, int pHeight, int pWidth, int pDepth, float anUnusedFloatFromDynamicTexture)
     {
     	
-    	System.out.println("Baleet");
+    	//System.out.println("Baleet");
     	GL11.glDeleteTextures(textureID);
     	System.out.println("Binding");
     	//GL13.glActiveTexture(GL13.GL_TEXTURE1);
@@ -89,12 +92,12 @@ public class CLDynamicTexture3D extends DynamicTexture {
             GL11.glTexParameterf(GL12.GL_TEXTURE_3D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
         }
         
-        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, GL30.GL_RGBA32UI, 16, 16, 16, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8, localBuffer);
+        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, 0, GL30.GL_RGBA8UI/*8bit per chan*/, pWidth, pHeight, pDepth, 0, GL30.GL_BGRA_INTEGER, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
         org.lwjgl.opengl.Util.checkGLError();
         
         //we might want to replace highestMipmapLevel with a 0... not sure...
-        GL12.glTexSubImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, 0, 0, 0, pWidth, pHeight, pDepth, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8, TextureUtil.dataBuffer);
-        org.lwjgl.opengl.Util.checkGLError();
+        //GL12.glTexSubImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, 0, 0, 0, pWidth, pHeight, pDepth, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8, TextureUtil.dataBuffer);
+        //org.lwjgl.opengl.Util.checkGLError();
     }
     
     /* Dynamic Texture had this... I don't even... */
