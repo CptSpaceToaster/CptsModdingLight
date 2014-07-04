@@ -100,7 +100,7 @@ public class CLDynamicTexture3D extends DynamicTexture {
     }
     
     /* Dynamic Texture had this... I don't even... */
-    public void loadTexture(IResourceManager par1ResourceManager) throws IOException {}
+    public void loadTexture(IResourceManager par1ResourceManager) {}
 
     public void updateDynamicTexture()
     {
