@@ -82,7 +82,7 @@ public class CLDynamicTexture3D extends DynamicTexture {
         
         //we might want to replace highestMipmapLevel with a 0... not sure...
         
-        System.out.println(pWidth+" "+pHeight+" "+pDepth+" ");
+        //System.out.println(pWidth+" "+pHeight+" "+pDepth+" ");
         
         GL12.glTexImage3D(GL12.GL_TEXTURE_3D, 0, GL30.GL_RGBA8UI/*8bit per chan*/, pWidth, pHeight, pDepth, 0, GL30.GL_BGRA_INTEGER, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
 

@@ -62,8 +62,9 @@ public class CLEntityRendererHelper {
                         
                         // Place  Does this work?
                         ptr1 = rave << 8 | s << 4 | r;
-                        //instance.lightmapColors[ptr1] = alpha << 24 | red << 16 | 255 << 8 | 255;
-                        ((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1] = alpha << 24 | red << 16 | 255 << 8 | 255;
+                        //instance.lightmapColors[ptr1] = alpha << 24 | red << 16 | 255 << 8 | 255;	
+                        //((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1] = 255 << 24 | 255 << 16 | red << 8 | alpha;
+                        ((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1] = 128 << 24 | 128 << 16 | 255 << 8 | 255;
         			}
 				}
             	
@@ -86,8 +87,8 @@ public class CLEntityRendererHelper {
                         if (blue < 0) blue = 0;
                         
                         //ptr2 = b << 16 | s << 8 | g;
-                        //er.lightmapColors[ptr2] = alpha << 24 | 255 << 16 | g << 8 | b;
-                        //((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1] = alpha << 24 | 255 << 16 | g << 8 | b;
+                        //er.lightmapColors[ptr2] = blue << 24 | green << 16 | 255 << 8 | alpha;
+                        //((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1] = blue << 24 | green << 16 | 255 << 8 | alpha;
         			}
             	}
         	}
@@ -106,10 +107,10 @@ public class CLEntityRendererHelper {
         float f = 0.00390625F; // 1/256
         float t = 8.0f;
         GL11.glScalef(f, f, f);
-        //GL11.glTranslatef(8.0F, 8.0F, 8.0F);
         GL11.glTranslatef(t, t, t);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         bindTexture(((CLDynamicTexture3D)instance.lightmapTexture).getGlTextureId());
+        
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         
@@ -121,8 +122,12 @@ public class CLEntityRendererHelper {
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL12.GL_TEXTURE_WRAP_R, GL11.GL_CLAMP);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        //GL11.glEnable(GL12.GL_TEXTURE_3D);
-        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        
+        GL11.glEnable(GL12.GL_TEXTURE_3D);
+        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        
+        
+        
 	}
 	
 	public static void disableLightmap(EntityRenderer instance, double par1)
@@ -136,6 +141,7 @@ public class CLEntityRendererHelper {
     {   
 		//FMLLog.info(""+textureID);
 		//System.out.println(textureID);
+		
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
         
         org.lwjgl.opengl.Util.checkGLError();

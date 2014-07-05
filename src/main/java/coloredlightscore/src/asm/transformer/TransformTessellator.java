@@ -152,8 +152,8 @@ public class TransformTessellator extends HelperMethodTransformer {
 		boolean replacedShift = false;
 		boolean hasFoundBrightness = false;
 		boolean replacedTwoWithThree = false;
-		//boolean enabled3D = false;
-		//boolean disabled3D = false;
+		boolean enabled3D = false;
+		boolean disabled3D = false;
 		
 		int replace32 = 0;
 		int replace8 = 0;
@@ -175,7 +175,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 	        	replacedShift = true;
 	        }
 	        
-	        /*
+	        
 	        //Add GL11.glEnable(GL12.GL_TEXTURE_3D);
 	        if (insn.getOpcode() == Opcodes.GETSTATIC && !enabled3D) {
 	        	try {
@@ -190,7 +190,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 		        	e.printStackTrace();
 		        }
 	        }
-	        */
+	        
 	        
 	        //replace the 2 that follows 'hasBrighness' with a 3
 	        if (insn.getOpcode() == Opcodes.GETFIELD && !hasFoundBrightness) {
@@ -210,7 +210,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 	        	replacedTwoWithThree = true;
 	        }
 	        
-	        /*
+	        
 	        //Add GL11.glDisable(GL12.GL_TEXTURE_3D);
 	        if (insn.getOpcode() == Opcodes.GETSTATIC && !disabled3D) {
 	        	try {
@@ -225,7 +225,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 		        	e.printStackTrace();
 		        }
 	        }
-	        */
+	        
 	        
 	        //replace all instances of 32 with 40 and replace all instances of 8 with 10
 	        if (insn.getOpcode() == Opcodes.BIPUSH) {
@@ -248,7 +248,7 @@ public class TransformTessellator extends HelperMethodTransformer {
 	    FMLLog.info("Replaced " + replace32 + " instances of 32 with " + newStride + ".");
 	    FMLLog.info("Replaced " + replace8 + " instances of 8 with " + newInts + ".");
 	    
-		return (fixedFive && replacedShift && hasFoundBrightness && replacedTwoWithThree);
+		return (fixedFive && replacedShift && hasFoundBrightness && replacedTwoWithThree && enabled3D && disabled3D);
 	}
 	
 	/*
