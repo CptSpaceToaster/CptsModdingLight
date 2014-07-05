@@ -1,20 +1,9 @@
 package coloredlightscore.src.types;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.glu.GLU;
-
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
@@ -24,7 +13,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class CLDynamicTexture3D extends DynamicTexture {
 
-    private final int[] dynamicTextureData;
+    public int[] dynamicTextureData;
     
     /* width of this icon in pixels */
     public final int width;
@@ -135,11 +124,6 @@ public class CLDynamicTexture3D extends DynamicTexture {
         TextureUtil.dataBuffer.position(0).limit(textureLength);
         
         int mipmapLevel = 0;
-        GL12.glTexSubImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, 0, 0, 0, this.width, this.height, this.depth, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
-    }
-    
-    public int[] getTextureData()
-    {
-        return this.dynamicTextureData;
+        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, GL30.GL_RGBA8UI/*8bit per chan*/, width, height, depth, 0, GL30.GL_BGRA_INTEGER, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
     }
 }

@@ -17,8 +17,8 @@ import cpw.mods.fml.common.FMLLog;
 
 public class CLEntityRendererHelper {
 	
-	public static int lightMap1 = -1;
-	public static int lightMap2 = -1;
+	//public static int lightMap1 = -1;
+	//public static int lightMap2 = -1;
 	
 	public static void Initialize()
 	{
@@ -62,7 +62,8 @@ public class CLEntityRendererHelper {
                         
                         // Place  Does this work?
                         ptr1 = rave << 8 | s << 4 | r;
-                        instance.lightmapColors[ptr1] = alpha << 24 | red << 16 | 255 << 8 | 255;          				            				
+                        //instance.lightmapColors[ptr1] = alpha << 24 | red << 16 | 255 << 8 | 255;
+                        ((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1] = alpha << 24 | red << 16 | 255 << 8 | 255;
         			}
 				}
             	
@@ -86,10 +87,9 @@ public class CLEntityRendererHelper {
                         
                         //ptr2 = b << 16 | s << 8 | g;
                         //er.lightmapColors[ptr2] = alpha << 24 | 255 << 16 | g << 8 | b;
+                        //((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1] = alpha << 24 | 255 << 16 | g << 8 | b;
         			}
             	}
-        		
-        		
         	}
 			
 			((CLDynamicTexture3D)(instance.lightmapTexture)).updateDynamicTexture();
@@ -121,7 +121,7 @@ public class CLEntityRendererHelper {
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL12.GL_TEXTURE_WRAP_R, GL11.GL_CLAMP);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(GL12.GL_TEXTURE_3D);
+        //GL11.glEnable(GL12.GL_TEXTURE_3D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 	}
 	
@@ -134,50 +134,10 @@ public class CLEntityRendererHelper {
 	
 	public static void bindTexture(int textureID)
     {   
-		FMLLog.info(""+textureID);
+		//FMLLog.info(""+textureID);
 		//System.out.println(textureID);
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
         
         org.lwjgl.opengl.Util.checkGLError();
     }
-	
-	
-	/*
-	public static void debugLightmap()
-	{
-        // Render it on the screen
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glPushMatrix();            
-        GL11.glLoadIdentity();
-        GL11.glOrtho(0.0, 300, 0.0, 300, -1.0, 1.0);
-        
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glPushMatrix();
-        GL11.glLoadIdentity();
-        GL11.glDisable(GL11.GL_LIGHTING);
-
-
-        GL11.glColor3f(1,1,1);
-        GL11.glEnable(GL12.GL_TEXTURE_3D);
-        GL11.glBindTexture(GL12.GL_TEXTURE_3D, lightMapTexId);
-
-        // Draw a textured quad
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 0); GL11.glVertex3f(0, 0, 0);
-        GL11.glTexCoord2f(0, 1); GL11.glVertex3f(0, 	100, 0);
-        GL11.glTexCoord2f(1, 1); GL11.glVertex3f(100, 100, 0);
-        GL11.glTexCoord2f(1, 0); GL11.glVertex3f(100, 0, 0);
-        GL11.glEnd();
-
-
-        GL11.glDisable(GL12.GL_TEXTURE_3D);
-        GL11.glPopMatrix();
-
-
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glPopMatrix();
-	
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);            		
-	}
-	*/
 }
