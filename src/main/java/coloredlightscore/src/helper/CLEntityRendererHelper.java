@@ -100,11 +100,12 @@ public class CLEntityRendererHelper {
 	
 	public static void enableLightmap(EntityRenderer instance, double par1)
 	{
-        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        /* We were fooling and found that we could get an image on screen by doing this */
+		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         GL11.glLoadIdentity();
-        float f = 0.00390625F; // 1/256
+        float f = 0.0625F; // 1/256 = 0.00390625F    1/16 = 0.0625F
         float t = 8.0f;
         GL11.glScalef(f, f, f);
         GL11.glTranslatef(t, t, t);
@@ -125,9 +126,6 @@ public class CLEntityRendererHelper {
         
         GL11.glEnable(GL12.GL_TEXTURE_3D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        
-        
-        
 	}
 	
 	public static void disableLightmap(EntityRenderer instance, double par1)
