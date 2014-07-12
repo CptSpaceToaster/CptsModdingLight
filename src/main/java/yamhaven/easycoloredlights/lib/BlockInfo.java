@@ -10,5 +10,4 @@ public class BlockInfo {
 	    };
 		public static String CLLamp = "CLBlock";
 		public static String CLStone = "CLStone";
-
 	} 

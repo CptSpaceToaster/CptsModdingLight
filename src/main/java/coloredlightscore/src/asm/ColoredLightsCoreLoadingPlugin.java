@@ -20,9 +20,15 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] { TransformBlock.class.getName(), TransformWorld.class.getName(), TransformRenderBlocks.class.getName(), TransformTessellator.class.getName(),
-                TransformChunkCache.class.getName(), TransformExtendedBlockStorage.class.getName(), TransformPlayerInstance.class.getName(), TransformEntityPlayerMP.class.getName(),
-                TransformEntityRenderer.class.getName() };
+        return new String[] { TransformBlock.class.getName(), 
+                              TransformWorld.class.getName(), 
+                              TransformRenderBlocks.class.getName(),
+                              TransformTessellator.class.getName(),
+                              TransformChunkCache.class.getName(),
+                              TransformExtendedBlockStorage.class.getName(), 
+                              TransformPlayerInstance.class.getName(), 
+                              TransformEntityPlayerMP.class.getName(),
+                              TransformEntityRenderer.class.getName() };
     }
 
     @Override

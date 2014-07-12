@@ -9,8 +9,9 @@ import coloredlightscore.src.asm.transformer.core.NameMapper;
 public class TransformRenderBlocks extends HelperMethodTransformer {
 
     // These methods will be replaced by statics in CLRenderBlocksHelper
-    String methodsToReplace[] = { "renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z", "renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z",
-            "getAoBrightness (IIII)I" };
+    String methodsToReplace[] = { "renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z", 
+                                  "renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z",
+                                  "getAoBrightness (IIII)I" };
 
     public TransformRenderBlocks() {
         super("net.minecraft.client.renderer.RenderBlocks");
@@ -43,5 +44,4 @@ public class TransformRenderBlocks extends HelperMethodTransformer {
 
         return false;
     }
-
 }
