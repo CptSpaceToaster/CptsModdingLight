@@ -14,14 +14,12 @@ import org.objectweb.asm.tree.MethodNode;
  * Source: https://github.com/diesieben07/SevenCommons/tree/master/src/main/java/de/take_weiland/mods/commons
  */
 
-public abstract class PrependingTransformer extends SingleMethodTransformer
-{
-	@Override
-	protected boolean transform(ClassNode clazz, MethodNode method)
-	{
-		method.instructions.insert(getPrepends(clazz, method));
-		return true;
-	}
+public abstract class PrependingTransformer extends SingleMethodTransformer {
+    @Override
+    protected boolean transform(ClassNode clazz, MethodNode method) {
+        method.instructions.insert(getPrepends(clazz, method));
+        return true;
+    }
 
-	protected abstract InsnList getPrepends(ClassNode clazz, MethodNode method);
+    protected abstract InsnList getPrepends(ClassNode clazz, MethodNode method);
 }

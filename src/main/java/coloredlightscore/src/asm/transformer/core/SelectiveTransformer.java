@@ -19,39 +19,31 @@ import cpw.mods.fml.common.FMLLog;
  * Source: https://github.com/diesieben07/SevenCommons/tree/master/src/main/java/de/take_weiland/mods/commons
  */
 
-public abstract class SelectiveTransformer implements IClassTransformer
-{
-	@Override
-	public byte[] transform(String name, String transformedName, byte[] bytes)
-	{
-		if (bytes != null && transforms(transformedName))
-		{
-			FMLLog.info("Class %s is a candidate for transforming", transformedName);
-			
-			try
-			{
-				ClassNode clazz = ASMUtils.getClassNode(bytes);
-				if (transform(clazz, transformedName))
-				{
-					FMLLog.info("Finished Transforming class " + transformedName);
-					ClassWriter writer = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-					clazz.accept(writer);
-					bytes = writer.toByteArray();
-				}
-				else
-					FMLLog.warning("Did not transform %s", transformedName);
-			}
-			catch (Exception e)
-			{
-				FMLLog.severe("Exception during transformation of class " + transformedName);
-				e.printStackTrace();
-				Throwables.propagate(e);
-			}
-		}
-		return bytes;
-	}
+public abstract class SelectiveTransformer implements IClassTransformer {
+    @Override
+    public byte[] transform(String name, String transformedName, byte[] bytes) {
+        if (bytes != null && transforms(transformedName)) {
+            FMLLog.info("Class %s is a candidate for transforming", transformedName);
 
-	protected abstract boolean transforms(String className);
+            try {
+                ClassNode clazz = ASMUtils.getClassNode(bytes);
+                if (transform(clazz, transformedName)) {
+                    FMLLog.info("Finished Transforming class " + transformedName);
+                    ClassWriter writer = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+                    clazz.accept(writer);
+                    bytes = writer.toByteArray();
+                } else
+                    FMLLog.warning("Did not transform %s", transformedName);
+            } catch (Exception e) {
+                FMLLog.severe("Exception during transformation of class " + transformedName);
+                e.printStackTrace();
+                Throwables.propagate(e);
+            }
+        }
+        return bytes;
+    }
 
-	protected abstract boolean transform(ClassNode clazz, String className);
+    protected abstract boolean transforms(String className);
+
+    protected abstract boolean transform(ClassNode clazz, String className);
 }

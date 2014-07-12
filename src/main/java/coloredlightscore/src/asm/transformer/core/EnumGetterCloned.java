@@ -10,11 +10,9 @@ package coloredlightscore.src.asm.transformer.core;
  * Source: https://github.com/diesieben07/SevenCommons/tree/master/src/main/java/de/take_weiland/mods/commons
  */
 
-class EnumGetterCloned implements coloredlightscore.src.asm.transformer.core.JavaUtils.EnumValueGetter
-{
-	@Override
-	public <T extends Enum<T>> T[] getEnumValues(Class<T> clazz)
-	{
-		return clazz.getEnumConstants();
-	}
+class EnumGetterCloned implements coloredlightscore.src.asm.transformer.core.JavaUtils.EnumValueGetter {
+    @Override
+    public <T extends Enum<T>> T[] getEnumValues(Class<T> clazz) {
+        return clazz.getEnumConstants();
+    }
 }

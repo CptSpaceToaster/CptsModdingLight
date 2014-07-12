@@ -12,7 +12,6 @@ package coloredlightscore.src.asm.transformer.core;
  * @author diesieben07
  */
 
-public interface Consumer<T>
-{
-	void apply(T input);
+public interface Consumer<T> {
+    void apply(T input);
 }
