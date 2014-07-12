@@ -58,11 +58,7 @@ public class CLDynamicTexture3D extends DynamicTexture {
     
     public static void allocateTextureImpl(int textureID, int mipmapLevel, int pHeight, int pWidth, int pDepth, float anUnusedFloatFromDynamicTexture)
     {
-    	
-    	System.out.println("Baleet");
     	GL11.glDeleteTextures(textureID);
-    	System.out.println("Binding");
-    	//GL13.glActiveTexture(GL13.GL_TEXTURE1);
     	GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
     	
         /* Looks to be some sort of wizardry for anisotropic filtering on all 2D textures... Not sure if I need this...
@@ -80,15 +76,7 @@ public class CLDynamicTexture3D extends DynamicTexture {
             GL11.glTexParameterf(GL12.GL_TEXTURE_3D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
         }
         
-        //we might want to replace highestMipmapLevel with a 0... not sure...
-        
-        //System.out.println(pWidth+" "+pHeight+" "+pDepth+" ");
-        
-        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, 0, GL30.GL_RGBA8UI/*8bit per chan*/, pWidth, pHeight, pDepth, 0, GL30.GL_BGRA_INTEGER, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
-
-        org.lwjgl.opengl.Util.checkGLError();
-        
-        //GL12.glTexSubImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, 0, 0, 0, pWidth, pHeight, pDepth, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
+        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, GL30.GL_RGBA8UI/*8bit per chan*/, pWidth, pHeight, pDepth, 0, GL30.GL_BGRA_INTEGER, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
 
     }
     
@@ -97,7 +85,6 @@ public class CLDynamicTexture3D extends DynamicTexture {
 
     public void updateDynamicTexture()
     {
-    	
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, this.getGlTextureId());
         
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);

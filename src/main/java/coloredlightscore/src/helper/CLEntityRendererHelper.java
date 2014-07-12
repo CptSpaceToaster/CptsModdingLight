@@ -100,32 +100,27 @@ public class CLEntityRendererHelper {
 	
 	public static void enableLightmap(EntityRenderer instance, double par1)
 	{
-        /* We were fooling and found that we could get an image on screen by doing this */
 		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         GL11.glLoadIdentity();
-        float f = 0.0625F; // 1/256 = 0.00390625F    1/16 = 0.0625F
+        float f = 0.00390625F; // 1/4096 = 0.00024414062F     1/256 = 0.00390625F     1/16 = 0.0625F   
         float t = 8.0f;
         GL11.glScalef(f, f, f);
         GL11.glTranslatef(t, t, t);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        bindTexture(((CLDynamicTexture3D)instance.lightmapTexture).getGlTextureId());
+        GL11.glBindTexture(GL12.GL_TEXTURE_3D, ((CLDynamicTexture3D)instance.lightmapTexture).getGlTextureId());
         
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        
-        //Duplicated lines?
-        //GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        //GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL12.GL_TEXTURE_WRAP_R, GL11.GL_CLAMP);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        
+        //GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL12.GL_TEXTURE_3D);
-        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        
+        /* We were fooling and found that we could get an image on screen by doing this */
+        //OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 	}
 	
 	public static void disableLightmap(EntityRenderer instance, double par1)
@@ -135,13 +130,9 @@ public class CLEntityRendererHelper {
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 	
+	/* This might not be necessary */
 	public static void bindTexture(int textureID)
     {   
-		//FMLLog.info(""+textureID);
-		//System.out.println(textureID);
-		
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
-        
-        org.lwjgl.opengl.Util.checkGLError();
     }
 }
