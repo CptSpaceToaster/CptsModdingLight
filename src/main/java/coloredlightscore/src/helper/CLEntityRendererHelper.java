@@ -61,7 +61,7 @@ public class CLEntityRendererHelper {
                         // 16 | 255 << 8 | 255;
                         // ((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1]
                         // = 255 << 24 | 255 << 16 | red << 8 | alpha;
-                        ((CLDynamicTexture3D) (instance.lightmapTexture)).dynamicTextureData[ptr1] = 0xFFFFFFFF;
+                        ((CLDynamicTexture3D) (instance.lightmapTexture)).dynamicTextureData[ptr1] = 255 << 24 | 255 << 16 | red << 8 | alpha;
                     }
                 }
 
@@ -120,19 +120,6 @@ public class CLEntityRendererHelper {
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL12.GL_TEXTURE_WRAP_R, GL11.GL_CLAMP);
-        
-        //New Code
-        
-        GL11.glEnable(GL12.GL_TEXTURE_3D);
-        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_COMBINE);
-        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_COMBINE_RGB, GL11.GL_REPLACE);
-        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_SOURCE0_RGB, GL13.GL_TEXTURE1);
-        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
-
-        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_COMBINE_ALPHA, GL11.GL_REPLACE);
-        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_SOURCE0_ALPHA, GL13.GL_TEXTURE1);
-        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
-        //End New Code
         
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         // GL11.glEnable(GL11.GL_TEXTURE_2D);
