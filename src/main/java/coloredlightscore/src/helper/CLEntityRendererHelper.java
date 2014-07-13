@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 
 import coloredlightscore.src.types.CLDynamicTexture3D;
 
@@ -60,7 +61,7 @@ public class CLEntityRendererHelper {
                         // 16 | 255 << 8 | 255;
                         // ((CLDynamicTexture3D)(instance.lightmapTexture)).dynamicTextureData[ptr1]
                         // = 255 << 24 | 255 << 16 | red << 8 | alpha;
-                        ((CLDynamicTexture3D) (instance.lightmapTexture)).dynamicTextureData[ptr1] = 128 << 24 | 128 << 16 | 255 << 8 | 255;
+                        ((CLDynamicTexture3D) (instance.lightmapTexture)).dynamicTextureData[ptr1] = 0xFFFFFFFF;
                     }
                 }
 
@@ -100,7 +101,10 @@ public class CLEntityRendererHelper {
     }
 
     public static void enableLightmap(EntityRenderer instance, double par1) {
-        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        //FMLLog.info("" + OpenGlHelper.lightmapTexUnit);
+        //OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         GL11.glLoadIdentity();
         float f = 0.00390625F; // 1/4096 = 0.00024414062F 1/256 = 0.00390625F
@@ -116,6 +120,20 @@ public class CLEntityRendererHelper {
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL12.GL_TEXTURE_WRAP_R, GL11.GL_CLAMP);
+        
+        //New Code
+        
+        GL11.glEnable(GL12.GL_TEXTURE_3D);
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL13.GL_COMBINE);
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_COMBINE_RGB, GL11.GL_REPLACE);
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_SOURCE0_RGB, GL13.GL_TEXTURE1);
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_OPERAND0_RGB, GL11.GL_SRC_COLOR);
+
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_COMBINE_ALPHA, GL11.GL_REPLACE);
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_SOURCE0_ALPHA, GL13.GL_TEXTURE1);
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_OPERAND0_ALPHA, GL11.GL_SRC_ALPHA);
+        //End New Code
+        
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         // GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL12.GL_TEXTURE_3D);
@@ -124,7 +142,8 @@ public class CLEntityRendererHelper {
          * We were fooling and found that we could get an image on screen by
          * doing this
          */
-        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        //OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
     }
 
     public static void disableLightmap(EntityRenderer instance, double par1) {

@@ -7,7 +7,6 @@ import net.minecraft.client.resources.IResourceManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL30;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -59,7 +58,7 @@ public class CLDynamicTexture3D extends DynamicTexture {
     }
 
     public static void allocateTextureImpl(int textureID, int mipmapLevel, int pHeight, int pWidth, int pDepth, float anUnusedFloatFromDynamicTexture) {
-        GL11.glDeleteTextures(textureID);
+        //GL11.glDeleteTextures(textureID);
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
 
         /*
@@ -76,7 +75,7 @@ public class CLDynamicTexture3D extends DynamicTexture {
             GL11.glTexParameterf(GL12.GL_TEXTURE_3D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
         }
 
-        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, GL30.GL_RGBA8UI/* 8bit per chan */, pWidth, pHeight, pDepth, 0, GL30.GL_BGRA_INTEGER, GL12.GL_UNSIGNED_INT_8_8_8_8_REV,
+        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, GL11.GL_RGBA/* 8bit per chan */, pWidth, pHeight, pDepth, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV,
                 TextureUtil.dataBuffer);
 
     }
@@ -113,6 +112,6 @@ public class CLDynamicTexture3D extends DynamicTexture {
         TextureUtil.dataBuffer.position(0).limit(textureLength);
 
         int mipmapLevel = 0;
-        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, GL30.GL_RGBA8UI/* 8bit per chan */, width, height, depth, 0, GL30.GL_BGRA_INTEGER, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
+        GL12.glTexImage3D(GL12.GL_TEXTURE_3D, mipmapLevel, GL11.GL_RGBA/* 8bit per chan */, width, height, depth, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, TextureUtil.dataBuffer);
     }
 }
