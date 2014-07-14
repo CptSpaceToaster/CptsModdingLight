@@ -9,7 +9,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -134,8 +133,6 @@ public class TransformTessellator extends HelperMethodTransformer {
         boolean replacedShift = false;
         boolean hasFoundBrightness = false;
         boolean replacedTwoWithThree = false;
-        boolean enabled3D = false;
-        boolean disabled3D = false;
 
         int replace32 = 0;
         int replace8 = 0;
@@ -157,21 +154,6 @@ public class TransformTessellator extends HelperMethodTransformer {
                 replacedShift = true;
             }
 
-            //Add GL11.glEnable(GL12.GL_TEXTURE_3D);
-            if (insn.getOpcode() == Opcodes.GETSTATIC && !enabled3D) {
-                try {
-                    //check to see if it's 'lightMapTexUnit'
-                    if (((FieldInsnNode) insn).name.equals(obfLightmapTexUnit) || ((FieldInsnNode) insn).name.equals(unObfLightmapTexUnit)) {
-                        it.add(new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/opengl/GL12", "GL_TEXTURE_3D", "I"));
-                        it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/lwjgl/opengl/GL11", "glEnable", "(I)V"));
-                        enabled3D = true;
-                    }
-                } catch (ClassCastException e) {
-                    FMLLog.severe("There was an issue casting the Instruction to a FieldInsnNode for some reason?");
-                    e.printStackTrace();
-                }
-            }
-
             //replace the 2 that follows 'hasBrighness' with a 3
             if (insn.getOpcode() == Opcodes.GETFIELD && !hasFoundBrightness) {
                 try {
@@ -188,21 +170,6 @@ public class TransformTessellator extends HelperMethodTransformer {
             if (hasFoundBrightness && insn.getOpcode() == Opcodes.ICONST_2) {
                 it.set(new InsnNode(Opcodes.ICONST_3));
                 replacedTwoWithThree = true;
-            }
-
-            //Add GL11.glDisable(GL12.GL_TEXTURE_3D);
-            if (insn.getOpcode() == Opcodes.GETSTATIC && !disabled3D) {
-                try {
-                    //check to see if it's 'lightMapTexUnit'
-                    if (((FieldInsnNode) insn).name.equals(obfDefaultTexUnit) || ((FieldInsnNode) insn).name.equals(unObfDefaultTexUnit)) {
-                        it.add(new FieldInsnNode(Opcodes.GETSTATIC, "org/lwjgl/opengl/GL12", "GL_TEXTURE_3D", "I"));
-                        it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/lwjgl/opengl/GL11", "glDisable", "(I)V"));
-                        disabled3D = true;
-                    }
-                } catch (ClassCastException e) {
-                    FMLLog.severe("There was an issue casting the Instruction to a FieldInsnNode for some reason?");
-                    e.printStackTrace();
-                }
             }
 
             //replace all instances of 32 with 40 and replace all instances of 8 with 10
@@ -226,7 +193,7 @@ public class TransformTessellator extends HelperMethodTransformer {
         FMLLog.info("Replaced " + replace32 + " instances of 32 with " + newStride + ".");
         FMLLog.info("Replaced " + replace8 + " instances of 8 with " + newInts + ".");
 
-        return (fixedFive && replacedShift && hasFoundBrightness && replacedTwoWithThree && enabled3D && disabled3D);
+        return (fixedFive && replacedShift && hasFoundBrightness && replacedTwoWithThree);
     }
 
     /*

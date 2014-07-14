@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -35,18 +36,30 @@ public class CLDynamicTexture3D extends DynamicTexture {
      */
 
     public CLDynamicTexture3D(int par1, int par2, int par3) {
-        super(par1, par2 * par3); // Hopefully we can fix what this does after
-                                  // it's all messed up! ._.
+        super(par1, par2 * par3); // Hopefully we can fix what this does after it's all messed up! ._.
         this.width = par1;
         this.height = par2;
         this.depth = par3;
-        this.dynamicTextureData = new int[par1 * par2 * par3]; // This was
-                                                               // duplicated :<
-                                                               // ooops
-
+        this.dynamicTextureData = new int[par1 * par2 * par3]; // This was duplicated :< ooops
+        initColorMap();
         allocateTextureImpl(this.getGlTextureId(), 0, par1, par2, par3, 1.0F);
     }
 
+    public void initColorMap() {
+        int ptr = 0;
+        float fac = (255*16)/256F;
+        FMLLog.info("" + fac);
+        
+        for (int b = 0; b < 16; b++) {
+            for (int g = 0; g < 16; g++) {
+                for (int r = 0; r < 16; r++) {
+                    ptr = r << 8 | g << 4 | g;
+                    dynamicTextureData[ptr] = 255 << 24 | (int)(r*fac) << 16 | (int)(g*fac) << 8 | (int)(b*fac);
+                }
+            }
+        }
+    }
+    
     @Override
     public int getGlTextureId() {
         if (this.myID == -1) {
