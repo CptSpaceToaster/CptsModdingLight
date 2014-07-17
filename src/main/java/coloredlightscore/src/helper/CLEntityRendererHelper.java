@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import coloredlightscore.src.types.CLDynamicTexture3D;
+import coloredlightscore.src.types.CLEntityRendererInterface;
+import cpw.mods.fml.common.FMLLog;
 
 public class CLEntityRendererHelper {
 
@@ -19,6 +21,7 @@ public class CLEntityRendererHelper {
         WorldClient worldclient = instance.mc.theWorld;
 
         if (worldclient != null) {
+            int sunlightIntArray[] = new int[16];
             for (int s = 0; s < 16; s++) {
                 float sunlightBase = worldclient.getSunBrightness(1.0F) * 0.95F + 0.05F;
                 float sunlight = worldclient.provider.lightBrightnessTable[s] * sunlightBase;
@@ -26,8 +29,12 @@ public class CLEntityRendererHelper {
                 if (worldclient.lastLightningBolt > 0) {
                     sunlight = worldclient.provider.lightBrightnessTable[s];
                 }
-                
-                //Store sunlight somewhere.......
+                sunlightIntArray[s] =  255 << 24 | (int)sunlight*255 << 16 | (int)sunlight*255 << 8 | (int)sunlight*255;
+            }
+            if (instance instanceof CLEntityRendererInterface) {
+                ((CLEntityRendererInterface)instance).setLightmapTexture2(sunlightIntArray);
+            } else {
+                FMLLog.info("HEY IT'S ALL BROKE");
             }
             //Set texture configurations
             ((CLDynamicTexture3D) (instance.lightmapTexture)).updateDynamicTexture();
