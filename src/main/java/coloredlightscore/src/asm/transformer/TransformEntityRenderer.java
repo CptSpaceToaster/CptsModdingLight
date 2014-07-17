@@ -2,12 +2,19 @@ package coloredlightscore.src.asm.transformer;
 
 import java.util.ListIterator;
 
-import coloredlightscore.src.types.CLEntityRendererInterface;
-import coloredlightscore.src.types.CLTessellatorInterface;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
+import coloredlightscore.src.types.CLEntityRendererInterface;
 
 import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes;
 
@@ -96,6 +103,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     protected boolean transformConstructor(MethodNode methodNode) {
         //Actions
         boolean replace2DLightmap = false;
+        boolean add1DLightmap = false;
         boolean removeTextureLocation = false;
         boolean fixGetTextureData = true;
 
@@ -145,7 +153,19 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
             }
             */
 
+            if (!add1DLightmap && removeTextureLocation && replace2DLightmap) {
+                FMLLog.info("Added Second Lightmap");
+                it.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                it.add(new TypeInsnNode(Opcodes.NEW, oldLightmapDesc));
+                it.add(new InsnNode(Opcodes.DUP));
+                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
+                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
+                it.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, oldLightmapDesc, "<init>", "(II)V"));
+                it.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", "lightmapTexture2", "L"+oldLightmapDesc+";"));
+                
+                add1DLightmap = true;
+            }
         }
-        return (replace2DLightmap && removeTextureLocation && fixGetTextureData); // && fixGetTextureData
+        return (replace2DLightmap && removeTextureLocation && fixGetTextureData && add1DLightmap); // && fixGetTextureData
     }
 }
