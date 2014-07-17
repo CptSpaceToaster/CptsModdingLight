@@ -2,6 +2,8 @@ package coloredlightscore.src.asm.transformer;
 
 import java.util.ListIterator;
 
+import net.minecraft.client.renderer.texture.DynamicTexture;
+
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -32,6 +34,12 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     
     boolean didThatThing = false;
 
+    DynamicTexture tttest;
+    
+    public void setThat (int[] varfg) {
+        ((CLDynamicTexture1D)tttest).dynamicTextureData = varfg;
+    }
+    
     public TransformEntityRenderer() {
         super("net.minecraft.client.renderer.EntityRenderer");
     }
@@ -68,35 +76,23 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     public boolean preTransformClass(ClassNode classNode)
     {
         if(!didThatThing) {
-            
             //public final DynamicTexture lightmapTexture;
             classNode.visitField(Opcodes.ACC_PUBLIC, "lightmapTexture2", "L"+oldLightmapDesc+";", null, null).visitEnd();
             
             classNode.interfaces.add(CLEntityRendererInterface.appliedInterface);
 
-            //getter
-            MethodNode getter = new MethodNode(org.objectweb.asm.Opcodes.ACC_PUBLIC, CLEntityRendererInterface.getterName, "()" + CLEntityRendererInterface.fieldDescriptor, null, null);
-            getter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0));
-            getter.instructions.add(new FieldInsnNode(org.objectweb.asm.Opcodes.GETFIELD, classNode.name, CLEntityRendererInterface.fieldName, CLEntityRendererInterface.fieldDescriptor));
-            getter.instructions.add(new InsnNode(org.objectweb.asm.Opcodes.IRETURN));
-            classNode.methods.add(getter);
-            //setter
-            MethodNode setter = new MethodNode(org.objectweb.asm.Opcodes.ACC_PUBLIC, CLEntityRendererInterface.setterName, "(" + CLEntityRendererInterface.fieldDescriptor + ")V", null, null);
+            /* Just cramming a setter, don't you mind */
+            MethodNode setter = new MethodNode(org.objectweb.asm.Opcodes.ACC_PUBLIC, CLEntityRendererInterface.setterName, "([I)V", null, null);
             setter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0));
-            setter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ILOAD, 1));
-            setter.instructions.add(new FieldInsnNode(org.objectweb.asm.Opcodes.PUTFIELD, classNode.name, CLEntityRendererInterface.fieldName, CLEntityRendererInterface.fieldDescriptor));
+            setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", "lightmapTexture2", "L"+oldLightmapDesc+";"));
+            setter.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, "coloredlightscore/src/types/CLDynamicTexture1D"));
+            setter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1));
+            setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "coloredlightscore/src/types/CLDynamicTexture1D", "dynamicTextureData", "[I"));
             setter.instructions.add(new InsnNode(org.objectweb.asm.Opcodes.RETURN));
             classNode.methods.add(setter);
             
             didThatThing = true;
         }
-        return true;
-    }
-    
-    @Override
-    public boolean postTransformClass(ClassNode classNode)
-    {
-
         return true;
     }
 
@@ -115,7 +111,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
         return false;
     }
-    CLDynamicTexture1D testtt;
+    DynamicTexture testtt;
     protected boolean transformConstructor(MethodNode methodNode) {
         //Actions
         boolean replace2DLightmap = false;
