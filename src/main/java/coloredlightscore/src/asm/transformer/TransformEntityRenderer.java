@@ -2,6 +2,8 @@ package coloredlightscore.src.asm.transformer;
 
 import java.util.ListIterator;
 
+import coloredlightscore.src.types.CLEntityRendererInterface;
+import coloredlightscore.src.types.CLTessellatorInterface;
 import org.objectweb.asm.tree.*;
 
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
@@ -71,6 +73,22 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
         if ((methodNode.name + " " + methodNode.desc).equals(constructorSignature))
             return transformConstructor(methodNode);
+
+        classNode.interfaces.add(CLEntityRendererInterface.appliedInterface);
+
+        //getter
+        MethodNode getter = new MethodNode(org.objectweb.asm.Opcodes.ACC_PUBLIC, CLEntityRendererInterface.getterName, "()" + CLEntityRendererInterface.fieldDescriptor, null, null);
+        getter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0));
+        getter.instructions.add(new FieldInsnNode(org.objectweb.asm.Opcodes.GETFIELD, classNode.name, CLEntityRendererInterface.fieldName, CLEntityRendererInterface.fieldDescriptor));
+        getter.instructions.add(new InsnNode(org.objectweb.asm.Opcodes.IRETURN));
+        classNode.methods.add(getter);
+        //setter
+        MethodNode setter = new MethodNode(org.objectweb.asm.Opcodes.ACC_PUBLIC, CLEntityRendererInterface.setterName, "(" + CLEntityRendererInterface.fieldDescriptor + ")V", null, null);
+        setter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0));
+        setter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ILOAD, 1));
+        setter.instructions.add(new FieldInsnNode(org.objectweb.asm.Opcodes.PUTFIELD, classNode.name, CLEntityRendererInterface.fieldName, CLEntityRendererInterface.fieldDescriptor));
+        setter.instructions.add(new InsnNode(org.objectweb.asm.Opcodes.RETURN));
+        classNode.methods.add(setter);
 
         return false;
     }
