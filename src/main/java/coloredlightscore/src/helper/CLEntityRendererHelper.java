@@ -4,8 +4,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.*;
 
 import coloredlightscore.src.types.CLDynamicTexture3D;
 
@@ -51,9 +50,10 @@ public class CLEntityRendererHelper {
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL12.GL_TEXTURE_WRAP_R, GL11.GL_CLAMP);
-        
+
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glEnable(GL12.GL_TEXTURE_3D);
+
 
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }

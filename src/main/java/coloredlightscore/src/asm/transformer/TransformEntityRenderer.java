@@ -2,12 +2,7 @@ package coloredlightscore.src.asm.transformer;
 
 import java.util.ListIterator;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.*;
 
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
@@ -58,8 +53,16 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     }
 
     @Override
-    protected boolean transform(ClassNode classNode, MethodNode methodNode) {
+    public boolean postTransformClass(ClassNode classNode)
+    {
+        //public final DynamicTexture lightmapTexture;
+        classNode.visitField(Opcodes.ACC_PUBLIC, "lightmapTexture2", "L"+oldLightmapDesc+";", null, null).visitEnd();
 
+        return true;
+    }
+
+    @Override
+    protected boolean transform(ClassNode classNode, MethodNode methodNode) {
         for (String name : methodsToReplace) {
             if (NameMapper.getInstance().isMethod(methodNode, super.className, name)) {
                 return redefineMethod(classNode, methodNode, name);
