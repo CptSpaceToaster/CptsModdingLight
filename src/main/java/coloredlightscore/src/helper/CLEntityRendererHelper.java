@@ -38,6 +38,7 @@ public class CLEntityRendererHelper {
             }
             //Set texture configurations
             ((CLDynamicTexture3D) (instance.lightmapTexture)).updateDynamicTexture();
+            //TODO: Need to call updateDynamicTexture() on the OTHER lightmap... we need the getter...
             instance.lightmapUpdateNeeded = false;
         }
     }

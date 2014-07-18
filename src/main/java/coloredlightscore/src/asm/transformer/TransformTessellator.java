@@ -9,6 +9,8 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -133,11 +135,14 @@ public class TransformTessellator extends HelperMethodTransformer {
         boolean replacedShift = false;
         boolean hasFoundBrightness = false;
         boolean replacedTwoWithThree = false;
+        boolean addedTexture2 = true; //TODO: TRUE FOR NOW
 
         int replace32 = 0;
         int replace8 = 0;
+        int replace14 = 0;
         int newStride = 40;
         int newInts = 10;
+        int newPoint = 15;
 
         for (ListIterator<AbstractInsnNode> it = methodNode.instructions.iterator(); it.hasNext();) {
             AbstractInsnNode insn = it.next();
@@ -171,7 +176,24 @@ public class TransformTessellator extends HelperMethodTransformer {
                 it.set(new InsnNode(Opcodes.ICONST_3));
                 replacedTwoWithThree = true;
             }
-
+            if (!addedTexture2 && hasFoundBrightness && insn.getOpcode() == Opcodes.INVOKESTATIC) {
+                if (((MethodInsnNode)insn).name.equals("glTexCoordPointer")) {
+                    //OpenGlHelper.setClientActiveTexture(GL13.GL_TEXTURE2);
+                    it.add(new LdcInsnNode(33986));
+                    it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/minecraft/client/renderer/OpenGlHelper", "setClientActiveTexture", "(I)V"));
+                    
+                    //GL11.glTexCoordPointer(1, 32, this.shortBuffer);
+                    it.add(new InsnNode(Opcodes.ICONST_1));
+                    it.add(new IntInsnNode(Opcodes.BIPUSH, newStride));
+                    it.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                    it.add(new InsnNode(Opcodes.POP));
+                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "shortBuffer", "Ljava/nio/ShortBuffer;"));
+                    it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/lwjgl/opengl/GL11", "glTexCoordPointer", "(IILjava/nio/ShortBuffer;)V"));
+                    
+                    addedTexture2 = true;
+                }
+            }
+            //replace the short(14) with short(17)
             //replace all instances of 32 with 40 and replace all instances of 8 with 10
             if (insn.getOpcode() == Opcodes.BIPUSH) {
                 if (((IntInsnNode) insn).operand == 32) {
@@ -192,6 +214,7 @@ public class TransformTessellator extends HelperMethodTransformer {
         }
         FMLLog.info("Replaced " + replace32 + " instances of 32 with " + newStride + ".");
         FMLLog.info("Replaced " + replace8 + " instances of 8 with " + newInts + ".");
+        FMLLog.info("Replaced " + replace14 + " instances of 14 with " + newPoint + ".");
 
         return (fixedFive && replacedShift && hasFoundBrightness && replacedTwoWithThree);
     }
