@@ -11,7 +11,6 @@ public class CLTessellatorHelper {
     public static float sunlightBrightness = 1.0f;
 
     public CLTessellatorHelper() {
-        // TODO Auto-generated constructor stub
     }
 
     public void setBrightness(Tessellator instance, int par1) {
@@ -43,20 +42,8 @@ public class CLTessellatorHelper {
 
         if (instance.hasBrightness) {
 
-            /*
-             Two lightmaps:
-              RSL
-              GSB
-             Three sets of two texture values:
-              SL
-              BR
-              GS
-            
-             << and >> take precedence over & 
-             
-            */
-            
-            /* We get this:
+            /* << and >> take precedence over &
+             * Incoming:
              * 0000 0000 SSSS BBBB GGGG RRRR LLLL 0000 */
             
             /* 0000 0000 GGGG 0000 0000 0000 BBBB 0000 */

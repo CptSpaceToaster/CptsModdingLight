@@ -140,7 +140,6 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
             try {
                 ASMUtils.assertClassContainsHelperMethod(getHelperClass().getName(), helperMethod, helperMethodDescriptor);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 

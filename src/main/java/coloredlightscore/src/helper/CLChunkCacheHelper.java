@@ -6,7 +6,6 @@ import net.minecraft.world.EnumSkyBlock;
 public class CLChunkCacheHelper {
 
     public CLChunkCacheHelper() {
-        // TODO Auto-generated constructor stub
     }
 
     /**

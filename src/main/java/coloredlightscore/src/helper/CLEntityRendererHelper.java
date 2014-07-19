@@ -7,14 +7,13 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import coloredlightscore.src.types.CLDynamicTexture1D;
 import coloredlightscore.src.types.CLDynamicTexture3D;
 import coloredlightscore.src.types.CLEntityRendererInterface;
-import cpw.mods.fml.common.FMLLog;
 
 public class CLEntityRendererHelper {
 
     public static void Initialize() {
-        // Hi... 
     }
 
     public static void updateLightmap(EntityRenderer instance, float par1) {
@@ -31,14 +30,11 @@ public class CLEntityRendererHelper {
                 }
                 sunlightIntArray[s] =  255 << 24 | (int)sunlight*255 << 16 | (int)sunlight*255 << 8 | (int)sunlight*255;
             }
-            if (instance instanceof CLEntityRendererInterface) {
-                ((CLEntityRendererInterface)instance).setLightmapTexture2(sunlightIntArray);
-            } else {
-                FMLLog.info("HEY IT'S ALL BROKE");
-            }
-            //Set texture configurations
-            ((CLDynamicTexture3D) (instance.lightmapTexture)).updateDynamicTexture();
-            //TODO: Need to call updateDynamicTexture() on the OTHER lightmap... we need the getter...
+            
+            ((CLEntityRendererInterface)instance).setLightmapTextureData2(sunlightIntArray);
+            
+            ((CLDynamicTexture3D)(instance.lightmapTexture)).updateDynamicTexture();
+            ((CLDynamicTexture1D)((CLEntityRendererInterface)instance).getLightmapTexture2()).updateDynamicTexture();
             instance.lightmapUpdateNeeded = false;
         }
     }
@@ -62,7 +58,7 @@ public class CLEntityRendererHelper {
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glEnable(GL12.GL_TEXTURE_3D);
-
+        //TODO: Setup 1D texture combination scheme 
 
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
@@ -73,7 +69,7 @@ public class CLEntityRendererHelper {
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
-    /* This might not be necessary */
+    /* This might not be necessary... as in, you can just call it directly... */
     public static void bindTexture(int textureID) {
         GL11.glBindTexture(GL12.GL_TEXTURE_3D, textureID);
     }

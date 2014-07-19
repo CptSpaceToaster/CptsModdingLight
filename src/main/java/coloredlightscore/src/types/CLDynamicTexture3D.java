@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -48,7 +47,6 @@ public class CLDynamicTexture3D extends DynamicTexture {
     public void initColorMap() {
         int ptr = 0;
         float fac = (255*16)/256F;
-        FMLLog.info("" + fac);
         
         for (int b = 0; b < 16; b++) {
             for (int g = 0; g < 16; g++) {

@@ -52,24 +52,6 @@ public class TransformTessellator extends HelperMethodTransformer {
             try {
                 ClassNode clazz = ASMUtils.getClassNode(bytes);
 
-                clazz.interfaces.add(CLTessellatorInterface.appliedInterface);
-
-                //Don't mind this.  Just cramming a getter and setter into the Tesellator for later use
-                //getter
-
-                MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.getterName, "()" + CLTessellatorInterface.fieldDescriptor, null, null);
-                getter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, clazz.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
-                getter.instructions.add(new InsnNode(Opcodes.IRETURN));
-                clazz.methods.add(getter);
-                //setter
-                MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.setterName, "(" + CLTessellatorInterface.fieldDescriptor + ")V", null, null);
-                setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                setter.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
-                setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, clazz.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
-                setter.instructions.add(new InsnNode(Opcodes.RETURN));
-                clazz.methods.add(setter);
-
                 if (transform(clazz, transformedName)) {
                     FMLLog.info("Finished Transforming class " + transformedName);
                     ClassWriter writer = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
@@ -84,6 +66,29 @@ public class TransformTessellator extends HelperMethodTransformer {
             }
         }
         return bytes;
+    }
+    
+    @Override
+    public boolean preTransformClass(ClassNode classNode)
+    {
+        classNode.interfaces.add(CLTessellatorInterface.appliedInterface);
+
+        //Don't mind this.  Just cramming a getter and setter into the Tesellator for later use
+        //getter
+        MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.getterName, "()" + CLTessellatorInterface.fieldDescriptor, null, null);
+        getter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
+        getter.instructions.add(new InsnNode(Opcodes.IRETURN));
+        classNode.methods.add(getter);
+        //setter
+        MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.setterName, "(" + CLTessellatorInterface.fieldDescriptor + ")V", null, null);
+        setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        setter.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
+        setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, classNode.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
+        setter.instructions.add(new InsnNode(Opcodes.RETURN));
+        classNode.methods.add(setter);
+        
+        return true;
     }
 
     @Override
@@ -135,7 +140,7 @@ public class TransformTessellator extends HelperMethodTransformer {
         boolean replacedShift = false;
         boolean hasFoundBrightness = false;
         boolean replacedTwoWithThree = false;
-        boolean addedTexture2 = true; //TODO: TRUE FOR NOW
+        boolean addedTexture2 = false;
 
         int replace32 = 0;
         int replace8 = 0;

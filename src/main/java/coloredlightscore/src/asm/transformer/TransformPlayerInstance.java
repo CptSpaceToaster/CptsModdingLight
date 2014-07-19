@@ -21,7 +21,6 @@ public class TransformPlayerInstance extends MethodTransformer {
     private final String SEND_TO_ALL_PLAYERS_WATCHING_CHUNK = "sendToAllPlayersWatchingChunk (Lnet/minecraft/network/Packet;)V";
 
     public TransformPlayerInstance() {
-        // TODO Auto-generated constructor stub
     }
 
     @Override

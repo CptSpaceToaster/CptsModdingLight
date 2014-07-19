@@ -4,6 +4,7 @@ import java.util.ListIterator;
 
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -18,9 +19,6 @@ import org.objectweb.asm.tree.VarInsnNode;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
 import coloredlightscore.src.types.CLEntityRendererInterface;
-
-import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes;
-
 import cpw.mods.fml.common.FMLLog;
 
 public class TransformEntityRenderer extends HelperMethodTransformer {
@@ -42,20 +40,10 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     @Override
     protected Class<?> getHelperClass() {
         return coloredlightscore.src.helper.CLEntityRendererHelper.class;
-    }
-
+    }    
+    
     @Override
     protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
-        /*   THIS IS BAD, DON'T DO THIS
-        for (Iterator<FieldNode> it = classNode.fields.iterator(); it.hasNext();) {
-        	FieldNode insn = it.next();
-        	if (insn.desc.equals("L" + oldLightmapDesc + ";")) {
-        		FMLLog.info("Replaced lightmapTexture field type");
-        		insn.desc = "L" + newLightmapDesc + ";";
-        	}
-        }
-        */
-        
         for (String name : methodsToReplace) {
             if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
                 return true;
@@ -77,14 +65,20 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
             //public final DynamicTexture lightmapTexture;
             classNode.fields.add( new FieldNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";", null, null));
 
-            /* Just cramming a setter, don't you mind */
-            MethodNode setter = new MethodNode(org.objectweb.asm.Opcodes.ACC_PUBLIC, CLEntityRendererInterface.setterName, "([I)V", null, null);
-            setter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 0));
+            /* Just cramming a getter and a setter, don't you mind */
+            MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.getterName, "()L" + new1DDesc + ";", null, null);
+            getter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";"));
+            getter.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new1DDesc));
+            getter.instructions.add(new InsnNode(Opcodes.ARETURN));
+            classNode.methods.add(getter);
+            MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.setterName, "([I)V", null, null);
+            setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
             setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";"));
             setter.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new1DDesc));
-            setter.instructions.add(new VarInsnNode(org.objectweb.asm.Opcodes.ALOAD, 1));
+            setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
             setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, new1DDesc, "dynamicTextureData", "[I"));
-            setter.instructions.add(new InsnNode(org.objectweb.asm.Opcodes.RETURN));
+            setter.instructions.add(new InsnNode(Opcodes.RETURN));
             classNode.methods.add(setter);
             
             addSetterAndInterface = true;
@@ -133,9 +127,6 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                     ((MethodInsnNode) insn).name = "<init>";
                     ((MethodInsnNode) insn).desc = "(III)V";
                     insn = it.next(); //Storing the value to the local field - PUTFIELD
-                    /* MAY NOT NEED THIS
-                    ((FieldInsnNode)insn).desc = "L" + newLightmapDesc + ";";
-                    */
                     replace2DLightmap = true;
                 }
             }
@@ -150,19 +141,8 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 removeTextureLocation = true;
             }
 
-            /* Still lazy here, after deleting the last line, the next instruction will be the next available GETFIELD instruction */
-            /* MAY NOT NEED THIS
-            if (insn.getOpcode() == Opcodes.GETFIELD && !fixGetTextureData && removeTextureLocation && replace2DLightmap) {
-            	FMLLog.info("Getting texture data from CLDynamicTexture3D instead");
-            	((FieldInsnNode)insn).desc = "L" + newLightmapDesc + ";";
-            	insn = it.next();
-            	((MethodInsnNode)insn).owner = newLightmapDesc;
-            	fixGetTextureData = true;
-            }
-            */
-
             if (!add1DLightmap && removeTextureLocation && replace2DLightmap) {
-                FMLLog.info("Added Second Lightmap");
+                FMLLog.info("Adding Second Lightmap");
                 it.add(new VarInsnNode(Opcodes.ALOAD, 0));
                 it.add(new TypeInsnNode(Opcodes.NEW, new1DDesc));
                 it.add(new InsnNode(Opcodes.DUP));

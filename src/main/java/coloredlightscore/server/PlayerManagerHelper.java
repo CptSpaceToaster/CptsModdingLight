@@ -10,7 +10,6 @@ import cpw.mods.fml.common.FMLLog;
 public class PlayerManagerHelper {
 
     public PlayerManagerHelper() {
-        // TODO Auto-generated constructor stub
     }
 
     /**

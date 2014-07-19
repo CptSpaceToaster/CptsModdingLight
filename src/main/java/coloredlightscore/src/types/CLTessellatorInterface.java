@@ -1,11 +1,7 @@
 package coloredlightscore.src.types;
 
-/*
- * Need access to rawBufferSize after Forge adds it?
- * 
- * No problem!  This interface gets applied to Tessellator, and we'll ASM the fields in 
- */
-
+/* This interface is added to Tessellator and gives rudimentary access to the fields we made public in the AT  
+ * Cast Tessellator to a (CLTessellatorInterface) and then you can use set/getRawBufferSize */
 public interface CLTessellatorInterface {
     public static final String appliedInterface = "coloredlightscore/src/types/CLTessellatorInterface";
     public static final String getterName = "getRawBufferSize";
@@ -14,6 +10,5 @@ public interface CLTessellatorInterface {
     public static final String fieldDescriptor = "I";
 
     public int getRawBufferSize();
-
     public void setRawBufferSize(int in);
 }
