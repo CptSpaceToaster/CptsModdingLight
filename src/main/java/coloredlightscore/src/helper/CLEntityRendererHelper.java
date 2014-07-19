@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 
 import coloredlightscore.src.types.CLDynamicTexture1D;
 import coloredlightscore.src.types.CLDynamicTexture3D;
@@ -40,11 +41,12 @@ public class CLEntityRendererHelper {
     }
     
     public static void enableLightmap(EntityRenderer instance, double par1) {
+        float f = (1/256F);
+        float t = 8.0f;
+        
         OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         GL11.glLoadIdentity();
-        float f = (1/256F);
-        float t = 8.0f;
         GL11.glScalef(f, f, f);
         GL11.glTranslatef(t, t, t);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -55,11 +57,23 @@ public class CLEntityRendererHelper {
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL12.GL_TEXTURE_WRAP_R, GL11.GL_CLAMP);
-
+        
+        //TODO: Setup 1D texture combination scheme 
+        
+        OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE2);
+        GL11.glMatrixMode(GL11.GL_TEXTURE);
+        GL11.glLoadIdentity();
+        GL11.glScalef(f, f, f);
+        GL11.glTranslatef(t, t, t);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glBindTexture(GL11.GL_TEXTURE_1D, ((CLDynamicTexture1D)((CLEntityRendererInterface)instance).getLightmapTexture2()).getGlTextureId());
+        GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL12.GL_TEXTURE_3D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
+        
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glEnable(GL12.GL_TEXTURE_3D);
-        //TODO: Setup 1D texture combination scheme 
-
+        
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
