@@ -1,6 +1,7 @@
 package yamhaven.easycoloredlights.blocks;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -54,7 +55,17 @@ public class CLStone extends CLBlock {
             par3List.add(new ItemStack(par1, 1, i));
         }
     }
+    
+    @Override
+    public Item getItemDropped(int par1, Random par2Random, int par3) {
+        return CLBlocksController.CLDust;
+    }
 
+    @Override
+    public int quantityDropped(Random rand) {
+        return 2 + rand.nextInt(3);
+    }
+    
     @Override
     public int getColorLightValue(int meta) {
         if (meta == 0) {
