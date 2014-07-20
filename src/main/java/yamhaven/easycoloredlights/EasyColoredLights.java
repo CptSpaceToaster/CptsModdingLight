@@ -1,6 +1,5 @@
 package yamhaven.easycoloredlights;
 
-import yamhaven.easycoloredlights.blocks.CLBlocksController;
 import yamhaven.easycoloredlights.lib.ModInfo;
 import yamhaven.easycoloredlights.proxy.CommonProxy;
 import cpw.mods.fml.common.Mod;
@@ -17,13 +16,13 @@ public class EasyColoredLights {
 
     @EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
-        CLBlocksController.init();
-        CLBlocksController.registerBlocks();
+        CLMaterialsController.init();
+        CLMaterialsController.registerMaterials();
     }
 
     @EventHandler
     public static void init(FMLInitializationEvent event) {
-        CLBlocksController.addBlockRecipes();
+        CLMaterialsController.addRecipes();
     }
 
     @EventHandler

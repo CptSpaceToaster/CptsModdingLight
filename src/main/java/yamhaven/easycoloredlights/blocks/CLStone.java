@@ -9,6 +9,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import yamhaven.easycoloredlights.CLMaterialsController;
 import yamhaven.easycoloredlights.lib.BlockInfo;
 import yamhaven.easycoloredlights.lib.ModInfo;
 import coloredlightscore.src.api.CLApi;
@@ -58,7 +59,7 @@ public class CLStone extends CLBlock {
     
     @Override
     public Item getItemDropped(int par1, Random par2Random, int par3) {
-        return CLBlocksController.CLDust;
+        return CLMaterialsController.CLDust;
     }
 
     @Override

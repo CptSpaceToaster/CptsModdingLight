@@ -37,7 +37,7 @@ public class CLLamp extends CLBlock {
             setCreativeTab(CreativeTabs.tabDecorations);
     }
 
-    protected void setSwitchBlock(Block switchBlock) {
+    public void setSwitchBlock(Block switchBlock) {
         this.switchBlock = switchBlock;
     }
 
