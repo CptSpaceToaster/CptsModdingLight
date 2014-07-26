@@ -9,6 +9,6 @@ public interface CLEntityRendererInterface {
     public static final String fieldName = "lightmapTexture2";
     public static final String fieldDescriptor = "Lnet/minecraft/client/renderer/texture/DynamicTexture;";
 
-    public CLDynamicTexture1D getLightmapTexture2();
+    public CLDynamicTexture3D getLightmapTexture2();
     public void setLightmapTextureData2(int[] in);
 }

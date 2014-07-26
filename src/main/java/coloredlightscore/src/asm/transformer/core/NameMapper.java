@@ -19,6 +19,12 @@ public class NameMapper {
 
         return INSTANCE;
     }
+    
+    /* Used when directly transforming some values */
+    public static String drawSignature = "draw ()I";
+    public static String obfDrawSignature = "bmh/a ()I";
+    public static String getVertexStateSignature = "getVertexState (FFF)Lnet/minecraft/client/shader/TesselatorVertexState;";
+    public static String obfGetVertexStateSignature = "bmh/a (FFF)Lnet/minecraft/client/shader/TesselatorVertexState;";
 
     public NameMapper() {
         m_NameList = new HashMap<String, SeargeData>();
@@ -28,69 +34,62 @@ public class NameMapper {
         // FIELDS (FD) SHOULD COME FROM MCP-SRG.SRG
 
         // Block
-        registerSrgName("CL: net/minecraft/block/Block ahu");
-        registerSrgName("MD: net/minecraft/block/Block/setLightLevel (F)Lnet/minecraft/block/Block; ahu/a (F)Lahu;");
+        registerSrgName("CL: net/minecraft/block/Block aji");
+        registerSrgName("MD: net/minecraft/block/Block/setLightLevel (F)Lnet/minecraft/block/Block; aji/a (F)Laji;");
 
-        // ChunkCache		
-        registerSrgName("CL: net/minecraft/world/ChunkCache agd");
-        registerSrgName("MD: net/minecraft/world/ChunkCache/getLightBrightnessForSkyBlocks (IIII)I agd/c (IIII)I");
+        // ChunkCache
+        registerSrgName("CL: net/minecraft/world/ChunkCache ahr");
+        registerSrgName("MD: net/minecraft/world/ChunkCache/getLightBrightnessForSkyBlocks (IIII)I ahr/c (IIII)I");
 
         // EntityPlayerMP
-        registerSrgName("CL: net/minecraft/entity/player/EntityPlayerMP mm");
-        registerSrgName("MD: net/minecraft/entity/player/EntityPlayerMP/onUpdate ()V mm/h ()V");
+        registerSrgName("CL: net/minecraft/entity/player/EntityPlayerMP mw");
+        registerSrgName("MD: net/minecraft/entity/player/EntityPlayerMP/onUpdate ()V mw/h ()V");
 
         // EntityRenderer
-        registerSrgName("CL: net/minecraft/client/renderer/EntityRenderer bll");
-        registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/updateLightmap (F)V bll/h (F)V");
-        registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/disableLightmap (D)V bll/a (D)V");
-        registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/enableLightmap (D)V bll/b (D)V");
+        registerSrgName("CL: net/minecraft/client/renderer/EntityRenderer blt");
+        registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/updateLightmap (F)V blt/i (F)V");
 
         // ExtendedBlockStorage
-        registerSrgName("CL: net/minecraft/world/chunk/storage/ExtendedBlockStorage aol");
-        registerSrgName("MD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/setExtBlocklightValue (IIII)V aol/c (IIII)V");
-        registerSrgName("MD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/getExtBlocklightValue (III)I aol/d (III)I");
+        registerSrgName("CL: net/minecraft/world/chunk/storage/ExtendedBlockStorage apz");
+        registerSrgName("MD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/setExtBlocklightValue (IIII)V apz/c (IIII)V");
+        registerSrgName("MD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/getExtBlocklightValue (III)I apz/d (III)I");
         registerSrgName("FD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/blockLSBArray net/minecraft/world/chunk/storage/ExtendedBlockStorage/field_76680_d");
 
         // PlayerInstance
-        registerSrgName("CL: net/minecraft/server/management/PlayerManager$PlayerInstance mh");
-        registerSrgName("MD: net/minecraft/server/management/PlayerManager$PlayerInstance/sendToAllPlayersWatchingChunk (Lnet/minecraft/network/Packet;)V mh/a (Lfk;)V");
+        registerSrgName("CL: net/minecraft/server/management/PlayerManager$PlayerInstance mr");
+        registerSrgName("MD: net/minecraft/server/management/PlayerManager$PlayerInstance/sendToAllPlayersWatchingChunk (Lnet/minecraft/network/Packet;)V mr/a (Lft;)V");
         registerSrgName("FD: net/minecraft/server/management/PlayerManager$PlayerInstance/chunkLocation net/minecraft/server/management/PlayerManager$PlayerInstance/field_73264_c");
 
         // RenderBlocks
-        registerSrgName("CL: net/minecraft/client/renderer/RenderBlocks ble");
-        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z ble/a (Lahu;IIIFFF)Z");
-        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z ble/d (Lahu;IIIFFF)Z");
-        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/getAoBrightness (IIII)I ble/a (IIII)I");
+        registerSrgName("CL: net/minecraft/client/renderer/RenderBlocks blm");
+        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z blm/a (Laji;IIIFFF)Z");
+        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z blm/d (Laji;IIIFFF)Z");
 
         // Tessellator
-        registerSrgName("CL: net/minecraft/client/renderer/Tessellator blz");
-        //registerSrgName("MD: net/minecraft/client/renderer/Tessellator/setBrightness (I)V blz/b (I)V");
-        registerSrgName("MD: net/minecraft/client/renderer/Tessellator/addVertex (DDD)V blz/a (DDD)V");
-        registerSrgName("MD: net/minecraft/client/renderer/Tessellator/draw ()I blz/a ()I");
-        registerSrgName("MD: net/minecraft/client/renderer/Tessellator/getVertexState (FFF)Lnet/minecraft/client/shader/TesselatorVertexState; blz/a (FFF)Lnet/minecraft/client/shader/TesselatorVertexState;");
-
+        registerSrgName("CL: net/minecraft/client/renderer/Tessellator bmh");
+        registerSrgName("MD: net/minecraft/client/renderer/Tessellator/setBrightness (I)V bmh/b (I)V");
+        registerSrgName("MD: net/minecraft/client/renderer/Tessellator/addVertex (DDD)V bmh/a (DDD)V");        
+        
         // World
-        registerSrgName("CL: net/minecraft/world/World afn");
-        registerSrgName("MD: net/minecraft/world/World/getBlockLightValue_do (IIIZ)I afn/b (IIIZ)I");
-        registerSrgName("MD: net/minecraft/world/World/getLightBrightnessForSkyBlocks (IIII)I afn/c (IIII)I");
-        registerSrgName("MD: net/minecraft/world/World/getLightBrightness (III)F afn/n (III)F");
-        registerSrgName("MD: net/minecraft/world/World/computeLightValue (IIILnet/minecraft/world/EnumSkyBlock;)I afn/a (IIILafz;)I");
-        registerSrgName("MD: net/minecraft/world/World/updateLightByType (Lnet/minecraft/world/EnumSkyBlock;III)Z afn/c (Lafz;III)Z");
+        registerSrgName("CL: net/minecraft/world/World ahb");
+        registerSrgName("MD: net/minecraft/world/World/getBlockLightValue_do (IIIZ)I ahb/b (IIIZ)I");
+        registerSrgName("MD: net/minecraft/world/World/getLightBrightnessForSkyBlocks (IIII)I ahb/c (IIII)I");
+        registerSrgName("MD: net/minecraft/world/World/getLightBrightness (III)F ahb/n (III)F");
+        registerSrgName("MD: net/minecraft/world/World/computeLightValue (IIILnet/minecraft/world/EnumSkyBlock;)I ahb/a (IIILahn;)I");
+        registerSrgName("MD: net/minecraft/world/World/updateLightByType (Lnet/minecraft/world/EnumSkyBlock;III)Z ahb/c (Lahn;III)Z");
 
         // NetHandlerPlayServer
-        registerSrgName("CL: net/minecraft/network/NetHandlerPlayServer mx");
-        registerSrgName("MD: net/minecraft/network/NetHandlerPlayServer/sendPacket (Lnet/minecraft/network/Packet;)V mx/a (Lfk;)V");
+        registerSrgName("CL: net/minecraft/network/NetHandlerPlayServer io");
+        registerSrgName("MD: net/minecraft/network/NetHandlerPlayServer/sendPacket (Lnet/minecraft/network/Packet;)V nh/a (Lft;)V");
 
         // NibbleArray
-        registerSrgName("CL: net/minecraft/world/chunk/NibbleArray aoh");
-        registerSrgName("MD: net/minecraft/world/chunk/NibbleArray/get (III)I aoh/a (III)I");
-        registerSrgName("MD: net/minecraft/world/chunk/NibbleArray/set (IIII)V aoh/a (IIII)V");
+        registerSrgName("CL: net/minecraft/world/chunk/NibbleArray apv");
+        registerSrgName("MD: net/minecraft/world/chunk/NibbleArray/get (III)I apv/a (III)I");
+        registerSrgName("MD: net/minecraft/world/chunk/NibbleArray/set (IIII)V apv/a (IIII)V");
 
-        // DynamicTexture
-        registerSrgName("CL: net/minecraft/client/renderer/texture/DynamicTexture bpi");
 
         // S26PacketMapChunkBulk
-        registerSrgName("CL: net/minecraft/network/play/server/S26PacketMapChunkBulk gq");
+        registerSrgName("CL: net/minecraft/network/play/server/S26PacketMapChunkBulk gz");
 
         // ***********************************************
 

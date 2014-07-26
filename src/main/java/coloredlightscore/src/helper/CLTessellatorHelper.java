@@ -41,18 +41,16 @@ public class CLTessellatorHelper {
         }
 
         if (instance.hasBrightness) {
-
             /* << and >> take precedence over &
              * Incoming:
              * 0000 0000 SSSS BBBB GGGG RRRR LLLL 0000 */
             
+            /* 0000 0000 SSSS 0000 0000 0000 LLLL 0000 */
+            instance.rawBuffer[instance.rawBufferIndex + 7] = (instance.brightness << 0 & 0x00F00000) | (instance.brightness >> 0 & 0x000000F0);
             /* 0000 0000 GGGG 0000 0000 0000 BBBB 0000 */
-            instance.rawBuffer[instance.rawBufferIndex + 7] = (instance.brightness << 8 & 0x00F00000) | (instance.brightness >> 12 & 0x000000F0);
+            instance.rawBuffer[instance.rawBufferIndex + 8] = (instance.brightness << 8 & 0x00F00000) | (instance.brightness >> 4 & 0x000000F0);
             /* 0000 0000 SSSS 0000 0000 0000 RRRR 0000 */
-            instance.rawBuffer[instance.rawBufferIndex + 8] = (instance.brightness << 0 & 0x00F00000) | (instance.brightness >> 4 & 0x000000F0);
-            
-            /* UNUSED */
-            instance.rawBuffer[instance.rawBufferIndex + 9] = (instance.brightness << 0 & 0x00000000) | (instance.brightness >> 0  & 0x00000000);
+            instance.rawBuffer[instance.rawBufferIndex + 9] = (instance.brightness << 0 & 0x00F00000) | (instance.brightness >> 12  & 0x000000F0);
         }
 
         if (instance.hasColor) {
