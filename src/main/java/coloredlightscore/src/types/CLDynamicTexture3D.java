@@ -52,8 +52,8 @@ public class CLDynamicTexture3D extends DynamicTexture {
             for (int g = 0; g < 16; g++) {
                 for (int r = 0; r < 16; r++) {
                     ptr = r << 8 | g << 4 | b;
-                    //dynamicTextureData[ptr] = 255 << 24 | (int)(r*fac) << 16 | (int)(g*fac) << 8 | (int)(b*fac);
-                    dynamicTextureData[ptr] = 0xFF0000FF;
+                    dynamicTextureData[ptr] = 255 << 24 | (int)(r*fac) << 16 | (int)(g*fac) << 8 | (int)(b*fac);
+                    //dynamicTextureData[ptr] = 0xFF0000FF;
                 }
             }
         }
