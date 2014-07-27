@@ -8,9 +8,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureMap;
 import coloredlightscore.src.types.CLDynamicTexture3D;
 import coloredlightscore.src.types.CLEntityRendererInterface;
+import cpw.mods.fml.common.FMLLog;
 
 public class CLEntityRendererHelper {
 
@@ -46,13 +48,9 @@ public class CLEntityRendererHelper {
         }
     }
     
-    public static void enableLightmap(EntityRenderer instance, double par1) {
-        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        glEnable(GL_TEXTURE_3D);
-        
+    public static void enableLightmap(EntityRenderer instance, double par1) {        
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         //GlStateManager.enableTexture();
-        
         //glBindTexture(GL_TEXTURE_2D, <SOMETHING_GOES_HERE>);
         //TODO: What's the call to make it look like this ^
         instance.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
@@ -77,7 +75,7 @@ public class CLEntityRendererHelper {
         glTranslatef(t, t, t);
         glMatrixMode(GL_MODELVIEW);
         //instance.mc.getTextureManager().bindTexture(instance.locationLightMap);
-        glBindTexture(GL_TEXTURE_2D, instance.lightmapTexture.getGlTextureId());
+        glBindTexture(GL_TEXTURE_2D, instance.lightmapTexture.getGlTextureId());    
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -121,6 +119,26 @@ public class CLEntityRendererHelper {
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_TEXTURE0);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
+        
+        /**********************************************************/
+        
+        OpenGlHelper.setActiveTexture(GL_TEXTURE3); 
+        //GlStateManager.enableTexture();
+        //minecraft.getTextureManager().bind(whiteTextureLocation);
+        glBindTexture(GL_TEXTURE_3D, ((CLEntityRendererInterface)instance).getLightmapTexture3().getGlTextureId());
+        org.lwjgl.opengl.Util.checkGLError(); //TODO: <---- Crashes for some reason
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_PRIMARY_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_PREVIOUS);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+        
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PRIMARY_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_PREVIOUS);   
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
         
         /**********************************************************/
         

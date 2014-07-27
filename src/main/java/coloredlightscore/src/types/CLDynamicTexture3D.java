@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -53,17 +54,15 @@ public class CLDynamicTexture3D extends DynamicTexture {
                 for (int r = 0; r < 16; r++) {
                     ptr = r << 8 | g << 4 | b;
                     dynamicTextureData[ptr] = 255 << 24 | (int)(r*fac) << 16 | (int)(g*fac) << 8 | (int)(b*fac);
-                    //dynamicTextureData[ptr] = 0xFF0000FF;
                 }
             }
         }
     }
     
-    @Override
     public int getGlTextureId() {
         if (this.myID == -1) {
             this.myID = GL11.glGenTextures();
-            System.out.println("Generated a new TextureID: " + myID);
+            FMLLog.info("Generated a new TextureID: " + myID);
         }
 
         return this.myID;

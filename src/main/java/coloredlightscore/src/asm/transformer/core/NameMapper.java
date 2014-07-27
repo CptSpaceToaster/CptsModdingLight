@@ -48,6 +48,7 @@ public class NameMapper {
         // EntityRenderer
         registerSrgName("CL: net/minecraft/client/renderer/EntityRenderer blt");
         registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/updateLightmap (F)V blt/i (F)V");
+        registerSrgName("MD: net/minecraft/client/renderer/EntityRenderer/enableLightmap (D)V blt/b (D)V");
 
         // ExtendedBlockStorage
         registerSrgName("CL: net/minecraft/world/chunk/storage/ExtendedBlockStorage apz");

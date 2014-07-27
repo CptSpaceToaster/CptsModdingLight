@@ -4,11 +4,12 @@ package coloredlightscore.src.types;
  * Cast Entity Renderer to a (CLEntityRendererInterface) and then you can use set/getLightMapTexture2 */
 public interface CLEntityRendererInterface {
     public static final String appliedInterface = "coloredlightscore/src/types/CLEntityRendererInterface";
-    public static final String getterName = "getLightmapTexture2";
-    public static final String setterName = "setLightmapTextureData2";
-    public static final String fieldName = "lightmapTexture2";
-    public static final String fieldDescriptor = "Lnet/minecraft/client/renderer/texture/DynamicTexture;";
-
+    
+    public static final String getterName2 = "getLightmapTexture2";
+    public static final String fieldName2 = "lightmapTexture2";
+    public static final String getterName3 = "getLightmapTexture3";
+    public static final String fieldName3 = "lightmapTexture3";
+    
     public CLDynamicTexture3D getLightmapTexture2();
-    public void setLightmapTextureData2(int[] in);
+    public CLDynamicTexture2D getLightmapTexture3();
 }

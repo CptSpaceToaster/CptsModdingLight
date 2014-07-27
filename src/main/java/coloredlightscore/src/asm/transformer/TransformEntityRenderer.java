@@ -28,6 +28,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     String entityRendererConstructor = "<init> (Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/resources/IResourceManager;)V";
     String oldLightmapDesc = "net/minecraft/client/renderer/texture/DynamicTexture";
     String new3DDesc = "coloredlightscore/src/types/CLDynamicTexture3D";
+    String new2DDesc = "coloredlightscore/src/types/CLDynamicTexture2D";
     
     boolean addSetterAndInterface = false;
     
@@ -60,16 +61,24 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
             //implements CLEntityRendererInterface
             classNode.interfaces.add(CLEntityRendererInterface.appliedInterface);
             
-            //public final DynamicTexture lightmapTexture;
-            classNode.fields.add( new FieldNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";", null, null));
+            //Add some Dynamic Textures
+            classNode.fields.add( new FieldNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.fieldName2, "L"+oldLightmapDesc+";", null, null));
+            classNode.fields.add( new FieldNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.fieldName3, "L"+oldLightmapDesc+";", null, null));
 
             /* Just cramming a getter and a setter, don't you mind */
-            MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.getterName, "()L" + new3DDesc + ";", null, null);
-            getter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";"));
-            getter.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new3DDesc));
-            getter.instructions.add(new InsnNode(Opcodes.ARETURN));
-            classNode.methods.add(getter);
+            MethodNode getter1 = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.getterName2, "()L" + new3DDesc + ";", null, null);
+            getter1.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            getter1.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName2, "L"+oldLightmapDesc+";"));
+            getter1.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new3DDesc));
+            getter1.instructions.add(new InsnNode(Opcodes.ARETURN));
+            classNode.methods.add(getter1);
+            
+            MethodNode getter2 = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.getterName3, "()L" + new2DDesc + ";", null, null);
+            getter2.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+            getter2.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName3, "L"+oldLightmapDesc+";"));
+            getter2.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new2DDesc));
+            getter2.instructions.add(new InsnNode(Opcodes.ARETURN));
+            classNode.methods.add(getter2);
             /*
             MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.setterName, "([I)V", null, null);
             setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
@@ -152,8 +161,16 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
                 it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
                 it.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, new3DDesc, "<init>", "(III)V"));
-                it.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";"));
+                it.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName2, "L"+oldLightmapDesc+";"));
                 
+                FMLLog.info("Adding Third Empty Texture");
+                it.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                it.add(new TypeInsnNode(Opcodes.NEW, new2DDesc));
+                it.add(new InsnNode(Opcodes.DUP));
+                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
+                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
+                it.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, new2DDesc, "<init>", "(II)V"));
+                it.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName3, "L"+oldLightmapDesc+";"));
                 
                 add3DLightmap = true;
             }
