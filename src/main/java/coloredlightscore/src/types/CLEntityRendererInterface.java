@@ -10,6 +10,11 @@ public interface CLEntityRendererInterface {
     public static final String getterName3 = "getLightmapTexture3";
     public static final String fieldName3 = "lightmapTexture3";
     
+    public static final String fieldName = "lightmapTexture";
+    public static final String setterName = "setLightmapTexture";
+    
     public CLDynamicTexture3D getLightmapTexture2();
     public CLDynamicTexture2D getLightmapTexture3();
+    
+    public void setLightmapTexture(int[] map);
 }

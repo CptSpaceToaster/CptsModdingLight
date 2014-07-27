@@ -79,7 +79,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
             getter2.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new2DDesc));
             getter2.instructions.add(new InsnNode(Opcodes.ARETURN));
             classNode.methods.add(getter2);
-            /*
+            
             MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.setterName, "([I)V", null, null);
             setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
             setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";"));
@@ -88,7 +88,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
             setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, new3DDesc, "dynamicTextureData", "[I"));
             setter.instructions.add(new InsnNode(Opcodes.RETURN));
             classNode.methods.add(setter);
-            */
+            
             addSetterAndInterface = true;
         }
         return true;
@@ -120,10 +120,9 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
             if (insn.getOpcode() == Opcodes.NEW && !found2DLightmap) {
                 if (((TypeInsnNode) insn).desc.equals(oldLightmapDesc)) {
-                    /*
+                    
                     FMLLog.info("Replacing 2D lighmap texture");
                     ((TypeInsnNode) insn).desc = new3DDesc;
-                    FMLLog.info("Fixing Arguments on stack - CLDynamicTexture3D(16, 16, 16)");
                     insn = it.next(); //DUP
                     insn = it.next(); //BIPUSH 16
                     insn = it.next(); //BIPUSH 16
@@ -134,20 +133,20 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                     ((MethodInsnNode) insn).name = "<init>";
                     ((MethodInsnNode) insn).desc = "(III)V";
                     insn = it.next(); //Storing the value to the local field - PUTFIELD
-                    */
+                    
                     found2DLightmap = true;
                 }
             }
 
             /* This is a bit lazy, but the next line is 10 instructions long and 'needs' to be removed */
             if (!removeTextureLocation && found2DLightmap) {
-                /*
+                
                 FMLLog.info("Removing locationLightMap");
                 for (int i = 0; i < 10; i++) {
                     insn = it.next();
                     it.remove();
                 }
-                */
+                
                 removeTextureLocation = true;
             }
 

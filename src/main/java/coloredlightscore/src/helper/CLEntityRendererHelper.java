@@ -4,15 +4,12 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.opengl.GL13.*;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureMap;
 import coloredlightscore.src.types.CLDynamicTexture3D;
 import coloredlightscore.src.types.CLEntityRendererInterface;
-import cpw.mods.fml.common.FMLLog;
 
 public class CLEntityRendererHelper {
 
@@ -26,6 +23,7 @@ public class CLEntityRendererHelper {
         WorldClient worldclient = instance.mc.theWorld;
         
         if (worldclient != null) {
+            int[] map = new int[16*16*16];
             int i;
             float sunlightBase = worldclient.getSunBrightness(1.0F) * 0.95F + 0.05F;
             float sunlight;
@@ -34,15 +32,18 @@ public class CLEntityRendererHelper {
                 sunlight = (float)s * sunlightBase / 16F;
                 
                 for (int b = 0; b < 16; b++) {
-                    if (worldclient.lastLightningBolt > 0) {
-                        //sunlight = worldclient.provider.lightBrightnessTable[s];
+                    for (int r = 0; r < 16; r++) {
+                        if (worldclient.lastLightningBolt > 0) {
+                            //sunlight = worldclient.provider.lightBrightnessTable[s];
+                        }
+                        i = ((s-1) << 8) | b << 4 | r;
+                        map[i] = 255 << 24 | (int)(sunlight*255) << 16 | (int)(sunlight*255) << 8 | (int)(sunlight*255);
                     }
-                    i = ((s-1) << 4) | b;
-                    instance.lightmapColors[i] = 255 << 24 | (int)(sunlight*255) << 16 | (int)(sunlight*255) << 8 | (int)(sunlight*255);
                 }
             }
+            ((CLEntityRendererInterface)instance).setLightmapTexture(map);
             
-            instance.lightmapTexture.updateDynamicTexture();
+            ((CLDynamicTexture3D)(instance.lightmapTexture)).updateDynamicTexture();
             ((CLDynamicTexture3D)((CLEntityRendererInterface)instance).getLightmapTexture2()).updateDynamicTexture();
             instance.lightmapUpdateNeeded = false;
         }
@@ -54,6 +55,9 @@ public class CLEntityRendererHelper {
         //glBindTexture(GL_TEXTURE_2D, <SOMETHING_GOES_HERE>);
         //TODO: What's the call to make it look like this ^
         instance.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+        
+        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        glEnable(GL_TEXTURE_2D);
         
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
@@ -75,11 +79,14 @@ public class CLEntityRendererHelper {
         glTranslatef(t, t, t);
         glMatrixMode(GL_MODELVIEW);
         //instance.mc.getTextureManager().bindTexture(instance.locationLightMap);
-        glBindTexture(GL_TEXTURE_2D, instance.lightmapTexture.getGlTextureId());    
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glBindTexture(GL_TEXTURE_3D, ((CLDynamicTexture3D)(instance.lightmapTexture)).getGlTextureId());    
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP);
+        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        glEnable(GL_TEXTURE_3D);
         
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_ADD);
@@ -108,6 +115,8 @@ public class CLEntityRendererHelper {
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP);
+        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        glEnable(GL_TEXTURE_3D);
         
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
@@ -126,6 +135,9 @@ public class CLEntityRendererHelper {
         //GlStateManager.enableTexture();
         //minecraft.getTextureManager().bind(whiteTextureLocation);
         glBindTexture(GL_TEXTURE_2D, ((CLEntityRendererInterface)instance).getLightmapTexture3().getGlTextureId());
+        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        glEnable(GL_TEXTURE_2D);
+        
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_PRIMARY_COLOR);
@@ -140,9 +152,6 @@ public class CLEntityRendererHelper {
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
         
         /**********************************************************/
-        
-        glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        glEnable(GL_TEXTURE_3D);
         
         //glActiveTexture(GL_TEXTURE0)
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);

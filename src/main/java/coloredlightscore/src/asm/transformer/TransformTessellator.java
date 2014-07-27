@@ -167,6 +167,7 @@ public class TransformTessellator extends HelperMethodTransformer {
             //mark when we find the instance of 2
             if (hasFoundBrightness && insn.getOpcode() == Opcodes.ICONST_2) {
                 FMLLog.info("Found that 2");
+                it.set(new InsnNode(Opcodes.ICONST_3));
                 findInstanceOfTwo = true;
             }
             if (!addedTexture2 && hasFoundBrightness && insn.getOpcode() == Opcodes.INVOKESTATIC) {
@@ -178,9 +179,9 @@ public class TransformTessellator extends HelperMethodTransformer {
                     //this.shortBuffer.position(15);
                     it.add(new VarInsnNode(Opcodes.ALOAD, 0));
                     it.add(new InsnNode(Opcodes.POP));
-                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "shortBuffer", "Ljava/nio/ShortBuffer;"));
-                    it.add(new IntInsnNode(Opcodes.BIPUSH, 15));
-                    it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ShortBuffer", "position", "(I)Ljava/nio/Buffer;"));
+                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "byteBuffer", "Ljava/nio/ByteBuffer;"));
+                    it.add(new IntInsnNode(Opcodes.BIPUSH, 31));
+                    it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ByteBuffer", "position", "(I)Ljava/nio/Buffer;"));
                     it.add(new InsnNode(Opcodes.POP));
                     
                     //GL11.glTexCoordPointer(3, 40, this.shortBuffer);
