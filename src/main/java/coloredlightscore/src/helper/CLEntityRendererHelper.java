@@ -125,8 +125,7 @@ public class CLEntityRendererHelper {
         OpenGlHelper.setActiveTexture(GL_TEXTURE3); 
         //GlStateManager.enableTexture();
         //minecraft.getTextureManager().bind(whiteTextureLocation);
-        glBindTexture(GL_TEXTURE_3D, ((CLEntityRendererInterface)instance).getLightmapTexture3().getGlTextureId());
-        org.lwjgl.opengl.Util.checkGLError(); //TODO: <---- Crashes for some reason
+        glBindTexture(GL_TEXTURE_2D, ((CLEntityRendererInterface)instance).getLightmapTexture3().getGlTextureId());
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_PRIMARY_COLOR);
