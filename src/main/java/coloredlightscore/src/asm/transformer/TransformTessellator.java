@@ -2,6 +2,8 @@ package coloredlightscore.src.asm.transformer;
 
 import java.util.ListIterator;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -172,16 +174,20 @@ public class TransformTessellator extends HelperMethodTransformer {
             }
             if (!addedTexture2 && hasFoundBrightness && insn.getOpcode() == Opcodes.INVOKESTATIC) {
                 if (((MethodInsnNode)insn).name.equals("glTexCoordPointer")) {
+                    it.add(new LdcInsnNode(new Integer(GL11.GL_TEXTURE_COORD_ARRAY)));
+                    it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/lwjgl/opengl/GL11", "glEnableClientState", "(I)V"));
+                    
                     //OpenGlHelper.setClientActiveTexture(GL13.GL_TEXTURE2); 
-                    it.add(new LdcInsnNode(33986));
+                    it.add(new LdcInsnNode(GL13.GL_TEXTURE2));
                     it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/minecraft/client/renderer/OpenGlHelper", "setClientActiveTexture", "(I)V"));
                     
                     //this.shortBuffer.position(15);
+                    //TODO: Figure out how to bump this pointer over 8 bits, but still have it reference the short buffer...
                     it.add(new VarInsnNode(Opcodes.ALOAD, 0));
                     it.add(new InsnNode(Opcodes.POP));
-                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "byteBuffer", "Ljava/nio/ByteBuffer;"));
-                    it.add(new IntInsnNode(Opcodes.BIPUSH, 31));
-                    it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ByteBuffer", "position", "(I)Ljava/nio/Buffer;"));
+                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "shortBuffer", "Ljava/nio/ShortBuffer;"));
+                    it.add(new IntInsnNode(Opcodes.BIPUSH, 15)); //should really be 15.5
+                    it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ShortBuffer", "position", "(I)Ljava/nio/Buffer;"));
                     it.add(new InsnNode(Opcodes.POP));
                     
                     //GL11.glTexCoordPointer(3, 40, this.shortBuffer);

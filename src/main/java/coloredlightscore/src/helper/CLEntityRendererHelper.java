@@ -136,7 +136,7 @@ public class CLEntityRendererHelper {
         //minecraft.getTextureManager().bind(whiteTextureLocation);
         glBindTexture(GL_TEXTURE_2D, ((CLEntityRendererInterface)instance).getLightmapTexture3().getGlTextureId());
         glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_3D);    
         
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
