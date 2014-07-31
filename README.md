@@ -10,7 +10,7 @@ The colored light core is an open source Forge Core-Mod that aims to replace Min
 
 ================
 ####Setting up the Colored Light Development Environment####
-You're going to need to pull the repository, and switch to the current development Branch.  Then you can use the gradle wrapper (or gradle if you have it installed) to setup and build the workspace
+You're going to need to pull the repository, and switch to the current development branch.  Then you can use the gradle wrapper (or gradle if you have it installed) to setup and build the workspace
 
 `cd the/place/you/want/to/put/this`  
 `git clone -b1.7.2 https://github.com/CptSpaceToaster/CptsModdingLight`  
@@ -29,7 +29,7 @@ Go ahead and select the CptsModdingLight directory as your existing project, and
 ![run_config3](http://i.imgur.com/iQlQaSX.png)  
 
 Program Arguments:  
-`--version 1.7 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --accessToken MINECRAFT_USERNAME  --username=IN_GAME_NAME --userProperties={} --assetIndex 1.7.10 --assetsDir D:\users\USERNAME\.gradle\caches\minecraft\assets`
+`--version 1.7 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --accessToken MINECRAFT_USERNAME  --username=IN_GAME_NAME --userProperties={} --assetIndex 1.7.10 --assetsDir C:\users\USERNAME\.gradle\caches\minecraft\assets`
 
 VM Arguments:  
 `-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.coreMods.load=coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin`
