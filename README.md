@@ -26,13 +26,14 @@ Select the CptsModdingLight directory as your existing project, and BAM!  You'll
 ![run_config2](http://i.imgur.com/stb8IIN.png)  
 ![run_config3](http://i.imgur.com/iQlQaSX.png)  
 
-` --version 1.7 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --accessToken MINECRAFT_USERNAME --username=IN_GAME_NAME --userProperties={} --assetIndex 1.7.10 --assetsDir D:\users\USERNAME\.gradle\caches\minecraft\assets  
+``` --version 1.7 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --accessToken MINECRAFT_USERNAME --username=IN_GAME_NAME --userProperties={} --assetIndex 1.7.10 --assetsDir D:\users\USERNAME\.gradle\caches\minecraft\assets  
   
--Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.coreMods.load=coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin `
+-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.coreMods.load=coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin ```
 
 ================
 ####Add the Colored Light API to an existing Forge Environment####
-I'll have to write this eventually
+I'll have to write this eventually  
+
 ================
 ####Install the Colored Light Core####
 Installs like a forge core mod... I'll write this up eventually as well I suppose
