@@ -1,14 +1,15 @@
 ##Colored Light Core##
 The colored light core is an open source Forge Core-Mod that aims to replace Minecraft's lighting engine with a backwards compatible system that adds three new channels of light.  With the addition of Red, Green, and Blue color data, blocks can be configured with customized light values, while the OpenGL and the lighting engine deals with the new information.  That's not all though!  While colored lights are awesome, the ultimate goal of this project is to extend an API for other mod writers to use!  Expect to see some mods show up that hook into the API we provide!
+
 ![splash](http://i.imgur.com/DpmhN9Q.png "Minecraft Forge 1.7.10")
 
 
-- If you're interested in helping develop the Colored Light Core, you probably want to setup the development environment .  
-- If you want to hook into our API, you'll want to import the Colored Light API Jarfiles, and Access Transformer into your current Development Environment!
+- If you're interested in helping develop the Colored Light Core, you need to [setup the development environment](https://github.com/CptSpaceToaster/CptsModdingLight/blob/1.7.2/README.md#setup-colored-light-development-environment).
+- If you want to [hook into our API](https://github.com/CptSpaceToaster/CptsModdingLight/blob/1.7.2/README.md#add-the-colored-light-api-to-an-existing-forge-environment), you'll want to import the Colored Light API Jarfiles, and Access Transformer into your current Development Environment!
 - If you want to install, and play with the colored light core, You'll have to be satisfied with our early beta release, found on the [Minecraft Forums](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/wip-mods/1445251-1-7-2-beta-wip-colored-light-progress-and "Minecraft Forums - Beta WIP Colored Lights - Progress and Discussion")
 
 ================
-####Setup Colored Light Development Environment####
+####Setting up the Colored Light Development Environment####
 You're going to need to pull the repository, and switch to the current development Branch.  Then you can use the gradle wrapper (or gradle if you have it installed) to setup and build the workspace
 
 `cd the/place/you/want/to/put/this`  
