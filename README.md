@@ -7,6 +7,7 @@ The colored light core is an open source Forge Core-Mod that aims to replace Min
 - If you're interested in helping develop the Colored Light Core, you probably want to setup the development environment .  
 - If you want to hook into our API, you'll want to import the Colored Light API Jarfiles, and Access Transformer into your current Development Environment!
 - If you want to install, and play with the colored light core, You'll have to be satisfied with our early beta release, found on the [Minecraft Forums](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/wip-mods/1445251-1-7-2-beta-wip-colored-light-progress-and "Minecraft Forums - Beta WIP Colored Lights - Progress and Discussion")
+
 ================
 ####Setup Colored Light Development Environment####
 ================
@@ -20,9 +21,9 @@ You're going to need to pull the repository, and switch to the current developme
 
 Once Gradle takes 30 minutes or less to do it's nonsense, you'll actually have an entire eclipse project to work with!  Open up eclipse to a brand new workspace, *NOT* in the CptsModdingLight directory, then `import an existing project` 
 ![import](http://i.imgur.com/iyw5zHG.png)
-Select the CptsModdingLight directory as your existing project, and BAM!
 
-You'll actually have most of the project after that, but you still need to setup a run configuration:
+Select the CptsModdingLight directory as your existing project, and BAM!  You'll actually have most of the project after that, but you still need to setup a run configuration:
+
 ![run_config1](http://i.imgur.com/XwlGnEw.png)  
 ![run_config2](http://i.imgur.com/stb8IIN.png)  
 ![run_config3](http://i.imgur.com/iQlQaSX.png)  
