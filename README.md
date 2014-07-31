@@ -3,41 +3,6 @@ The colored light core is an open source Forge Core-Mod that aims to replace Min
 
 ![splash](http://i.imgur.com/DpmhN9Q.png "Minecraft Forge 1.7.10")
 
-- If you're interested in helping develop the Colored Light Core, you need to [setup the development environment](https://github.com/CptSpaceToaster/CptsModdingLight/blob/1.7.2/README.md#setup-colored-light-development-environment).
-- If you want to [hook into our API](https://github.com/CptSpaceToaster/CptsModdingLight/blob/1.7.2/README.md#add-the-colored-light-api-to-an-existing-forge-environment), you'll want to import the Colored Light API Jarfiles, and Access Transformer into your current Development Environment!
+- If you're interested in helping develop the Colored Light Core, you need to [setup the development environment](https://github.com/CptSpaceToaster/CptsModdingLight/blob/1.7.2/docs/SETUP_DEV_WORKSPACE.md).
+- If you want to [hook into our API](https://github.com/CptSpaceToaster/CptsModdingLight/blob/1.7.2/docs/SETUP_API.md), you'll want to import the Colored Light API Jarfiles, and Access Transformer into your current Development Environment!
 - If you want to install, and play with the colored light core, You'll have to be satisfied with our early beta release, found on the [Minecraft Forums](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/wip-mods/1445251-1-7-2-beta-wip-colored-light-progress-and "Minecraft Forums - Beta WIP Colored Lights - Progress and Discussion")
-
-================
-####Setting up the Colored Light Development Environment####
-You're going to need to pull the repository, and switch to the current development branch.  Then you can use the gradle wrapper (or gradle if you have it installed) to setup and build the workspace
-
-`cd the/place/you/want/to/put/this`  
-`git clone -b1.7.2 https://github.com/CptSpaceToaster/CptsModdingLight`  
-`cd CptsModdingLight`  
-`gradlew setupDecompWorkspace`  
-`gradlew eclipse (or your preferred development environment)`  
-
-Once Gradle takes 30 minutes or less to do it's nonsense, you'll actually have an entire eclipse project to work with!  Open up eclipse to a brand new workspace, *NOT* in the CptsModdingLight directory, then `import an existing project`
-
-![import1](http://i.imgur.com/iyw5zHG.png)
-![import2](http://i.imgur.com/HMVrjcX.png)
-
-Go ahead and select the CptsModdingLight directory as your existing project, and BAM!  You'll actually have most of the project after that, but you still need to setup a run configuration:
-
-![run_config1](http://i.imgur.com/XwlGnEw.png)  
-![run_config2](http://i.imgur.com/stb8IIN.png)  
-![run_config3](http://i.imgur.com/iQlQaSX.png)  
-
-Program Arguments:  
-`--version 1.7 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker --accessToken MINECRAFT_USERNAME  --username=IN_GAME_NAME --userProperties={} --assetIndex 1.7.10 --assetsDir C:\users\USERNAME\.gradle\caches\minecraft\assets`
-
-VM Arguments:  
-`-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.coreMods.load=coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin`
-
-================
-####Add the Colored Light API to an existing Forge Environment####
-I'll have to write this eventually  
-
-================
-####Install the Colored Light Core####
-Installs like a forge core mod... I'll write this up eventually as well I suppose
