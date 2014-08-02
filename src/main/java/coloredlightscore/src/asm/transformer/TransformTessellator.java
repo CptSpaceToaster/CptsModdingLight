@@ -189,8 +189,11 @@ public class TransformTessellator extends HelperMethodTransformer {
                     it.add(new VarInsnNode(Opcodes.ALOAD, 0));
                     it.add(new InsnNode(Opcodes.POP));
                     it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "shortBuffer", "Ljava/nio/ShortBuffer;"));
-                    it.add(new IntInsnNode(Opcodes.BIPUSH, 15)); //should really be 15.5
+                    it.add(new IntInsnNode(Opcodes.BIPUSH, 16)); //should really be 15.5
                     it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ShortBuffer", "position", "(I)Ljava/nio/Buffer;"));
+                    //it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "byteBuffer", "Ljava/nio/ByteBuffer;"));
+                    //it.add(new IntInsnNode(Opcodes.BIPUSH, 31));
+                    //it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ByteBuffer", "position", "(I)Ljava/nio/Buffer;"));
                     it.add(new InsnNode(Opcodes.POP));
                     
                     //GL11.glTexCoordPointer(3, 40, this.shortBuffer);
