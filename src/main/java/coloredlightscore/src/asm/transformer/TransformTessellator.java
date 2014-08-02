@@ -139,6 +139,8 @@ public class TransformTessellator extends HelperMethodTransformer {
         boolean hasFoundBrightness = false;
         boolean findInstanceOfTwo = false;
         boolean addedTexture2 = false;
+        boolean hasFoundBrightnessAgain = false;
+        boolean addedDisable2 = false;
 
         int replace32 = 0;
         int replace8 = 0;
@@ -164,6 +166,7 @@ public class TransformTessellator extends HelperMethodTransformer {
             if (!hasFoundBrightness && replacedShift && fixedFive && insn.getOpcode() == Opcodes.GETFIELD && insn instanceof FieldInsnNode) {
                 if (((FieldInsnNode) insn).name.equals(obfBrightness) || ((FieldInsnNode) insn).name.equals(unObfBrightness)) {
                     hasFoundBrightness = true;
+                    it.next();  //Move so we don't find it again
                 }
             }
             //mark when we find the instance of 2
@@ -197,9 +200,24 @@ public class TransformTessellator extends HelperMethodTransformer {
                     it.add(new InsnNode(Opcodes.POP));
                     it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "shortBuffer", "Ljava/nio/ShortBuffer;"));
                     it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/lwjgl/opengl/GL11", "glTexCoordPointer", "(IILjava/nio/ShortBuffer;)V"));
-                    
-                    FMLLog.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     addedTexture2 = true;
+                }
+            }
+            if (!hasFoundBrightnessAgain && addedTexture2 && insn.getOpcode() == Opcodes.GETFIELD && insn instanceof FieldInsnNode) {
+                if (((FieldInsnNode) insn).name.equals(obfBrightness) || ((FieldInsnNode) insn).name.equals(unObfBrightness)) {
+                    hasFoundBrightnessAgain = true;
+                }
+            }
+            
+            if (!addedDisable2 && hasFoundBrightnessAgain && insn.getOpcode() == Opcodes.INVOKESTATIC) {
+                if (((MethodInsnNode)insn).name.equals("glDisableClientState")) {
+                    //OpenGlHelper.setClientActiveTexture(GL13.GL_TEXTURE2);
+                    it.add(new LdcInsnNode(GL13.GL_TEXTURE2));
+                    it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "net/minecraft/client/renderer/OpenGlHelper", "setClientActiveTexture", "(I)V"));
+                    //GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+                    it.add(new LdcInsnNode(GL11.GL_TEXTURE_COORD_ARRAY));
+                    it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "org/lwjgl/opengl/GL11", "glDisableClientState", "(I)V"));
+                    addedDisable2 = true;
                 }
             }
             //replace the short(14) with short(17)
@@ -224,7 +242,7 @@ public class TransformTessellator extends HelperMethodTransformer {
         FMLLog.info("Replaced " + replace32 + " instances of 32 with " + newStride + ".");
         FMLLog.info("Replaced " + replace8 + " instances of 8 with " + newInts + ".");
 
-        return (fixedFive && replacedShift && hasFoundBrightness && findInstanceOfTwo);
+        return (fixedFive && replacedShift && hasFoundBrightness && findInstanceOfTwo && addedTexture2 && addedDisable2);
     }
 
     /*
