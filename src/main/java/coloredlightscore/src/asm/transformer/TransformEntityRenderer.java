@@ -14,6 +14,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
 import coloredlightscore.src.types.CLEntityRendererInterface;
@@ -26,7 +27,11 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
     //TODO: Is this obfuscated later?  If it is, then add both entries to the NameMapper class instead
     String entityRendererConstructor = "<init> (Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/resources/IResourceManager;)V";
+    String obfEntityRendererConstructor = "<init> (Lbao;Lbqy;)V";
     String oldLightmapDesc = "net/minecraft/client/renderer/texture/DynamicTexture";
+    String obfOldLightmapDesc = "bpi";
+    String entityRenderClass = "net/minecraft/client/renderer/EntityRenderer";
+    String obfEntityRenderClass = "blt";
     String new3DDesc = "coloredlightscore/src/types/CLDynamicTexture3D";
     String new2DDesc = "coloredlightscore/src/types/CLDynamicTexture2D";
     
@@ -46,9 +51,10 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
         for (String name : methodsToReplace) {
             if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
                 return true;
-        }
+        }  
 
-        if ((methodNode.name + " " + methodNode.desc).equals(entityRendererConstructor))
+        if ((methodNode.name + " " + methodNode.desc).equals(entityRendererConstructor) ||
+            (methodNode.name + " " + methodNode.desc).equals(obfEntityRendererConstructor))
             return true;
 
         return false;
@@ -57,6 +63,10 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     @Override
     public boolean preTransformClass(ClassNode classNode)
     {
+        if (!ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT) {
+            oldLightmapDesc = obfOldLightmapDesc;
+            entityRenderClass = obfEntityRenderClass;
+        }
         if(!addSetterAndInterface) {
             //implements CLEntityRendererInterface
             classNode.interfaces.add(CLEntityRendererInterface.appliedInterface);
@@ -68,21 +78,24 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
             /* Just cramming a getter and a setter, don't you mind */
             MethodNode getter1 = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.getterName2, "()L" + new3DDesc + ";", null, null);
             getter1.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            getter1.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName2, "L"+oldLightmapDesc+";"));
+            getter1.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, CLEntityRendererInterface.fieldName2, "L"+oldLightmapDesc+";"));
             getter1.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new3DDesc));
             getter1.instructions.add(new InsnNode(Opcodes.ARETURN));
             classNode.methods.add(getter1);
             
             MethodNode getter2 = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.getterName3, "()L" + new2DDesc + ";", null, null);
             getter2.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            getter2.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName3, "L"+oldLightmapDesc+";"));
+            getter2.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, CLEntityRendererInterface.fieldName3, "L"+oldLightmapDesc+";"));
             getter2.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new2DDesc));
             getter2.instructions.add(new InsnNode(Opcodes.ARETURN));
             classNode.methods.add(getter2);
             
             MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, CLEntityRendererInterface.setterName, "([I)V", null, null);
             setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";"));
+            if (ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT)
+                setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, CLEntityRendererInterface.fieldName, "L"+oldLightmapDesc+";"));
+            else
+                setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, CLEntityRendererInterface.obfFieldName, "L"+oldLightmapDesc+";"));
             setter.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new3DDesc));
             setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
             setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, new3DDesc, "dynamicTextureData", "[I"));
@@ -101,8 +114,9 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 return redefineMethod(classNode, methodNode, name);
             }
         }
-
-        if ((methodNode.name + " " + methodNode.desc).equals(entityRendererConstructor)) {
+        
+        if ((methodNode.name + " " + methodNode.desc).equals(entityRendererConstructor) ||
+            (methodNode.name + " " + methodNode.desc).equals(obfEntityRendererConstructor)) {
             return transformConstructor(methodNode);
         }
         
@@ -110,6 +124,10 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     }
     
     protected boolean transformConstructor(MethodNode methodNode) {
+        if (!ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT) {
+            oldLightmapDesc = obfOldLightmapDesc;
+            entityRenderClass = obfEntityRenderClass;
+        }
         //Actions
         boolean found2DLightmap = false;
         boolean add3DLightmap = false;
@@ -160,7 +178,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
                 it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
                 it.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, new3DDesc, "<init>", "(III)V"));
-                it.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName2, "L"+oldLightmapDesc+";"));
+                it.add(new FieldInsnNode(Opcodes.PUTFIELD, entityRenderClass, CLEntityRendererInterface.fieldName2, "L"+oldLightmapDesc+";"));
                 
                 FMLLog.info("Adding Third Empty Texture");
                 it.add(new VarInsnNode(Opcodes.ALOAD, 0));
@@ -169,7 +187,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
                 it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
                 it.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, new2DDesc, "<init>", "(II)V"));
-                it.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", CLEntityRendererInterface.fieldName3, "L"+oldLightmapDesc+";"));
+                it.add(new FieldInsnNode(Opcodes.PUTFIELD, entityRenderClass, CLEntityRendererInterface.fieldName3, "L"+oldLightmapDesc+";"));
                 
                 add3DLightmap = true;
             }

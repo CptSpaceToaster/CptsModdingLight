@@ -11,6 +11,7 @@ public interface CLEntityRendererInterface {
     public static final String fieldName3 = "lightmapTexture3";
     
     public static final String fieldName = "lightmapTexture";
+    public static final String obfFieldName = "T";
     public static final String setterName = "setLightmapTexture";
     
     public CLDynamicTexture3D getLightmapTexture2();
