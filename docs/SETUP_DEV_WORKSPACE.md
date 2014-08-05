@@ -1,4 +1,4 @@
-####Setting up the Colored Light Development Environment####
+####Setting up the Colored Light Development Environment
 You're going to need to pull the repository, and switch to the current development branch.  Then you can use the gradle wrapper (or gradle if you have it installed) to setup and build the workspace
 
 `cd the/place/you/want/to/put/this`  
@@ -23,3 +23,10 @@ Program Arguments:
 
 VM Arguments:  
 `-Dfml.ignoreInvalidMinecraftCertificates=true -Dfml.coreMods.load=coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin`
+_____________
+#####You're in!
+Have fun!  Don't go too crazy, and be sure to add an [issue](https://github.com/CptSpaceToaster/CptsModdingLight/issues) if you think you found a new one.
+
+Feel free to contact me on the [forums](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/wip-mods/1445251-1-7-2-beta-wip-colored-light-progress-and), here on github, and in the #MinecraftForge IRC on esper.net.
+
+Also... we registered #ColoredLightCore as well, so it would probably be good if you asked direct questions there instead.  Have a great day!
