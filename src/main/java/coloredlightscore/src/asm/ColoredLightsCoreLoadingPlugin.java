@@ -13,7 +13,12 @@ import coloredlightscore.src.asm.transformer.TransformRenderBlocks;
 import coloredlightscore.src.asm.transformer.TransformTessellator;
 import coloredlightscore.src.asm.transformer.TransformWorld;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
 
+@TransformerExclusions("coloredlightscore.*")
+@MCVersion("1.7.10")
+@Name("ColoredLightsCore")
+@SortingIndex(1001)
 public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin {
     public static LaunchClassLoader CLASSLOADER;
     public static boolean MCP_ENVIRONMENT;

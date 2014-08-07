@@ -45,5 +45,6 @@ processResources {
 jar {
   manifest {
     attributes('FMLCorePlugin': 'coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin')
+    attributes('FMLCorePluginContainsFMLMod': 'true')
   }
 }
