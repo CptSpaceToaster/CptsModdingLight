@@ -27,11 +27,11 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
 
     //TODO: Is this obfuscated later?  If it is, then add both entries to the NameMapper class instead
     String entityRendererConstructor = "<init> (Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/resources/IResourceManager;)V";
-    String obfEntityRendererConstructor = "<init> (Lbao;Lbqy;)V";
+    String obfEntityRendererConstructor = "<init> (Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/resources/IResourceManager;)V";
     String oldLightmapDesc = "net/minecraft/client/renderer/texture/DynamicTexture";
-    String obfOldLightmapDesc = "bpi";
+    String obfOldLightmapDesc = "net/minecraft/client/renderer/texture/DynamicTexture";
     String entityRenderClass = "net/minecraft/client/renderer/EntityRenderer";
-    String obfEntityRenderClass = "blt";
+    String obfEntityRenderClass = "net/minecraft/client/renderer/EntityRenderer";
     String new3DDesc = "coloredlightscore/src/types/CLDynamicTexture3D";
     String new2DDesc = "coloredlightscore/src/types/CLDynamicTexture2D";
     
@@ -98,7 +98,11 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, CLEntityRendererInterface.obfFieldName, "L"+oldLightmapDesc+";"));
             setter.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new3DDesc));
             setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
-            setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, new3DDesc, "dynamicTextureData", "[I"));
+            if(ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT){
+            	setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, new3DDesc, "dynamicTextureData", "[I"));
+            }else{
+            	setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, new3DDesc, "field_110566_b", "[I"));
+            }
             setter.instructions.add(new InsnNode(Opcodes.RETURN));
             classNode.methods.add(setter);
             
