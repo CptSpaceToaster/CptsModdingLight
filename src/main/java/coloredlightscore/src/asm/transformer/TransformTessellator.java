@@ -20,7 +20,6 @@ import coloredlightscore.src.asm.transformer.core.ASMUtils;
 import coloredlightscore.src.asm.transformer.core.ExtendedClassWriter;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
-import coloredlightscore.src.types.CLTessellatorInterface;
 
 import com.google.common.base.Throwables;
 
@@ -69,20 +68,18 @@ public class TransformTessellator extends HelperMethodTransformer {
     @Override
     public boolean preTransformClass(ClassNode classNode)
     {
-        classNode.interfaces.add(CLTessellatorInterface.appliedInterface);
-
-        //Don't mind this.  Just cramming a getter and setter into the Tesellator for later use
+        //Don't mind this.  Just cramming a getter and setter into the Tessellator for later use
         //getter
-        MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.getterName, "()" + CLTessellatorInterface.fieldDescriptor, null, null);
+        MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, "getRawBufferSize", "()I", null, null);
         getter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
+        getter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "rawBufferSize", "I"));
         getter.instructions.add(new InsnNode(Opcodes.IRETURN));
         classNode.methods.add(getter);
         //setter
-        MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, CLTessellatorInterface.setterName, "(" + CLTessellatorInterface.fieldDescriptor + ")V", null, null);
+        MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, "setRawBufferSize", "(I)V", null, null);
         setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
         setter.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
-        setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, classNode.name, CLTessellatorInterface.fieldName, CLTessellatorInterface.fieldDescriptor));
+        setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, classNode.name, "rawBufferSize", "I"));
         setter.instructions.add(new InsnNode(Opcodes.RETURN));
         classNode.methods.add(setter);
         

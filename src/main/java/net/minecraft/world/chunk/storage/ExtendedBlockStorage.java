@@ -1,38 +1,43 @@
 package net.minecraft.world.chunk.storage;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.world.chunk.NibbleArray;
 
-// Dummy class to avoid reflection for new methods/fields
+/**
+ * Dummy class to enable access to runtime-added methods/fields
+ */
 public class ExtendedBlockStorage
 {
+    // Added by TransformExtendedBlockStorage
     private NibbleArray rColorArray;
     private NibbleArray gColorArray;
     private NibbleArray bColorArray;
 
+    // Added by TransformExtendedBlockStorage
     public NibbleArray getRedColorArray() {
         return rColorArray;
     }
 
+    // Added by TransformExtendedBlockStorage
     public void setRedColorArray(NibbleArray rColorArray) {
         this.rColorArray = rColorArray;
     }
 
+    // Added by TransformExtendedBlockStorage
     public NibbleArray getGreenColorArray() {
         return gColorArray;
     }
 
+    // Added by TransformExtendedBlockStorage
     public void setGreenColorArray(NibbleArray gColorArray) {
         this.gColorArray = gColorArray;
     }
 
+    // Added by TransformExtendedBlockStorage
     public NibbleArray getBlueColorArray() {
         return bColorArray;
     }
 
+    // Added by TransformExtendedBlockStorage
     public void setBlueColorArray(NibbleArray bColorArray) {
         this.bColorArray = bColorArray;
     }

@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import coloredlightscore.src.types.CLDynamicTexture3D;
-import coloredlightscore.src.types.CLEntityRendererInterface;   
 
 public class CLEntityRendererHelper {
 
@@ -44,10 +43,10 @@ public class CLEntityRendererHelper {
                     }
                 }
             }
-            ((CLEntityRendererInterface)instance).setLightmapTexture(map);
+            instance.setLightmapTexture(map);
             
-            ((CLDynamicTexture3D)(instance.lightmapTexture)).updateDynamicTexture();
-            ((CLDynamicTexture3D)((CLEntityRendererInterface)instance).getLightmapTexture2()).updateDynamicTexture();
+            instance.lightmapTexture.updateDynamicTexture();
+            instance.getLightmapTexture2().updateDynamicTexture();
             instance.lightmapUpdateNeeded = false;
         }
     }
@@ -113,7 +112,7 @@ public class CLEntityRendererHelper {
         glScalef(f, f, f);
         glTranslatef(t, t, t);
         glMatrixMode(GL_MODELVIEW);
-        glBindTexture(GL_TEXTURE_3D, ((CLDynamicTexture3D)((CLEntityRendererInterface)instance).getLightmapTexture2()).getGlTextureId());
+        glBindTexture(GL_TEXTURE_3D, instance.getLightmapTexture2().getGlTextureId());
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);   
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -138,7 +137,7 @@ public class CLEntityRendererHelper {
         glEnable(GL_TEXTURE_2D);
         //GlStateManager.enableTexture();
         //minecraft.getTextureManager().bind(whiteTextureLocation);
-        glBindTexture(GL_TEXTURE_2D, ((CLEntityRendererInterface)instance).getLightmapTexture3().getGlTextureId());
+        glBindTexture(GL_TEXTURE_2D, instance.getLightmapTexture3().getGlTextureId());
         
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
