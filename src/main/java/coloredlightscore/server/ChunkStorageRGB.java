@@ -1,5 +1,6 @@
 package coloredlightscore.server;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.chunk.Chunk;
@@ -140,9 +141,16 @@ public class ChunkStorageRGB {
                 gColorArray = chunkStorageArrays[k].getGreenColorArray();
                 bColorArray = chunkStorageArrays[k].getBlueColorArray();
 
-                nbtYCompound.setByteArray("RedColorArray", rColorArray.data);
-                nbtYCompound.setByteArray("GreenColorArray", gColorArray.data);
-                nbtYCompound.setByteArray("BlueColorArray", bColorArray.data);
+                //Cauldron adds .getValueArray() instead of .data
+                if (FMLCommonHandler.instance().getModName().contains("cauldron")) {
+                    nbtYCompound.setByteArray("RedColorArray", rColorArray.getValueArray());
+                    nbtYCompound.setByteArray("GreenColorArray", gColorArray.getValueArray());
+                    nbtYCompound.setByteArray("BlueColorArray", bColorArray.getValueArray());
+                } else {
+                    nbtYCompound.setByteArray("RedColorArray", rColorArray.data);
+                    nbtYCompound.setByteArray("GreenColorArray", gColorArray.data);
+                    nbtYCompound.setByteArray("BlueColorArray", bColorArray.data);
+                }
             }
         }
 

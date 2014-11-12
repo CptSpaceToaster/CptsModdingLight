@@ -3,7 +3,6 @@ package coloredlightscore.src.helper;
 import java.util.Arrays;
 
 import net.minecraft.client.renderer.Tessellator;
-import coloredlightscore.src.types.CLTessellatorInterface;
 
 public class CLTessellatorHelper {
 
@@ -19,16 +18,16 @@ public class CLTessellatorHelper {
     }
 
     public static void addVertex(Tessellator instance, double par1, double par3, double par5) {
-        int cl_rawBufferSize = ((CLTessellatorInterface) instance).getRawBufferSize();
+        int cl_rawBufferSize = instance.getRawBufferSize();
 
         if (instance.rawBufferIndex >= cl_rawBufferSize - 32) {
             if (cl_rawBufferSize == 0) {
                 cl_rawBufferSize = 0x10000; //65536
-                ((CLTessellatorInterface) instance).setRawBufferSize(cl_rawBufferSize);
+                instance.setRawBufferSize(cl_rawBufferSize);
                 instance.rawBuffer = new int[cl_rawBufferSize];
             } else {
                 cl_rawBufferSize *= 2;
-                ((CLTessellatorInterface) instance).setRawBufferSize(cl_rawBufferSize);
+                instance.setRawBufferSize(cl_rawBufferSize);
                 instance.rawBuffer = Arrays.copyOf(instance.rawBuffer, cl_rawBufferSize);
             }
         }

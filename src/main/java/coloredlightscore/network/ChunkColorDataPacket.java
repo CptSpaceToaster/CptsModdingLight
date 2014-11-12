@@ -2,7 +2,6 @@ package coloredlightscore.network;
 
 import io.netty.buffer.ByteBuf;
 
-import java.lang.reflect.Method;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -34,16 +33,6 @@ public class ChunkColorDataPacket implements IMessage, IMessageHandler<ChunkColo
     public int[] yLocation;
 
     private final boolean USE_COMPRESSION = true;
-
-    private static Method methodGetValueArray = null;
-
-    public ChunkColorDataPacket() {
-
-    }
-
-    public ChunkColorDataPacket(Method methodGetValueArray) {
-        this.methodGetValueArray = methodGetValueArray;
-    }
 
     @Override
     public IMessage onMessage(ChunkColorDataPacket packet, MessageContext context) {
@@ -160,9 +149,9 @@ public class ChunkColorDataPacket implements IMessage, IMessageHandler<ChunkColo
                 if (RedColorArray[i] != null || GreenColorArray[i] != null || BlueColorArray[i] != null) {
                     arraysPresent |= (1 << i);
                     if (FMLCommonHandler.instance().getModName().contains("cauldron")) {
-                        byte[] localRed = (byte[]) this.methodGetValueArray.invoke(RedColorArray[i]);
-                        byte[] localGreen = (byte[]) this.methodGetValueArray.invoke(GreenColorArray[i]);
-                        byte[] localBlue = (byte[]) this.methodGetValueArray.invoke(BlueColorArray[i]);
+                        byte[] localRed = RedColorArray[i].getValueArray();
+                        byte[] localGreen = GreenColorArray[i].getValueArray();
+                        byte[] localBlue = BlueColorArray[i].getValueArray();
                         System.arraycopy(localRed, 0, rawColorData, p, localRed.length);
                         p += localRed.length;
                         System.arraycopy(localGreen, 0, rawColorData, p, localGreen.length);
