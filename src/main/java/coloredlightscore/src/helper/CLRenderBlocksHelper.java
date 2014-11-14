@@ -25,7 +25,7 @@ public class CLRenderBlocksHelper {
         boolean flag1 = true;
         int blockBrightness = block.getMixedBrightnessForBlock(instance.blockAccess, x, y, z);
         Tessellator tessellator = Tessellator.instance;
-        tessellator.setBrightness(983055);
+        tessellator.setBrightness(0xf000f);
 
         if (instance.getBlockIcon(block).getIconName().equals("grass_top")) {
             flag1 = false;
@@ -2030,10 +2030,10 @@ public class CLRenderBlocksHelper {
     public static int mixColorChannel(int startBit, int p1, int p2, int p3, int p4) {
         int avg;
 
-        int q1 = (p1 >> startBit) & 15;
-        int q2 = (p2 >> startBit) & 15;
-        int q3 = (p3 >> startBit) & 15;
-        int q4 = (p4 >> startBit) & 15;
+        int q1 = (p1 >> startBit) & 0xf;
+        int q2 = (p2 >> startBit) & 0xf;
+        int q3 = (p3 >> startBit) & 0xf;
+        int q4 = (p4 >> startBit) & 0xf;
 
         avg = (q1 + q2 + q3 + q4) / 4;
 

@@ -56,7 +56,7 @@ public class CLApi {
         //		}
 
         int brightness = (int) (currentLightValue * 15.0f);
-        brightness &= 15;
+        brightness &= 0xf;
 
         return brightness | ((((int) (15.0F * b)) << 15) + (((int) (15.0F * g)) << 10) + (((int) (15.0F * r)) << 5));
     }
@@ -91,7 +91,7 @@ public class CLApi {
         else if (b > 15)
             b = 15;
 
-        brightness &= 15;
+        brightness &= 0xf;
 
         if (brightness != Math.max(r, Math.max(g, b))) {
             FMLLog.warning("One of the color value should be equal to Current Light Brightness, but not exceed it");

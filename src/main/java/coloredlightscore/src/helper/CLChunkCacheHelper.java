@@ -10,7 +10,7 @@ public class CLChunkCacheHelper {
 
     /**
      * Any Light rendered on a 1.8 Block goes through here
-     * Light value returned is SSSS RRRR GGGG BBBB LLLL
+     * Light value returned is SSSS RRRR GGGG BBBB LLLL 0000
      * 
      * Modified by CptSpaceToaster
      */
@@ -18,9 +18,9 @@ public class CLChunkCacheHelper {
         int skyBrightness = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
         int blockBrightness = instance.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
 
-        lightValue = ((lightValue & 15) | ((lightValue & 480) >> 1) | ((lightValue & 15360) >> 2) | ((lightValue & 491520) >> 3));
+        lightValue = ((lightValue & 0xf) | ((lightValue & 0x1e0) >> 1) | ((lightValue & 0x3c00) >> 2) | ((lightValue & 0x78000) >> 3));
 
-        blockBrightness = ((blockBrightness & 15) | ((blockBrightness & 480) >> 1) | ((blockBrightness & 15360) >> 2) | ((blockBrightness & 491520) >> 3));
+        blockBrightness = ((blockBrightness & 0xf) | ((blockBrightness & 0x1e0) >> 1) | ((blockBrightness & 0x3c00) >> 2) | ((blockBrightness & 0x78000) >> 3));
 
         if (blockBrightness < lightValue) {
             blockBrightness = lightValue;
