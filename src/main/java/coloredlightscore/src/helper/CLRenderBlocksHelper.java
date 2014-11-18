@@ -22,21 +22,30 @@ public class CLRenderBlocksHelper {
         float bottomLeftAoLightValue = 0.0F;
         float bottomRightAoLightValue = 0.0F;
         float topRightAoLightValue = 0.0F;
-        boolean flag1 = true;
+        boolean notGrassAndNotOverridden = true;
         int blockBrightness = block.getMixedBrightnessForBlock(instance.blockAccess, x, y, z);
         Tessellator tessellator = Tessellator.instance;
         tessellator.setBrightness(0xf000f);
 
         if (instance.getBlockIcon(block).getIconName().equals("grass_top")) {
-            flag1 = false;
+            // Don't tint the sides of grass blocks!
+            notGrassAndNotOverridden = false;
         } else if (instance.hasOverrideBlockTexture()) {
-            flag1 = false;
+            // Err... only tint the top of overridden textures?
+            notGrassAndNotOverridden = false;
         }
 
-        boolean flag3;
-        boolean flag2;
-        boolean flag5;
-        boolean flag4;
+        // Whether kitty-corner blocks are air or similar (fire, redstone, etc.)
+        boolean isAirish1N;
+        boolean isAirish1P;
+        boolean isAirish2N;
+        boolean isAirish2P;
+        // Extra shading per-side to add depth
+        float topColorMultiplier = 1.0f;
+        float bottomColorMultiplier = 0.5f;
+        float northSouthColorMultiplier = 0.8f;
+        float eastWestColorMultiplier = 0.6f;
+
         float normalAoValue;
         int brightnessScratchValue;
 
@@ -54,12 +63,12 @@ public class CLRenderBlocksHelper {
             instance.aoLightValueScratchYZNN = instance.blockAccess.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
             instance.aoLightValueScratchYZNP = instance.blockAccess.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
             instance.aoLightValueScratchXYPN = instance.blockAccess.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-            flag2 = instance.blockAccess.getBlock(x + 1, y - 1, z).getCanBlockGrass();
-            flag3 = instance.blockAccess.getBlock(x - 1, y - 1, z).getCanBlockGrass();
-            flag4 = instance.blockAccess.getBlock(x, y - 1, z + 1).getCanBlockGrass();
-            flag5 = instance.blockAccess.getBlock(x, y - 1, z - 1).getCanBlockGrass();
+            isAirish1P = instance.blockAccess.getBlock(x + 1, y, z).getCanBlockGrass();
+            isAirish1N = instance.blockAccess.getBlock(x - 1, y, z).getCanBlockGrass();
+            isAirish2P = instance.blockAccess.getBlock(x, y, z + 1).getCanBlockGrass();
+            isAirish2N = instance.blockAccess.getBlock(x, y, z - 1).getCanBlockGrass();
 
-            if (!flag5 && !flag3) {
+            if (!isAirish2N && !isAirish1N) {
                 instance.aoLightValueScratchXYZNNN = instance.aoLightValueScratchXYNN;
                 instance.aoBrightnessXYZNNN = instance.aoBrightnessXYNN;
             } else {
@@ -67,7 +76,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNNN = block.getMixedBrightnessForBlock(instance.blockAccess, x - 1, y, z - 1);
             }
 
-            if (!flag4 && !flag3) {
+            if (!isAirish2P && !isAirish1N) {
                 instance.aoLightValueScratchXYZNNP = instance.aoLightValueScratchXYNN;
                 instance.aoBrightnessXYZNNP = instance.aoBrightnessXYNN;
             } else {
@@ -75,7 +84,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNNP = block.getMixedBrightnessForBlock(instance.blockAccess, x - 1, y, z + 1);
             }
 
-            if (!flag5 && !flag2) {
+            if (!isAirish2N && !isAirish1P) {
                 instance.aoLightValueScratchXYZPNN = instance.aoLightValueScratchXYPN;
                 instance.aoBrightnessXYZPNN = instance.aoBrightnessXYPN;
             } else {
@@ -83,7 +92,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZPNN = block.getMixedBrightnessForBlock(instance.blockAccess, x + 1, y, z - 1);
             }
 
-            if (!flag4 && !flag2) {
+            if (!isAirish2P && !isAirish1P) {
                 instance.aoLightValueScratchXYZPNP = instance.aoLightValueScratchXYPN;
                 instance.aoBrightnessXYZPNP = instance.aoBrightnessXYPN;
             } else {
@@ -111,14 +120,14 @@ public class CLRenderBlocksHelper {
             instance.brightnessBottomRight = getAoBrightness(instance.aoBrightnessYZNN, instance.aoBrightnessXYPN, instance.aoBrightnessXYZPNN, brightnessScratchValue);
             instance.brightnessBottomLeft = getAoBrightness(instance.aoBrightnessXYNN, instance.aoBrightnessXYZNNN, instance.aoBrightnessYZNN, brightnessScratchValue);
 
-            if (flag1) {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * 0.5F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * 0.5F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * 0.5F;
+            if (notGrassAndNotOverridden) {
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * bottomColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * bottomColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * bottomColorMultiplier;
             } else {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = 0.5F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = 0.5F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = 0.5F;
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = bottomColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = bottomColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = bottomColorMultiplier;
             }
 
             instance.colorRedTopLeft *= topLeftAoLightValue;
@@ -151,12 +160,12 @@ public class CLRenderBlocksHelper {
             instance.aoLightValueScratchXYPP = instance.blockAccess.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
             instance.aoLightValueScratchYZPN = instance.blockAccess.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
             instance.aoLightValueScratchYZPP = instance.blockAccess.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-            flag2 = instance.blockAccess.getBlock(x + 1, y + 1, z).getCanBlockGrass();
-            flag3 = instance.blockAccess.getBlock(x - 1, y + 1, z).getCanBlockGrass();
-            flag4 = instance.blockAccess.getBlock(x, y + 1, z + 1).getCanBlockGrass();
-            flag5 = instance.blockAccess.getBlock(x, y + 1, z - 1).getCanBlockGrass();
+            isAirish1P = instance.blockAccess.getBlock(x + 1, y, z).getCanBlockGrass();
+            isAirish1N = instance.blockAccess.getBlock(x - 1, y, z).getCanBlockGrass();
+            isAirish2P = instance.blockAccess.getBlock(x, y, z + 1).getCanBlockGrass();
+            isAirish2N = instance.blockAccess.getBlock(x, y, z - 1).getCanBlockGrass();
 
-            if (!flag5 && !flag3) {
+            if (!isAirish2N && !isAirish1N) {
                 instance.aoLightValueScratchXYZNPN = instance.aoLightValueScratchXYNP;
                 instance.aoBrightnessXYZNPN = instance.aoBrightnessXYNP;
             } else {
@@ -164,7 +173,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNPN = block.getMixedBrightnessForBlock(instance.blockAccess, x - 1, y, z - 1);
             }
 
-            if (!flag5 && !flag2) {
+            if (!isAirish2N && !isAirish1P) {
                 instance.aoLightValueScratchXYZPPN = instance.aoLightValueScratchXYPP;
                 instance.aoBrightnessXYZPPN = instance.aoBrightnessXYPP;
             } else {
@@ -172,7 +181,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZPPN = block.getMixedBrightnessForBlock(instance.blockAccess, x + 1, y, z - 1);
             }
 
-            if (!flag4 && !flag3) {
+            if (!isAirish2P && !isAirish1N) {
                 instance.aoLightValueScratchXYZNPP = instance.aoLightValueScratchXYNP;
                 instance.aoBrightnessXYZNPP = instance.aoBrightnessXYNP;
             } else {
@@ -180,7 +189,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNPP = block.getMixedBrightnessForBlock(instance.blockAccess, x - 1, y, z + 1);
             }
 
-            if (!flag4 && !flag2) {
+            if (!isAirish2P && !isAirish1P) {
                 instance.aoLightValueScratchXYZPPP = instance.aoLightValueScratchXYPP;
                 instance.aoBrightnessXYZPPP = instance.aoBrightnessXYPP;
             } else {
@@ -207,9 +216,9 @@ public class CLRenderBlocksHelper {
             instance.brightnessTopLeft = getAoBrightness(instance.aoBrightnessYZPP, instance.aoBrightnessXYZPPP, instance.aoBrightnessXYPP, brightnessScratchValue);
             instance.brightnessBottomLeft = getAoBrightness(instance.aoBrightnessYZPN, instance.aoBrightnessXYPP, instance.aoBrightnessXYZPPN, brightnessScratchValue);
             instance.brightnessBottomRight = getAoBrightness(instance.aoBrightnessXYNP, instance.aoBrightnessXYZNPN, instance.aoBrightnessYZPN, brightnessScratchValue);
-            instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r;
-            instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g;
-            instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b;
+            instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * topColorMultiplier;
+            instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * topColorMultiplier;
+            instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * topColorMultiplier;
             instance.colorRedTopLeft *= topLeftAoLightValue;
             instance.colorGreenTopLeft *= topLeftAoLightValue;
             instance.colorBlueTopLeft *= topLeftAoLightValue;
@@ -228,6 +237,7 @@ public class CLRenderBlocksHelper {
 
         IIcon iicon;
 
+        // North face of block
         if (instance.renderAllFaces || block.shouldSideBeRendered(instance.blockAccess, x, y, z - 1, 2)) {
             if (instance.renderMinZ <= 0.0D) {
                 --z;
@@ -241,12 +251,12 @@ public class CLRenderBlocksHelper {
             instance.aoBrightnessYZNN = block.getMixedBrightnessForBlock(instance.blockAccess, x, y - 1, z);
             instance.aoBrightnessYZPN = block.getMixedBrightnessForBlock(instance.blockAccess, x, y + 1, z);
             instance.aoBrightnessXZPN = block.getMixedBrightnessForBlock(instance.blockAccess, x + 1, y, z);
-            flag2 = instance.blockAccess.getBlock(x + 1, y, z - 1).getCanBlockGrass();
-            flag3 = instance.blockAccess.getBlock(x - 1, y, z - 1).getCanBlockGrass();
-            flag4 = instance.blockAccess.getBlock(x, y + 1, z - 1).getCanBlockGrass();
-            flag5 = instance.blockAccess.getBlock(x, y - 1, z - 1).getCanBlockGrass();
+            isAirish1P = instance.blockAccess.getBlock(x + 1, y, z).getCanBlockGrass();
+            isAirish1N = instance.blockAccess.getBlock(x - 1, y, z).getCanBlockGrass();
+            isAirish2P = instance.blockAccess.getBlock(x, y + 1, z).getCanBlockGrass();
+            isAirish2N = instance.blockAccess.getBlock(x, y - 1, z).getCanBlockGrass();
 
-            if (!flag3 && !flag5) {
+            if (!isAirish1N && !isAirish2N) {
                 instance.aoLightValueScratchXYZNNN = instance.aoLightValueScratchXZNN;
                 instance.aoBrightnessXYZNNN = instance.aoBrightnessXZNN;
             } else {
@@ -254,7 +264,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNNN = block.getMixedBrightnessForBlock(instance.blockAccess, x - 1, y - 1, z);
             }
 
-            if (!flag3 && !flag4) {
+            if (!isAirish1N && !isAirish2P) {
                 instance.aoLightValueScratchXYZNPN = instance.aoLightValueScratchXZNN;
                 instance.aoBrightnessXYZNPN = instance.aoBrightnessXZNN;
             } else {
@@ -262,7 +272,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNPN = block.getMixedBrightnessForBlock(instance.blockAccess, x - 1, y + 1, z);
             }
 
-            if (!flag2 && !flag5) {
+            if (!isAirish1P && !isAirish2N) {
                 instance.aoLightValueScratchXYZPNN = instance.aoLightValueScratchXZPN;
                 instance.aoBrightnessXYZPNN = instance.aoBrightnessXZPN;
             } else {
@@ -270,7 +280,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZPNN = block.getMixedBrightnessForBlock(instance.blockAccess, x + 1, y - 1, z);
             }
 
-            if (!flag2 && !flag4) {
+            if (!isAirish1P && !isAirish2P) {
                 instance.aoLightValueScratchXYZPPN = instance.aoLightValueScratchXZPN;
                 instance.aoBrightnessXYZPPN = instance.aoBrightnessXZPN;
             } else {
@@ -298,14 +308,14 @@ public class CLRenderBlocksHelper {
             instance.brightnessBottomRight = getAoBrightness(instance.aoBrightnessYZNN, instance.aoBrightnessXYZPNN, instance.aoBrightnessXZPN, brightnessScratchValue);
             instance.brightnessTopRight = getAoBrightness(instance.aoBrightnessXYZNNN, instance.aoBrightnessXZNN, instance.aoBrightnessYZNN, brightnessScratchValue);
 
-            if (flag1) {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * 0.8F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * 0.8F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * 0.8F;
+            if (notGrassAndNotOverridden) {
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * northSouthColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * northSouthColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * northSouthColorMultiplier;
             } else {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = 0.8F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = 0.8F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = 0.8F;
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = northSouthColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = northSouthColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = northSouthColorMultiplier;
             }
 
             instance.colorRedTopLeft *= topLeftAoLightValue;
@@ -342,6 +352,7 @@ public class CLRenderBlocksHelper {
             flag = true;
         }
 
+        // South face of block
         if (instance.renderAllFaces || block.shouldSideBeRendered(instance.blockAccess, x, y, z + 1, 3)) {
             if (instance.renderMaxZ >= 1.0D) {
                 ++z;
@@ -355,12 +366,12 @@ public class CLRenderBlocksHelper {
             instance.aoBrightnessXZPP = block.getMixedBrightnessForBlock(instance.blockAccess, x + 1, y, z);
             instance.aoBrightnessYZNP = block.getMixedBrightnessForBlock(instance.blockAccess, x, y - 1, z);
             instance.aoBrightnessYZPP = block.getMixedBrightnessForBlock(instance.blockAccess, x, y + 1, z);
-            flag2 = instance.blockAccess.getBlock(x + 1, y, z + 1).getCanBlockGrass();
-            flag3 = instance.blockAccess.getBlock(x - 1, y, z + 1).getCanBlockGrass();
-            flag4 = instance.blockAccess.getBlock(x, y + 1, z + 1).getCanBlockGrass();
-            flag5 = instance.blockAccess.getBlock(x, y - 1, z + 1).getCanBlockGrass();
+            isAirish1P = instance.blockAccess.getBlock(x + 1, y, z).getCanBlockGrass();
+            isAirish1N = instance.blockAccess.getBlock(x - 1, y, z).getCanBlockGrass();
+            isAirish2P = instance.blockAccess.getBlock(x, y + 1, z).getCanBlockGrass();
+            isAirish2N = instance.blockAccess.getBlock(x, y - 1, z).getCanBlockGrass();
 
-            if (!flag3 && !flag5) {
+            if (!isAirish1N && !isAirish2N) {
                 instance.aoLightValueScratchXYZNNP = instance.aoLightValueScratchXZNP;
                 instance.aoBrightnessXYZNNP = instance.aoBrightnessXZNP;
             } else {
@@ -368,7 +379,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNNP = block.getMixedBrightnessForBlock(instance.blockAccess, x - 1, y - 1, z);
             }
 
-            if (!flag3 && !flag4) {
+            if (!isAirish1N && !isAirish2P) {
                 instance.aoLightValueScratchXYZNPP = instance.aoLightValueScratchXZNP;
                 instance.aoBrightnessXYZNPP = instance.aoBrightnessXZNP;
             } else {
@@ -376,7 +387,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNPP = block.getMixedBrightnessForBlock(instance.blockAccess, x - 1, y + 1, z);
             }
 
-            if (!flag2 && !flag5) {
+            if (!isAirish1P && !isAirish2N) {
                 instance.aoLightValueScratchXYZPNP = instance.aoLightValueScratchXZPP;
                 instance.aoBrightnessXYZPNP = instance.aoBrightnessXZPP;
             } else {
@@ -384,7 +395,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZPNP = block.getMixedBrightnessForBlock(instance.blockAccess, x + 1, y - 1, z);
             }
 
-            if (!flag2 && !flag4) {
+            if (!isAirish1P && !isAirish2P) {
                 instance.aoLightValueScratchXYZPPP = instance.aoLightValueScratchXZPP;
                 instance.aoBrightnessXYZPPP = instance.aoBrightnessXZPP;
             } else {
@@ -412,14 +423,14 @@ public class CLRenderBlocksHelper {
             instance.brightnessBottomRight = getAoBrightness(instance.aoBrightnessYZNP, instance.aoBrightnessXYZPNP, instance.aoBrightnessXZPP, brightnessScratchValue);
             instance.brightnessBottomLeft = getAoBrightness(instance.aoBrightnessXYZNNP, instance.aoBrightnessXZNP, instance.aoBrightnessYZNP, brightnessScratchValue);
 
-            if (flag1) {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * 0.8F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * 0.8F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * 0.8F;
+            if (notGrassAndNotOverridden) {
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * northSouthColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * northSouthColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * northSouthColorMultiplier;
             } else {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = 0.8F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = 0.8F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = 0.8F;
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = northSouthColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = northSouthColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = northSouthColorMultiplier;
             }
 
             instance.colorRedTopLeft *= topLeftAoLightValue;
@@ -456,6 +467,7 @@ public class CLRenderBlocksHelper {
             flag = true;
         }
 
+        // West face of block
         if (instance.renderAllFaces || block.shouldSideBeRendered(instance.blockAccess, x - 1, y, z, 4)) {
             if (instance.renderMinX <= 0.0D) {
                 --x;
@@ -469,12 +481,12 @@ public class CLRenderBlocksHelper {
             instance.aoBrightnessXZNN = block.getMixedBrightnessForBlock(instance.blockAccess, x, y, z - 1);
             instance.aoBrightnessXZNP = block.getMixedBrightnessForBlock(instance.blockAccess, x, y, z + 1);
             instance.aoBrightnessXYNP = block.getMixedBrightnessForBlock(instance.blockAccess, x, y + 1, z);
-            flag2 = instance.blockAccess.getBlock(x - 1, y + 1, z).getCanBlockGrass();
-            flag3 = instance.blockAccess.getBlock(x - 1, y - 1, z).getCanBlockGrass();
-            flag4 = instance.blockAccess.getBlock(x - 1, y, z - 1).getCanBlockGrass();
-            flag5 = instance.blockAccess.getBlock(x - 1, y, z + 1).getCanBlockGrass();
+            isAirish1P = instance.blockAccess.getBlock(x, y + 1, z).getCanBlockGrass();
+            isAirish1N = instance.blockAccess.getBlock(x, y - 1, z).getCanBlockGrass();
+            isAirish2P = instance.blockAccess.getBlock(x, y, z - 1).getCanBlockGrass();
+            isAirish2N = instance.blockAccess.getBlock(x, y, z + 1).getCanBlockGrass();
 
-            if (!flag4 && !flag3) {
+            if (!isAirish2P && !isAirish1N) {
                 instance.aoLightValueScratchXYZNNN = instance.aoLightValueScratchXZNN;
                 instance.aoBrightnessXYZNNN = instance.aoBrightnessXZNN;
             } else {
@@ -482,7 +494,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNNN = block.getMixedBrightnessForBlock(instance.blockAccess, x, y - 1, z - 1);
             }
 
-            if (!flag5 && !flag3) {
+            if (!isAirish2N && !isAirish1N) {
                 instance.aoLightValueScratchXYZNNP = instance.aoLightValueScratchXZNP;
                 instance.aoBrightnessXYZNNP = instance.aoBrightnessXZNP;
             } else {
@@ -490,7 +502,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNNP = block.getMixedBrightnessForBlock(instance.blockAccess, x, y - 1, z + 1);
             }
 
-            if (!flag4 && !flag2) {
+            if (!isAirish2P && !isAirish1P) {
                 instance.aoLightValueScratchXYZNPN = instance.aoLightValueScratchXZNN;
                 instance.aoBrightnessXYZNPN = instance.aoBrightnessXZNN;
             } else {
@@ -498,7 +510,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZNPN = block.getMixedBrightnessForBlock(instance.blockAccess, x, y + 1, z - 1);
             }
 
-            if (!flag5 && !flag2) {
+            if (!isAirish2N && !isAirish1P) {
                 instance.aoLightValueScratchXYZNPP = instance.aoLightValueScratchXZNP;
                 instance.aoBrightnessXYZNPP = instance.aoBrightnessXZNP;
             } else {
@@ -526,14 +538,14 @@ public class CLRenderBlocksHelper {
             instance.brightnessBottomLeft = getAoBrightness(instance.aoBrightnessXZNN, instance.aoBrightnessXYZNPN, instance.aoBrightnessXYNP, brightnessScratchValue);
             instance.brightnessBottomRight = getAoBrightness(instance.aoBrightnessXYZNNN, instance.aoBrightnessXYNN, instance.aoBrightnessXZNN, brightnessScratchValue);
 
-            if (flag1) {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * 0.6F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * 0.6F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * 0.6F;
+            if (notGrassAndNotOverridden) {
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * eastWestColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * eastWestColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * eastWestColorMultiplier;
             } else {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = 0.6F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = 0.6F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = 0.6F;
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = eastWestColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = eastWestColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = eastWestColorMultiplier;
             }
 
             instance.colorRedTopLeft *= topLeftAoLightValue;
@@ -570,6 +582,7 @@ public class CLRenderBlocksHelper {
             flag = true;
         }
 
+        // East face of block
         if (instance.renderAllFaces || block.shouldSideBeRendered(instance.blockAccess, x + 1, y, z, 5)) {
             if (instance.renderMaxX >= 1.0D) {
                 ++x;
@@ -583,12 +596,12 @@ public class CLRenderBlocksHelper {
             instance.aoBrightnessXZPN = block.getMixedBrightnessForBlock(instance.blockAccess, x, y, z - 1);
             instance.aoBrightnessXZPP = block.getMixedBrightnessForBlock(instance.blockAccess, x, y, z + 1);
             instance.aoBrightnessXYPP = block.getMixedBrightnessForBlock(instance.blockAccess, x, y + 1, z);
-            flag2 = instance.blockAccess.getBlock(x + 1, y + 1, z).getCanBlockGrass();
-            flag3 = instance.blockAccess.getBlock(x + 1, y - 1, z).getCanBlockGrass();
-            flag4 = instance.blockAccess.getBlock(x + 1, y, z + 1).getCanBlockGrass();
-            flag5 = instance.blockAccess.getBlock(x + 1, y, z - 1).getCanBlockGrass();
+            isAirish1P = instance.blockAccess.getBlock(x, y + 1, z).getCanBlockGrass();
+            isAirish1N = instance.blockAccess.getBlock(x, y - 1, z).getCanBlockGrass();
+            isAirish2P = instance.blockAccess.getBlock(x, y, z + 1).getCanBlockGrass();
+            isAirish2N = instance.blockAccess.getBlock(x, y, z - 1).getCanBlockGrass();
 
-            if (!flag3 && !flag5) {
+            if (!isAirish1N && !isAirish2N) {
                 instance.aoLightValueScratchXYZPNN = instance.aoLightValueScratchXZPN;
                 instance.aoBrightnessXYZPNN = instance.aoBrightnessXZPN;
             } else {
@@ -596,7 +609,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZPNN = block.getMixedBrightnessForBlock(instance.blockAccess, x, y - 1, z - 1);
             }
 
-            if (!flag3 && !flag4) {
+            if (!isAirish1N && !isAirish2P) {
                 instance.aoLightValueScratchXYZPNP = instance.aoLightValueScratchXZPP;
                 instance.aoBrightnessXYZPNP = instance.aoBrightnessXZPP;
             } else {
@@ -604,7 +617,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZPNP = block.getMixedBrightnessForBlock(instance.blockAccess, x, y - 1, z + 1);
             }
 
-            if (!flag2 && !flag5) {
+            if (!isAirish1P && !isAirish2N) {
                 instance.aoLightValueScratchXYZPPN = instance.aoLightValueScratchXZPN;
                 instance.aoBrightnessXYZPPN = instance.aoBrightnessXZPN;
             } else {
@@ -612,7 +625,7 @@ public class CLRenderBlocksHelper {
                 instance.aoBrightnessXYZPPN = block.getMixedBrightnessForBlock(instance.blockAccess, x, y + 1, z - 1);
             }
 
-            if (!flag2 && !flag4) {
+            if (!isAirish1P && !isAirish2P) {
                 instance.aoLightValueScratchXYZPPP = instance.aoLightValueScratchXZPP;
                 instance.aoBrightnessXYZPPP = instance.aoBrightnessXZPP;
             } else {
@@ -640,14 +653,14 @@ public class CLRenderBlocksHelper {
             instance.brightnessBottomRight = getAoBrightness(instance.aoBrightnessXZPN, instance.aoBrightnessXYZPPN, instance.aoBrightnessXYPP, brightnessScratchValue);
             instance.brightnessBottomLeft = getAoBrightness(instance.aoBrightnessXYZPNN, instance.aoBrightnessXYPN, instance.aoBrightnessXZPN, brightnessScratchValue);
 
-            if (flag1) {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * 0.6F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * 0.6F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * 0.6F;
+            if (notGrassAndNotOverridden) {
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = r * eastWestColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = g * eastWestColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = b * eastWestColorMultiplier;
             } else {
-                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = 0.6F;
-                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = 0.6F;
-                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = 0.6F;
+                instance.colorRedTopLeft = instance.colorRedBottomLeft = instance.colorRedBottomRight = instance.colorRedTopRight = eastWestColorMultiplier;
+                instance.colorGreenTopLeft = instance.colorGreenBottomLeft = instance.colorGreenBottomRight = instance.colorGreenTopRight = eastWestColorMultiplier;
+                instance.colorBlueTopLeft = instance.colorBlueBottomLeft = instance.colorBlueBottomRight = instance.colorBlueTopRight = eastWestColorMultiplier;
             }
 
             instance.colorRedTopLeft *= topLeftAoLightValue;
