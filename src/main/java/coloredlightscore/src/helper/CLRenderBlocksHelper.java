@@ -28,7 +28,7 @@ public class CLRenderBlocksHelper {
         tessellator.setBrightness(0xf000f);
 
         if (instance.getBlockIcon(block).getIconName().equals("grass_top")) {
-            // Don't tint the sides of grass blocks!
+            // Don't tint the dirt part of grass blocks!
             notGrassAndNotOverridden = false;
         } else if (instance.hasOverrideBlockTexture()) {
             // Err... only tint the top of overridden textures?
