@@ -8,6 +8,7 @@ import coloredlightscore.src.asm.transformer.TransformChunkCache;
 import coloredlightscore.src.asm.transformer.TransformEntityPlayerMP;
 import coloredlightscore.src.asm.transformer.TransformEntityRenderer;
 import coloredlightscore.src.asm.transformer.TransformExtendedBlockStorage;
+import coloredlightscore.src.asm.transformer.TransformGuiIngameForge;
 import coloredlightscore.src.asm.transformer.TransformPlayerInstance;
 import coloredlightscore.src.asm.transformer.TransformRenderBlocks;
 import coloredlightscore.src.asm.transformer.TransformTessellator;
@@ -33,7 +34,8 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin {
                               TransformExtendedBlockStorage.class.getName(), 
                               TransformPlayerInstance.class.getName(), 
                               TransformEntityPlayerMP.class.getName(),
-                              TransformEntityRenderer.class.getName() };
+                              TransformEntityRenderer.class.getName(),
+                              TransformGuiIngameForge.class.getName()};
     }
 
     @Override
