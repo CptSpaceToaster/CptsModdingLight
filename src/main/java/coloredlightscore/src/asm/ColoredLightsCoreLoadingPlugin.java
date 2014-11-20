@@ -2,16 +2,8 @@ package coloredlightscore.src.asm;
 
 import java.util.Map;
 
+import coloredlightscore.src.asm.transformer.*;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import coloredlightscore.src.asm.transformer.TransformBlock;
-import coloredlightscore.src.asm.transformer.TransformChunkCache;
-import coloredlightscore.src.asm.transformer.TransformEntityPlayerMP;
-import coloredlightscore.src.asm.transformer.TransformEntityRenderer;
-import coloredlightscore.src.asm.transformer.TransformExtendedBlockStorage;
-import coloredlightscore.src.asm.transformer.TransformPlayerInstance;
-import coloredlightscore.src.asm.transformer.TransformRenderBlocks;
-import coloredlightscore.src.asm.transformer.TransformTessellator;
-import coloredlightscore.src.asm.transformer.TransformWorld;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
 
@@ -33,7 +25,9 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin {
                               TransformExtendedBlockStorage.class.getName(), 
                               TransformPlayerInstance.class.getName(), 
                               TransformEntityPlayerMP.class.getName(),
-                              TransformEntityRenderer.class.getName() };
+                              TransformEntityRenderer.class.getName(),
+                              TransformGuiIngameForge.class.getName(),
+                              TransformChunk.class.getName()};
     }
 
     @Override
