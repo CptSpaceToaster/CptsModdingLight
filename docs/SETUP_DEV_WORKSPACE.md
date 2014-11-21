@@ -2,7 +2,7 @@
 You're going to need to pull the repository, and switch to the current development branch.  Then you can use the gradle wrapper (or gradle if you have it installed) to setup and build the workspace
 
 `cd the/place/you/want/to/put/this`  
-`git clone -b1.7.2 https://github.com/CptSpaceToaster/CptsModdingLight`  
+`git clone -b<branch_name> https://github.com/CptSpaceToaster/CptsModdingLight`  
 `cd CptsModdingLight`  
 `gradlew setupDecompWorkspace`  
 `gradlew eclipse (or your preferred development environment)`  
