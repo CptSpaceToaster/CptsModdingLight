@@ -76,7 +76,7 @@ public class CLWorldHelper {
 
         blockBrightness = ((blockBrightness & 0xf) | ((blockBrightness & 0x1e0) >> 1) | ((blockBrightness & 0x3c00) >> 2) | ((blockBrightness & 0x78000) >> 3));
 
-        if (blockBrightness < lightValue) {
+        if ((blockBrightness & 15) < (lightValue & 15)) {
             blockBrightness = lightValue;
         }
         return skyBrightness << 20 | blockBrightness << 4;

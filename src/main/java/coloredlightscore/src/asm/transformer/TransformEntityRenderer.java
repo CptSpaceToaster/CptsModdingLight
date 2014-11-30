@@ -3,16 +3,7 @@ package coloredlightscore.src.asm.transformer;
 import java.util.ListIterator;
 
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
 import coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin;
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
@@ -31,8 +22,6 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
     String obfOldLightmapDesc = "net/minecraft/client/renderer/texture/DynamicTexture";
     String entityRenderClass = "net/minecraft/client/renderer/EntityRenderer";
     String obfEntityRenderClass = "net/minecraft/client/renderer/EntityRenderer";
-    String new3DDesc = "coloredlightscore/src/types/CLDynamicTexture3D";
-    String new2DDesc = "coloredlightscore/src/types/CLDynamicTexture2D";
     
     boolean addSetter = false;
     
@@ -67,37 +56,18 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
             entityRenderClass = obfEntityRenderClass;
         }
         if(!addSetter) {
-            //Add some Dynamic Textures
-            classNode.fields.add( new FieldNode(Opcodes.ACC_PUBLIC, "lightmapTexture2", "L"+oldLightmapDesc+";", null, null));
-            classNode.fields.add( new FieldNode(Opcodes.ACC_PUBLIC, "lightmapTexture3", "L"+oldLightmapDesc+";", null, null));
-
-            /* Just cramming a getter and a setter, don't you mind */
-            MethodNode getter1 = new MethodNode(Opcodes.ACC_PUBLIC, "getLightmapTexture2", "()L" + new3DDesc + ";", null, null);
-            getter1.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            getter1.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "lightmapTexture2", "L"+oldLightmapDesc+";"));
-            getter1.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new3DDesc));
-            getter1.instructions.add(new InsnNode(Opcodes.ARETURN));
-            classNode.methods.add(getter1);
-            
-            MethodNode getter2 = new MethodNode(Opcodes.ACC_PUBLIC, "getLightmapTexture3", "()L" + new2DDesc + ";", null, null);
-            getter2.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-            getter2.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "lightmapTexture3", "L"+oldLightmapDesc+";"));
-            getter2.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new2DDesc));
-            getter2.instructions.add(new InsnNode(Opcodes.ARETURN));
-            classNode.methods.add(getter2);
-            
             MethodNode setter = new MethodNode(Opcodes.ACC_PUBLIC, "setLightmapTexture", "([I)V", null, null);
             setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
             if (ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT)
                 setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "lightmapTexture", "L"+oldLightmapDesc+";"));
             else
                 setter.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "field_78513_d", "L"+oldLightmapDesc+";"));
-            setter.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, new3DDesc));
+            setter.instructions.add(new TypeInsnNode(Opcodes.CHECKCAST, oldLightmapDesc));
             setter.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
             if(ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT){
-            	setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, new3DDesc, "dynamicTextureData", "[I"));
+            	setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, oldLightmapDesc, "dynamicTextureData", "[I"));
             }else{
-            	setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, new3DDesc, "field_110566_b", "[I"));
+            	setter.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, oldLightmapDesc, "field_110566_b", "[I"));
             }
             setter.instructions.add(new InsnNode(Opcodes.RETURN));
             classNode.methods.add(setter);
@@ -140,18 +110,14 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 if (((TypeInsnNode) insn).desc.equals(oldLightmapDesc)) {
                     
                     FMLLog.info("Replacing 2D lightmap texture");
-                    ((TypeInsnNode) insn).desc = new3DDesc;
                     insn = it.next(); //DUP
                     insn = it.next(); //BIPUSH 16
+                    it.set(new LdcInsnNode(256));
                     insn = it.next(); //BIPUSH 16
-                    it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
-                    FMLLog.info("Setting Entityrenderer.lightmapTexture to a " + new3DDesc);
-                    insn = it.next(); //Constructor call to the CLDynamicTexture3D - INVOKESPECIAL
-                    ((MethodInsnNode) insn).owner = new3DDesc;
-                    ((MethodInsnNode) insn).name = "<init>";
-                    ((MethodInsnNode) insn).desc = "(III)V";
+                    it.set(new LdcInsnNode(256));
+                    insn = it.next(); //Constructor call to the DynamicTexture - INVOKESPECIAL
                     insn = it.next(); //Storing the value to the local field - PUTFIELD
-                    
+
                     found2DLightmap = true;
                 }
             }
@@ -162,32 +128,13 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 FMLLog.info("Removing locationLightMap");
                 for (int i = 0; i < 10; i++) {
                     insn = it.next();
-                    it.remove();
+                    //it.remove();
                 }
                 
                 removeTextureLocation = true;
             }
 
             if (!add3DLightmap && removeTextureLocation && found2DLightmap) {
-                FMLLog.info("Adding Second Colormap");
-                
-                it.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                it.add(new TypeInsnNode(Opcodes.NEW, new3DDesc));
-                it.add(new InsnNode(Opcodes.DUP));
-                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
-                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
-                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
-                it.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, new3DDesc, "<init>", "(III)V"));
-                it.add(new FieldInsnNode(Opcodes.PUTFIELD, entityRenderClass, "lightmapTexture2", "L"+oldLightmapDesc+";"));
-                
-                FMLLog.info("Adding Third Empty Texture");
-                it.add(new VarInsnNode(Opcodes.ALOAD, 0));
-                it.add(new TypeInsnNode(Opcodes.NEW, new2DDesc));
-                it.add(new InsnNode(Opcodes.DUP));
-                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
-                it.add(new IntInsnNode(Opcodes.BIPUSH, 16));
-                it.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, new2DDesc, "<init>", "(II)V"));
-                it.add(new FieldInsnNode(Opcodes.PUTFIELD, entityRenderClass, "lightmapTexture3", "L"+oldLightmapDesc+";"));
                 
                 add3DLightmap = true;
             }

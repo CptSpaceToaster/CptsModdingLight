@@ -21,6 +21,9 @@ public class Tessellator {
     public double yOffset;
     public double zOffset;
     public int vertexCount;
+    // Added by TransformTessellator
+    public static int clProgram;
+    public static int clTexCoordAttribute;
 
     // Added by TransformTessellator
     public int getRawBufferSize() { return 0; }
