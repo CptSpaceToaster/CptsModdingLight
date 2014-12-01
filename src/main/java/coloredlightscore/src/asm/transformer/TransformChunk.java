@@ -20,15 +20,21 @@ public class TransformChunk extends MethodTransformer {
         ListIterator<AbstractInsnNode> iterator = method.instructions.iterator();
         if (iterator.hasNext()) {
             AbstractInsnNode insn = iterator.next();
-            while (iterator.hasNext() && (insn.getOpcode() != Opcodes.ILOAD || ((VarInsnNode)insn).var != 7)) {
+            // int i1 = ... & 0xf
+            while (iterator.hasNext() && (insn.getOpcode() != Opcodes.ISTORE || ((VarInsnNode)insn).var != 6)) {
                 insn = iterator.next();
             }
-            // if (j1 > i1) => if ((j1 & 0xf) > (i1 & 0xf))
-            iterator.add(new IntInsnNode(Opcodes.BIPUSH, 15));
+            iterator.set(new IntInsnNode(Opcodes.BIPUSH, 0xf));
             iterator.add(new InsnNode(Opcodes.IAND));
-            insn = iterator.next(); // ILOAD 6
-            iterator.add(new IntInsnNode(Opcodes.BIPUSH, 15));
+            iterator.add(insn); // ISTORE 6
+
+            // int j1 = ... & 0xf
+            while (iterator.hasNext() && (insn.getOpcode() != Opcodes.ISTORE || ((VarInsnNode)insn).var != 7)) {
+                insn = iterator.next();
+            }
+            iterator.set(new IntInsnNode(Opcodes.BIPUSH, 0xf));
             iterator.add(new InsnNode(Opcodes.IAND));
+            iterator.add(insn); // ISTORE 7
         }
         return true;
     }
