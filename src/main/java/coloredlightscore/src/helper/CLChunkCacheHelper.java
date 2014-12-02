@@ -22,8 +22,17 @@ public class CLChunkCacheHelper {
 
         blockBrightness = ((blockBrightness & 0xf) | ((blockBrightness & 0x1e0) >> 1) | ((blockBrightness & 0x3c00) >> 2) | ((blockBrightness & 0x78000) >> 3));
 
-        if (blockBrightness < lightValue) {
-            blockBrightness = lightValue;
+        if ((blockBrightness & 0x000f) < (lightValue & 0x000f)) {
+            blockBrightness = blockBrightness & 0xfff0 | lightValue & 0x000f;
+        }
+        if ((blockBrightness & 0x00f0) < (lightValue & 0x00f0)) {
+            blockBrightness = blockBrightness & 0xff0f | lightValue & 0x00f0;
+        }
+        if ((blockBrightness & 0x0f00) < (lightValue & 0x0f00)) {
+            blockBrightness = blockBrightness & 0xf0ff | lightValue & 0x0f00;
+        }
+        if ((blockBrightness & 0xf000) < (lightValue & 0xf000)) {
+            blockBrightness = blockBrightness & 0x0fff | lightValue & 0xf000;
         }
 
         return skyBrightness << 20 | blockBrightness << 4;

@@ -45,4 +45,12 @@ public class ExtendedBlockStorage
     public int getYLocation() {
         return 0;
     }
+
+    public int getExtBlocklightValue(int p_76629_1_, int i, int p_76629_3_) {
+        return 0;
+    }
+
+    public int getExtSkylightValue(int p_76629_1_, int i, int p_76629_3_) {
+        return 0;
+    }
 }

@@ -11,7 +11,6 @@ public class CLEntityRendererHelper {
 
     public static float f = (1.0F/4096.0F);
     public static float t = 8.0f;
-    public static float[] sunlightColor = {1.0F, 1.0F, 1.0F}; // RGB TODO:Move this to dimension?
     
     public static void Initialize() {
     }
@@ -32,9 +31,9 @@ public class CLEntityRendererHelper {
                 if (worldclient.lastLightningBolt > 0) {
                     sunlight = worldclient.provider.lightBrightnessTable[s] * (max - min) + min;
                 }
-                rSunlight = sunlight * sunlightColor[0];
-                gSunlight = sunlight * sunlightColor[1];
-                bSunlight = sunlight * sunlightColor[2];
+                rSunlight = sunlight * worldclient.sunColor[0];
+                gSunlight = sunlight * worldclient.sunColor[1];
+                bSunlight = sunlight * worldclient.sunColor[2];
                 
                 for (int b = 0; b < 16; b++) {
                     bLight = worldclient.provider.lightBrightnessTable[b] + bSunlight;

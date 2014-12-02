@@ -1,8 +1,6 @@
 package coloredlightscore.src.helper;
 
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL20;
 
 /**
@@ -10,17 +8,17 @@ import org.lwjgl.opengl.GL20;
  */
 public class CLOpenGlHelper {
     public static void setLightmapTextureCoords(int textureId, float x, float y) {
-        int brightness = (int)y * 65536 + (int)x;
+        int brightness = ((int) y << 16) + (int)x;
         /*
             brightness is of the form
             0000 0000 SSSS BBBB GGGG RRRR LLLL 0000
             and needs to be decomposed.
          */
-        byte s = (byte)(brightness >> 20 & 0xF);
-        byte b = (byte)(brightness >> 16 & 0xF);
-        byte g = (byte)(brightness >> 12 & 0xF);
-        byte r = (byte)(brightness >> 8 & 0xF);
-        byte l = (byte)(brightness >> 4 & 0xF);
+        int s = brightness >> 20 & 0xF;
+        int b = brightness >> 16 & 0xF;
+        int g = brightness >> 12 & 0xF;
+        int r = brightness >> 8 & 0xF;
+        int l = brightness >> 4 & 0xF;
         if (l > r && l > g && l > b) {
             r = g = b = l;
         }

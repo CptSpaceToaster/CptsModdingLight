@@ -76,8 +76,17 @@ public class CLWorldHelper {
 
         blockBrightness = ((blockBrightness & 0xf) | ((blockBrightness & 0x1e0) >> 1) | ((blockBrightness & 0x3c00) >> 2) | ((blockBrightness & 0x78000) >> 3));
 
-        if ((blockBrightness & 15) < (lightValue & 15)) {
-            blockBrightness = lightValue;
+        if ((blockBrightness & 0x000f) < (lightValue & 0x000f)) {
+            blockBrightness = blockBrightness & 0xfff0 | lightValue & 0x000f;
+        }
+        if ((blockBrightness & 0x00f0) < (lightValue & 0x00f0)) {
+            blockBrightness = blockBrightness & 0xff0f | lightValue & 0x00f0;
+        }
+        if ((blockBrightness & 0x0f00) < (lightValue & 0x0f00)) {
+            blockBrightness = blockBrightness & 0xf0ff | lightValue & 0x0f00;
+        }
+        if ((blockBrightness & 0xf000) < (lightValue & 0xf000)) {
+            blockBrightness = blockBrightness & 0x0fff | lightValue & 0xf000;
         }
         return skyBrightness << 20 | blockBrightness << 4;
     }
@@ -112,12 +121,6 @@ public class CLWorldHelper {
     */
 
     //getBrightness(x,y,z) appears to be missing... not sure what's up there
-
-    //Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC
-    //Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
-    public static float getLightBrightness(World world, int par1, int par2, int par3) {
-        return world.provider.lightBrightnessTable[world.getBlockLightValue(par1, par2, par3) & 0xf];
-    }
 
     //Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC, made it PUBLIC
     //Added the parameter 'World world, ' and then replaces all instances of 'this', with world

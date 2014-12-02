@@ -1,46 +1,43 @@
 package coloredlightscore.src.asm.transformer;
 
-import coloredlightscore.src.asm.transformer.core.MethodTransformer;
-import org.objectweb.asm.Opcodes;
+import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import org.objectweb.asm.tree.*;
-
-import java.util.ListIterator;
 
 /**
  * Created by Murray on 11/19/2014.
  */
-public class TransformChunk extends MethodTransformer {
-    @Override
-    protected boolean transforms(ClassNode clazz, MethodNode method) {
-        return method.name.equals("getBlockLightValue") && method.desc.equals("(IIII)I");
+public class TransformChunk extends HelperMethodTransformer {
+
+    // These methods will be replaced by statics in CLWorldHelper
+    String methodsToReplace[] = { "getBlockLightValue (IIII)I" };
+
+    public TransformChunk() {
+        // Inform HelperMethodTransformer which class we are interested in
+        super("net.minecraft.world.chunk.Chunk");
     }
 
     @Override
-    protected boolean transform(ClassNode clazz, MethodNode method) {
-        ListIterator<AbstractInsnNode> iterator = method.instructions.iterator();
-        if (iterator.hasNext()) {
-            AbstractInsnNode insn = iterator.next();
-            // int i1 = ... & 0xf
-            while (iterator.hasNext() && (insn.getOpcode() != Opcodes.ISTORE || ((VarInsnNode)insn).var != 6)) {
-                insn = iterator.next();
-            }
-            iterator.set(new IntInsnNode(Opcodes.BIPUSH, 0xf));
-            iterator.add(new InsnNode(Opcodes.IAND));
-            iterator.add(insn); // ISTORE 6
+    protected Class<?> getHelperClass() {
+        return coloredlightscore.src.helper.CLChunkHelper.class;
+    }
 
-            // int j1 = ... & 0xf
-            while (iterator.hasNext() && (insn.getOpcode() != Opcodes.ISTORE || ((VarInsnNode)insn).var != 7)) {
-                insn = iterator.next();
+    @Override
+    protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
+        for (String name : methodsToReplace) {
+            if (name.equals(methodNode.name + " " + methodNode.desc)) {
+                return true;
             }
-            iterator.set(new IntInsnNode(Opcodes.BIPUSH, 0xf));
-            iterator.add(new InsnNode(Opcodes.IAND));
-            iterator.add(insn); // ISTORE 7
         }
-        return true;
+        return false;
     }
 
     @Override
-    protected boolean transforms(String className) {
-        return "net.minecraft.world.chunk.Chunk".equals(className);
+    protected boolean transform(ClassNode classNode, MethodNode methodNode) {
+        for (String name : methodsToReplace) {
+            if (name.equals(methodNode.name + " " + methodNode.desc)) {
+                return redefineMethod(classNode, methodNode, name);
+            }
+        }
+        return false;
     }
 }

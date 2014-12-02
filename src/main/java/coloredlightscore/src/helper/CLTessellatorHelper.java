@@ -11,7 +11,6 @@ import org.lwjgl.opengl.*;
 public class CLTessellatorHelper {
 
     //private static int nativeBufferSize = 0x200000;
-    public static float sunlightBrightness = 1.0f;
     public static int texCoordParam;
     public static int lightCoordParam;
     public static int clProgram;
@@ -47,31 +46,37 @@ public class CLTessellatorHelper {
                     "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;" +
                     "p_TexCoord = TexCoord;" +
                     "p_Color = Color;" +
-                    "p_LightCoord = LightCoord + u_LightCoord;" +
+                    "if (u_LightCoord == ivec4(0, 0, 0, 0)) {" +
+                        "p_LightCoord = LightCoord;" +
+                    "} else {" +
+                        "p_LightCoord = u_LightCoord;" +
+                    "}" +
                 "}");
         GL20.glShaderSource(fragShader, "uniform sampler2D Texture;" +
                 "uniform sampler2D LightMap;" +
                 "varying vec2 p_TexCoord;" +
                 "varying vec4 p_Color;" +
                 "varying vec4 p_LightCoord;" +
+                "uniform ivec4 u_LightCoord;" +
                 "void main() {" +
                     "float scale = 256;" +
-                    "vec4 texel0000 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + 0.5)) / scale);" +
-                    "vec4 texel0001 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + 0.5)) / scale);" +
-                    "vec4 texel0010 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + 0.5)) / scale);" +
-                    "vec4 texel0011 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + 0.5)) / scale);" +
-                    "vec4 texel0100 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + 0.5)) / scale);" +
-                    "vec4 texel0101 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + 0.5)) / scale);" +
-                    "vec4 texel0110 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + 0.5)) / scale);" +
-                    "vec4 texel0111 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + 0.5)) / scale);" +
-                    "vec4 texel1000 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + 0.5)) / scale);" +
-                    "vec4 texel1001 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + 0.5)) / scale);" +
-                    "vec4 texel1010 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + 0.5)) / scale);" +
-                    "vec4 texel1011 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + 0.5)) / scale);" +
-                    "vec4 texel1100 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + 0.5)) / scale);" +
-                    "vec4 texel1101 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + 0.5)) / scale);" +
-                    "vec4 texel1110 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + 0.5)) / scale);" +
-                    "vec4 texel1111 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + 0.5)) / scale);" +
+                    "float bias = 0.5;" +
+                    "vec4 texel0000 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel0001 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel0010 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel0011 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel0100 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel0101 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel0110 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel0111 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel1000 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel1001 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel1010 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel1011 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel1100 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel1101 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel1110 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));" +
+                    "vec4 texel1111 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));" +
                     "vec4 lightColor = texel0000 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +" +
                                       "texel0001 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +" +
                                       "texel0010 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +" +
