@@ -46,12 +46,12 @@ public class CLTessellatorHelper {
                 "varying vec2 p_TexCoord;" +
                 "attribute vec4 LightCoord;" +
                 "varying vec4 p_LightCoord;" +
-                "attribute vec4 Color;" +
+                "attribute vec4 gl_Color;" +
                 "varying vec4 p_Color;" +
                 "void main() {" +
                     "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;" +
                     "p_TexCoord = TexCoord;" +
-                    "p_Color = Color;" +
+                    "p_Color = gl_Color;" +
                     "if (u_LightCoord == ivec4(0, 0, 0, 0)) {" +
                         "p_LightCoord = LightCoord;" +
                     "} else {" +
