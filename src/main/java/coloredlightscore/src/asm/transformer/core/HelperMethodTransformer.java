@@ -27,7 +27,7 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
     protected String classNameDeobfuscated;
 
     /**
-     * When set, this class will check for the existance of the proper target function.
+     * When set, this class will check for the existence of the proper target function.
      * This is useful during development to help narrow down programming errors that would
      * otherwise crash the game. Set to false on release.
      */
@@ -59,7 +59,7 @@ public abstract class HelperMethodTransformer extends MethodTransformer {
      * 
      * @author heaton84
      * @param clazz
-     * @param method Reference of the method to transform
+     * @param targetMethod Reference of the method to transform
      * @param helperMethod The name of the method in the helper class to invoke. See description for Descriptor details.
      * @return
      */

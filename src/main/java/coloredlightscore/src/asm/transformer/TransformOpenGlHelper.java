@@ -14,7 +14,7 @@ import java.util.ListIterator;
 public class TransformOpenGlHelper extends MethodTransformer {
     @Override
     protected boolean transforms(ClassNode clazz, MethodNode method) {
-        return method.name.equals("setLightmapTextureCoords") && method.desc.equals("(IFF)V");
+        return NameMapper.getInstance().isMethod(method, clazz.name, "setLightmapTextureCoords (IFF)V");
     }
 
     @Override

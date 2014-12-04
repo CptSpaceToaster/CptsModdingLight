@@ -1,6 +1,7 @@
 package coloredlightscore.src.asm.transformer;
 
 import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 import org.objectweb.asm.tree.*;
 
 /**
@@ -24,7 +25,7 @@ public class TransformChunk extends HelperMethodTransformer {
     @Override
     protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
         for (String name : methodsToReplace) {
-            if (name.equals(methodNode.name + " " + methodNode.desc)) {
+            if (NameMapper.getInstance().isMethod(methodNode, classNode.name, name)) {
                 return true;
             }
         }
@@ -34,7 +35,7 @@ public class TransformChunk extends HelperMethodTransformer {
     @Override
     protected boolean transform(ClassNode classNode, MethodNode methodNode) {
         for (String name : methodsToReplace) {
-            if (name.equals(methodNode.name + " " + methodNode.desc)) {
+            if (NameMapper.getInstance().isMethod(methodNode, classNode.name, name)) {
                 return redefineMethod(classNode, methodNode, name);
             }
         }

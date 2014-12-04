@@ -1,8 +1,5 @@
 package coloredlightscore.src.asm.transformer.core;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.HashMap;
 
 import org.objectweb.asm.Type;
@@ -19,7 +16,7 @@ public class NameMapper {
 
     private HashMap<String, SeargeData> m_NameList;
     private static NameMapper INSTANCE = null;
-    private boolean MCP_ENVIRONMENT = false;;
+    private boolean MCP_ENVIRONMENT = false;
 
     public static NameMapper getInstance() {
         if (INSTANCE == null){
@@ -46,6 +43,10 @@ public class NameMapper {
         registerSrgName("CL: net/minecraft/block/Block net/minecraft/block/Block");
         registerSrgName("MD: net/minecraft/block/Block/setLightLevel (F)Lnet/minecraft/block/Block; net/minecraft/block/Block/func_149715_a (F)Lnet/minecraft/block/Block;");
 
+        // Chunk
+        registerSrgName("CL: net/minecraft/world/chunk/Chunk net/minecraft/world/chunk/Chunk");
+        registerSrgName("MD: net/minecraft/world/chunk/Chunk/getBlockLightValue (IIII)I net/minecraft/world/chunk/Chunk/func_76629_c (IIII)I");
+
         // ChunkCache
         registerSrgName("CL: net/minecraft/world/ChunkCache net/minecraft/world/ChunkCache");
         registerSrgName("MD: net/minecraft/world/ChunkCache/getLightBrightnessForSkyBlocks (IIII)I net/minecraft/world/ChunkCache/func_72802_i (IIII)I");
@@ -66,6 +67,10 @@ public class NameMapper {
         registerSrgName("MD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/getExtBlocklightValue (III)I net/minecraft/world/chunk/storage/ExtendedBlockStorage/func_76674_d (III)I");
         registerSrgName("FD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/blockLSBArray net/minecraft/world/chunk/storage/ExtendedBlockStorage/field_76680_d");
 
+        // OpenGlHelper
+        registerSrgName("CL: net/minecraft/client/renderer/OpenGlHelper net/minecraft/client/renderer/OpenGlHelper");
+        registerSrgName("MD: net/minecraft/client/renderer/OpenGlHelper/setLightmapTextureCoords (IFF)V net/minecraft/client/renderer/OpenGlHelper/func_77475_a (IFF)V");
+
         // PlayerInstance
         registerSrgName("CL: net/minecraft/server/management/PlayerManager$PlayerInstance net/minecraft/server/management/PlayerManager$PlayerInstance");
         registerSrgName("MD: net/minecraft/server/management/PlayerManager$PlayerInstance/sendToAllPlayersWatchingChunk (Lnet/minecraft/network/Packet;)V net/minecraft/server/management/PlayerManager$PlayerInstance/func_151251_a (Lnet/minecraft/network/Packet;)V");
@@ -74,12 +79,15 @@ public class NameMapper {
         // RenderBlocks
         registerSrgName("CL: net/minecraft/client/renderer/RenderBlocks net/minecraft/client/renderer/RenderBlocks");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147751_a (Lnet/minecraft/block/Block;IIIFFF)Z");
+        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusionPartial (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147808_b (Lnet/minecraft/block/Block;IIIFFF)Z");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147736_d (Lnet/minecraft/block/Block;IIIFFF)Z");
+        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/getAoBrightness (IIII)I net/minecraft/client/renderer/RenderBlocks/func_147778_a (IIII)I");
 
         // Tessellator
         registerSrgName("CL: net/minecraft/client/renderer/Tessellator net/minecraft/client/renderer/Tessellator");
         registerSrgName("MD: net/minecraft/client/renderer/Tessellator/setBrightness (I)V net/minecraft/client/renderer/Tessellator/func_78380_c (I)V");
-        registerSrgName("MD: net/minecraft/client/renderer/Tessellator/addVertex (DDD)V net/minecraft/client/renderer/Tessellator/func_78377_a (DDD)V");        
+        registerSrgName("MD: net/minecraft/client/renderer/Tessellator/addVertex (DDD)V net/minecraft/client/renderer/Tessellator/func_78377_a (DDD)V");
+        registerSrgName("MD: net/minecraft/client/renderer/Tessellator/draw ()I net/minecraft/client/renderer/Tessellator/func_78381_a ()I");
         
         // World
         registerSrgName("CL: net/minecraft/world/World net/minecraft/world/World");
@@ -104,13 +112,19 @@ public class NameMapper {
 
         // ***********************************************
 
-        MCP_ENVIRONMENT = (this.getClass().getClassLoader().getResource("net/minecraft/world/World.class") != null);
+        //This should be set in the plugin, where we have this information!
+        //MCP_ENVIRONMENT = (this.getClass().getClassLoader().getResource("net/minecraft/world/World.class") != null);
 
-        FMLLog.info("ColoredLightsCore: MCP_ENVIORNMENT=%s", MCP_ENVIRONMENT);
+        FMLLog.info("ColoredLightsCore: MCP_ENVIRONMENT=%s", MCP_ENVIRONMENT);
     }
 
     public boolean isObfuscated() {
         return !MCP_ENVIRONMENT;
+    }
+
+    public void setObfuscated(boolean obfuscated) {
+        MCP_ENVIRONMENT = !obfuscated;
+        FMLLog.info("ColoredLightsCore: MCP_ENVIRONMENT=%s", MCP_ENVIRONMENT);
     }
 
     /**

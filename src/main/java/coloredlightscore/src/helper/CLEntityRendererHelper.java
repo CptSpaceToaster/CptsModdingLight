@@ -31,9 +31,9 @@ public class CLEntityRendererHelper {
                 if (worldclient.lastLightningBolt > 0) {
                     sunlight = worldclient.provider.lightBrightnessTable[s] * (max - min) + min;
                 }
-                rSunlight = sunlight * worldclient.sunColor[0];
-                gSunlight = sunlight * worldclient.sunColor[1];
-                bSunlight = sunlight * worldclient.sunColor[2];
+                rSunlight = sunlight * worldclient.clSunColor[0];
+                gSunlight = sunlight * worldclient.clSunColor[1];
+                bSunlight = sunlight * worldclient.clSunColor[2];
                 
                 for (int b = 0; b < 16; b++) {
                     bLight = worldclient.provider.lightBrightnessTable[b] + bSunlight;

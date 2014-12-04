@@ -24,11 +24,11 @@ public abstract class MethodTransformer extends SelectiveTransformer {
         for (MethodNode method : clazz.methods) {
             if (transforms(clazz, method)) {
                 FMLLog.info("Transforming method " + method.name);
-                result |= transform(clazz, method);
+                result &= transform(clazz, method);
             }
         }
 
-        result |= postTransformClass(clazz);
+        result &= postTransformClass(clazz);
 
         return result;
     }
@@ -38,11 +38,11 @@ public abstract class MethodTransformer extends SelectiveTransformer {
     protected abstract boolean transform(ClassNode clazz, MethodNode method);
 
     protected boolean preTransformClass(ClassNode clazz) {
-        return false;
+        return true;
     }
 
     protected boolean postTransformClass(ClassNode clazz) {
-        return false;
+        return true;
     }
 
 }

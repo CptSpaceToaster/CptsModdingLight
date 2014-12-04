@@ -40,7 +40,7 @@ public class TransformWorld extends HelperMethodTransformer {
 
     @Override
     protected boolean preTransformClass(ClassNode clazz) {
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "sunColor", "[F", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "clSunColor", "[F", null, null));
         return true;
     }
 
@@ -60,7 +60,7 @@ public class TransformWorld extends HelperMethodTransformer {
     private boolean transformConstructor(MethodNode methodNode) {
         InsnList initSunColor = new InsnList();
 
-        // this.sunColor = new float[]{1.0f, 1.0f, 1.0f};
+        // this.clSunColor = new float[]{1.0f, 1.0f, 1.0f};
         initSunColor.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initSunColor.add(new IntInsnNode(Opcodes.BIPUSH, 3));
         initSunColor.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_FLOAT));
@@ -76,7 +76,7 @@ public class TransformWorld extends HelperMethodTransformer {
         initSunColor.add(new InsnNode(Opcodes.ICONST_2));
         initSunColor.add(new InsnNode(Opcodes.FCONST_1));
         initSunColor.add(new InsnNode(Opcodes.FASTORE));
-        initSunColor.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "sunColor", "[F"));
+        initSunColor.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "clSunColor", "[F"));
 
         AbstractInsnNode returnNode = ASMUtils.findLastReturn(methodNode);
         methodNode.instructions.insertBefore(returnNode, initSunColor);

@@ -5,6 +5,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
+import cpw.mods.fml.common.FMLLog;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.*;
 
@@ -17,9 +19,13 @@ public class CLTessellatorHelper {
     private static boolean programInUse;
     public static int lightCoordUniform;
     private static IntBuffer cachedLightCoord;
+    private static int cachedShader;
+    private static boolean hasFlaggedOpenglError;
 
     static {
         cachedLightCoord = ByteBuffer.allocateDirect(16).asIntBuffer();
+        cachedShader = 0;
+        hasFlaggedOpenglError = false;
     }
 
     public CLTessellatorHelper() {
@@ -122,20 +128,27 @@ public class CLTessellatorHelper {
     }
 
     public static void enableShader() {
+        cachedShader = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
         GL20.glUseProgram(clProgram);
         programInUse = true;
         int textureUniform = GL20.glGetUniformLocation(clProgram, "Texture");
-        GL20.glUniform1i(textureUniform, 0);
+        GL20.glUniform1i(textureUniform, OpenGlHelper.defaultTexUnit - GL13.GL_TEXTURE0);
         int lightmapUniform = GL20.glGetUniformLocation(clProgram, "LightMap");
-        GL20.glUniform1i(lightmapUniform, 1);
+        GL20.glUniform1i(lightmapUniform, OpenGlHelper.lightmapTexUnit - GL13.GL_TEXTURE0);
     }
 
     public static void disableShader() {
         programInUse = false;
-        GL20.glUseProgram(0);
+        GL20.glUseProgram(cachedShader);
     }
 
     public static void setTextureCoord(FloatBuffer buffer) {
+        if (GL11.glGetError() != GL11.GL_NO_ERROR) {
+            if (!hasFlaggedOpenglError) {
+                FMLLog.warning("Render error entering CLTessellatorHelper.setTextureCoord()! Trying to proceed anyway...");
+                hasFlaggedOpenglError = true;
+            }
+        }
         GL20.glVertexAttribPointer(texCoordParam, 2, false, 32, buffer);
         GL20.glEnableVertexAttribArray(texCoordParam);
     }
@@ -206,5 +219,9 @@ public class CLTessellatorHelper {
 
         return;
 
+    }
+
+    public static boolean isProgramInUse() {
+        return programInUse;
     }
 }

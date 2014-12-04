@@ -1,6 +1,7 @@
 package coloredlightscore.src.asm.transformer;
 
 import coloredlightscore.src.asm.transformer.core.MethodTransformer;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -10,6 +11,10 @@ import java.util.ListIterator;
  * Created by Murray on 11/19/2014.
  */
 public class TransformGuiIngameForge extends MethodTransformer {
+    final static String getSavedLightValue = "getSavedLightValue";
+    final static String getSavedLightValueObf = "func_76614_a";
+    final static String targetClass = "net.minecraftforge.client.GuiIngameForge";
+
     @Override
     protected boolean transforms(ClassNode clazz, MethodNode method) {
         return method.name.equals("renderHUDText") && method.desc.equals("(II)V");
@@ -29,7 +34,16 @@ public class TransformGuiIngameForge extends MethodTransformer {
                 ((LdcInsnNode)insn).cst = "lc: %d b: %s bl: %d (0x%03x) sl: %d rl: %d";
                 insn = iterator.next();
                 iterator.set(new IntInsnNode(Opcodes.BIPUSH, 6)); // Change the 5 to a 6 for the new number of parameters
-                do { insn = iterator.next(); } while (iterator.hasNext() && (insn.getOpcode() != Opcodes.INVOKEVIRTUAL || !((MethodInsnNode)insn).name.equals("getSavedLightValue")));
+                boolean foundSavedLightValue = false;
+                do {
+                    insn = iterator.next();
+                    if (insn.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+                        MethodInsnNode mNode = (MethodInsnNode)insn;
+                        if (mNode.name.equals(getSavedLightValue) || mNode.name.equals(getSavedLightValueObf)) {
+                            foundSavedLightValue = true;
+                        }
+                    }
+                } while (iterator.hasNext() && !foundSavedLightValue);
                 iterator.add(new InsnNode(Opcodes.DUP_X2)); // Save calculated brightness under AASTORE params so we can grab rgb later
                 iterator.add(new IntInsnNode(Opcodes.BIPUSH, 0xf));
                 iterator.add(new InsnNode(Opcodes.IAND)); // AND with 0xf to extract just the l component
@@ -83,6 +97,6 @@ public class TransformGuiIngameForge extends MethodTransformer {
 
     @Override
     protected boolean transforms(String className) {
-        return "net.minecraftforge.client.GuiIngameForge".equals(className);
+        return targetClass.equals(className);
     }
 }

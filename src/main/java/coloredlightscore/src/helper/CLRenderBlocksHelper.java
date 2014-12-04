@@ -15,6 +15,10 @@ public class CLRenderBlocksHelper {
         // Ehhhh?
     }
 
+    public static boolean renderStandardBlockWithAmbientOcclusionPartial(RenderBlocks instance, Block block, int x, int y, int z, float r, float g, float b) {
+        return renderStandardBlockWithAmbientOcclusion(instance, block, x, y, z, r, g, b);
+    }
+
     public static boolean renderStandardBlockWithAmbientOcclusion(RenderBlocks instance, Block block, int x, int y, int z, float r, float g, float b) {
         instance.enableAO = true;
         boolean flag = false;

@@ -41,8 +41,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
                 return true;
         }  
 
-        if ((methodNode.name + " " + methodNode.desc).equals(entityRendererConstructor) ||
-            (methodNode.name + " " + methodNode.desc).equals(obfEntityRendererConstructor))
+        if ((methodNode.name + " " + methodNode.desc).equals(entityRendererConstructor))
             return true;
 
         return false;
@@ -85,8 +84,7 @@ public class TransformEntityRenderer extends HelperMethodTransformer {
             }
         }
         
-        if ((methodNode.name + " " + methodNode.desc).equals(entityRendererConstructor) ||
-            (methodNode.name + " " + methodNode.desc).equals(obfEntityRendererConstructor)) {
+        if ((methodNode.name + " " + methodNode.desc).equals(entityRendererConstructor)) {
             return transformConstructor(methodNode);
         }
         

@@ -13,7 +13,7 @@ import yamhaven.easycoloredlights.blocks.CLLamp;
  */
 public class World implements IBlockAccess {
     // Added by TransformWorld
-    public float[] sunColor;
+    public float[] clSunColor;
 
     public WorldProvider provider;
     public int skylightSubtracted;

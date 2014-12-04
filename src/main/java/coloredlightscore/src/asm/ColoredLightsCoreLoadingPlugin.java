@@ -3,6 +3,7 @@ package coloredlightscore.src.asm;
 import java.util.Map;
 
 import coloredlightscore.src.asm.transformer.*;
+import coloredlightscore.src.asm.transformer.core.NameMapper;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
@@ -44,6 +45,7 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin {
     @Override
     public void injectData(Map<String, Object> data) {
         MCP_ENVIRONMENT = !((Boolean) data.get("runtimeDeobfuscationEnabled")).booleanValue();
+        NameMapper.getInstance().setObfuscated(!MCP_ENVIRONMENT);
         CLASSLOADER = (LaunchClassLoader) data.get("classLoader");
     }
 

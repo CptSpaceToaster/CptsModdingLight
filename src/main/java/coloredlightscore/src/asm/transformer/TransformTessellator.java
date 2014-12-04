@@ -2,6 +2,7 @@ package coloredlightscore.src.asm.transformer;
 
 import java.util.ListIterator;
 
+import coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -18,6 +19,10 @@ import cpw.mods.fml.common.FMLLog;
 public class TransformTessellator extends HelperMethodTransformer {
     String unObfBrightness = "hasBrightness";
     String obfBrightness = "field_78414_p"; //It could also be field_147580_e (trianglecube36: I checked this it is field_78414_p)
+    String unObfTexture = "hasTexture";
+    String obfTexture = "field_78400_o";
+    String unObfByteBuffer = "byteBuffer";
+    String obfByteBuffer = "field_78394_d";
 
     // These methods will be replaced by statics in CLTessellatorHelper
     String methodsToReplace[] = { "addVertex (DDD)V" };
@@ -90,7 +95,7 @@ public class TransformTessellator extends HelperMethodTransformer {
                 return true;
         }
 
-        if ((methodNode.name + " " + methodNode.desc).equals(NameMapper.drawSignature))
+        if (NameMapper.getInstance().isMethod(methodNode, super.className, "draw ()I"))
             return true;
 
         if ((methodNode.name + " " + methodNode.desc).equals(constructorToReplace))
@@ -108,7 +113,7 @@ public class TransformTessellator extends HelperMethodTransformer {
             }
         }
 
-        if ((methodNode.name + " " + methodNode.desc).equals(NameMapper.drawSignature)){
+        if (NameMapper.getInstance().isMethod(methodNode, super.className, "draw ()I")) {
         	return transformDraw(methodNode);
         }
 
@@ -136,7 +141,7 @@ public class TransformTessellator extends HelperMethodTransformer {
         boolean transformedDisableLightmap = false;
         for (ListIterator<AbstractInsnNode> it = methodNode.instructions.iterator(); it.hasNext(); ) {
             AbstractInsnNode insn = it.next();
-            if (insn.getOpcode() == Opcodes.GETFIELD && ((FieldInsnNode)insn).name.equals("hasTexture")) {
+            if (insn.getOpcode() == Opcodes.GETFIELD && (((FieldInsnNode)insn).name.equals(unObfTexture) || ((FieldInsnNode)insn).name.equals(obfTexture))) {
                 if (!transformedEnableTexture) {
                     while (insn.getOpcode() != Opcodes.INVOKEVIRTUAL || !((MethodInsnNode) insn).name.equals("position")) {
                         insn = it.next();
@@ -150,14 +155,15 @@ public class TransformTessellator extends HelperMethodTransformer {
                     it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "coloredlightscore/src/helper/CLTessellatorHelper", "unsetTextureCoord", "()V"));
                     transformedDisableTexture = true;
                 }
-            } else if (insn.getOpcode() == Opcodes.GETFIELD && ((FieldInsnNode)insn).name.equals("hasBrightness")) {
+            } else if (insn.getOpcode() == Opcodes.GETFIELD && (((FieldInsnNode)insn).name.equals(unObfBrightness) ||  ((FieldInsnNode)insn).name.equals(obfBrightness))) {
                 if (!transformedEnableLightmap) {
                     insn = it.next(); // IFEQ L17 (or similar)
-                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "byteBuffer", "Ljava/nio/ByteBuffer;"));
+                    String byteBuffer = ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT ? unObfByteBuffer : obfByteBuffer;
+                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
                     it.add(new IntInsnNode(Opcodes.BIPUSH, 28));
                     it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ByteBuffer", "position", "(I)Ljava/nio/Buffer;"));
                     it.add(new InsnNode(Opcodes.POP));
-                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", "byteBuffer", "Ljava/nio/ByteBuffer;"));
+                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
                     it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "coloredlightscore/src/helper/CLTessellatorHelper", "setLightCoord", "(Ljava/nio/ByteBuffer;)V"));
                     transformedEnableLightmap = true;
                 } else {
