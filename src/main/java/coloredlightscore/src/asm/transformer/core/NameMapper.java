@@ -83,6 +83,10 @@ public class NameMapper {
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147736_d (Lnet/minecraft/block/Block;IIIFFF)Z");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/getAoBrightness (IIII)I net/minecraft/client/renderer/RenderBlocks/func_147778_a (IIII)I");
 
+        // RendererLivingEntity
+        registerSrgName("CL: net/minecraft/client/renderer/entity/RendererLivingEntity net/minecraft/client/renderer/entity/RendererLivingEntity");
+        registerSrgName("MD: net/minecraft/client/renderer/entity/RendererLivingEntity/doRender (Lnet/minecraft/entity/EntityLivingBase;DDDFF)V net/minecraft/client/renderer/entity/RendererLivingEntity/func_76986_a (Lnet/minecraft/entity/EntityLivingBase;DDDFF)V");
+
         // Tessellator
         registerSrgName("CL: net/minecraft/client/renderer/Tessellator net/minecraft/client/renderer/Tessellator");
         registerSrgName("MD: net/minecraft/client/renderer/Tessellator/setBrightness (I)V net/minecraft/client/renderer/Tessellator/func_78380_c (I)V");
