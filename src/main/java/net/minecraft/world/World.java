@@ -106,13 +106,14 @@ public class World implements IBlockAccess {
         return false;
     }
 
-    public void scheduleBlockUpdate(int x, int y, int z, CLLamp clLamp, int i) {
+    public void scheduleBlockUpdate(int x, int y, int z, Block block, int i) {
     }
 
-    public void setBlock(int x, int y, int z, Block switchBlock, int i, int i1) {
+    public boolean setBlock(int x, int y, int z, Block block, int i, int i1) {
+        return false;
     }
 
-    public void setBlockMetadataWithNotify(int x, int y, int z, int temp, int i) {
-
+    public boolean setBlockMetadataWithNotify(int x, int y, int z, int temp, int i) {
+        return false;
     }
 }
