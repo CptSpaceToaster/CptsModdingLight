@@ -206,6 +206,7 @@ public class CLWorldHelper {
             int faceIndex;
             int lightEntry;
             int edgeEntryLight;
+            int manhattan_distance;
 
             int ll;
             int rl;
@@ -225,39 +226,59 @@ public class CLWorldHelper {
                     y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
                     z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
                     lightEntry = (int) (l1 >>> 18) & 0x7bdef; //Get Entry's saved Light (0111 1011 1101 1110 1111)
-                    //expectedEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location
+                    edgeEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location - Instead of comparing against the calue saved on disk, and checking to see if it's been updated already... Consider storing values in a temp 3D array and applying it all at once
 
-                    world.setLightValue(par1Enu, x1, y1, z1, lightEntry);
+                    if (((edgeEntryLight - lightEntry) & 0x84210) > 0) {
 
-                    x2 = MathHelper.abs_int(x1 - parX);
-                    y2 = MathHelper.abs_int(y1 - parY);
-                    z2 = MathHelper.abs_int(z1 - parZ);
 
-                    if (x2 + y2 + z2 < 17) { // manhattan distance
-                        for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
-                            xFace = parX + Facing.offsetsXForSide[faceIndex];
-                            yFace = parY + Facing.offsetsYForSide[faceIndex];
-                            zFace = parZ + Facing.offsetsZForSide[faceIndex];
+                        x2 = MathHelper.abs_int(x1 - parX);
+                        y2 = MathHelper.abs_int(y1 - parY);
+                        z2 = MathHelper.abs_int(z1 - parZ);
 
-                            opacity = Math.max(1, world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace));
-                            if (opacity < 15) {
-                                //Get Saved light value from face
-                                edgeEntryLight = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
-                                ll = lightEntry & 0x0000F;
-                                rl = lightEntry & 0x001E0;
-                                gl = lightEntry & 0x03C00;
-                                bl = lightEntry & 0x78000;
+                        manhattan_distance = x2 + y2 + z2;
+                        if (manhattan_distance == 15 && y2 == 0) {
+                            edgeEntryLight = 0; //for breaking with a debugger... delete this line otherwise
+                        }
 
-                                ll -= opacity & 0x0000F;
-                                //rl -= opacity & 0x001E0;
-                                //gl -= opacity & 0x03C00;
-                                //bl -= opacity & 0x78000;
+                        world.setLightValue(par1Enu, x1, y1, z1, lightEntry);
 
-                                if (((ll > (edgeEntryLight & 0x0000F)) ||
-                                        (rl > (edgeEntryLight & 0x001E0)) ||
-                                        (gl > (edgeEntryLight & 0x03C00)) ||
-                                        (bl > (edgeEntryLight & 0x78000))) && (i1 < CLWorldHelper.lightUpdateBlockList.length))
-                                    CLWorldHelper.lightUpdateBlockList[i1++] = (xFace - parX + 32) | ((yFace - parY + 32) << 6) | ((zFace - parZ + 32) << 12) | ((ll | rl | gl | bl) << 18);
+
+                        if (manhattan_distance < 15) { //The 17 or 15 MAY need to change
+                            for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
+                                xFace = x1 + Facing.offsetsXForSide[faceIndex];
+                                yFace = y1 + Facing.offsetsYForSide[faceIndex];
+                                zFace = z1 + Facing.offsetsZForSide[faceIndex];
+
+                                x2 = MathHelper.abs_int(xFace - parX);
+                                y2 = MathHelper.abs_int(yFace - parY);
+                                z2 = MathHelper.abs_int(zFace - parZ);
+
+                                if (x2 + y2 + z2 > manhattan_distance) { // Only look outwards as the cube expands out
+
+                                    opacity = Math.max(1, world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace));
+
+                                    if (opacity < 15) {
+                                        //Get Saved light value from face
+                                        edgeEntryLight = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
+                                        ll = lightEntry & 0x0000F;
+                                        rl = lightEntry & 0x001E0;
+                                        gl = lightEntry & 0x03C00;
+                                        bl = lightEntry & 0x78000;
+
+                                        ll = Math.max(0, ll - opacity & 0x0000F); // L shouldn't be going negative
+
+                                        //rl -= opacity & 0x001E0;
+                                        //gl -= opacity & 0x03C00;
+                                        //bl -= opacity & 0x78000;
+
+                                        if (((ll > (edgeEntryLight & 0x0000F)) ||
+                                                (rl > (edgeEntryLight & 0x001E0)) ||
+                                                (gl > (edgeEntryLight & 0x03C00)) ||
+                                                (bl > (edgeEntryLight & 0x78000))) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) {
+                                            CLWorldHelper.lightUpdateBlockList[i1++] = (xFace - parX + 32) | ((yFace - parY + 32) << 6) | ((zFace - parZ + 32) << 12) | ((ll | rl | gl | bl) << 18);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
