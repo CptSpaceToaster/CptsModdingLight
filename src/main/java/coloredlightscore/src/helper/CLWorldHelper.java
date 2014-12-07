@@ -217,7 +217,7 @@ public class CLWorldHelper {
             // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
             // x/y/z are relative offsets
 
-            if (((savedLightValue - compLightValue) & 0x84210) > 0) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
+            if ((compLightValue&0x0000F) > (savedLightValue&0x0000F)) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
                 CLWorldHelper.lightUpdateBlockList[i1++] = 0x20820 | (compLightValue << 18);
 
                 while (l < i1) {
@@ -243,7 +243,7 @@ public class CLWorldHelper {
                         world.setLightValue(par1Enu, x1, y1, z1, lightEntry);
 
 
-                        if (manhattan_distance < 15) { //The 17 or 15 MAY need to change
+                        if (manhattan_distance < 14) { //The 17 or 15 MAY need to change
                             for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
                                 xFace = x1 + Facing.offsetsXForSide[faceIndex];
                                 yFace = y1 + Facing.offsetsYForSide[faceIndex];
@@ -284,7 +284,7 @@ public class CLWorldHelper {
                     }
                 }
                 //world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
-            } else if (((compLightValue - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
+            } else if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
                 //TODO: clear and backfill
                 world.setLightValue(par1Enu, parX, parY, parZ, 0);
 
