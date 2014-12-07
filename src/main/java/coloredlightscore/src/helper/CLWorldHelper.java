@@ -207,6 +207,11 @@ public class CLWorldHelper {
             int lightEntry;
             int edgeEntryLight;
 
+            int ll;
+            int rl;
+            int gl;
+            int bl;
+
             // Format of lightUpdateBlockList word:
             // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
             // x/y/z are relative offsets
@@ -222,7 +227,7 @@ public class CLWorldHelper {
                     lightEntry = (int) (l1 >>> 18) & 0x7bdef; //Get Entry's saved Light (0111 1011 1101 1110 1111)
                     //expectedEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location
 
-                    world.setLightValue(par1Enu, parX, parY, parZ, lightEntry);
+                    world.setLightValue(par1Enu, x1, y1, z1, lightEntry);
 
                     x2 = MathHelper.abs_int(x1 - parX);
                     y2 = MathHelper.abs_int(y1 - parY);
@@ -235,27 +240,28 @@ public class CLWorldHelper {
                             zFace = parZ + Facing.offsetsZForSide[faceIndex];
 
                             opacity = Math.max(1, world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace));
-                            //Get Saved light value from face
-                            edgeEntryLight = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
-                            int ll = lightEntry & 0x0000F;
-                            int rl = lightEntry & 0x001E0;
-                            int gl = lightEntry & 0x03C00;
-                            int bl = lightEntry & 0x78000;
+                            if (opacity < 15) {
+                                //Get Saved light value from face
+                                edgeEntryLight = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
+                                ll = lightEntry & 0x0000F;
+                                rl = lightEntry & 0x001E0;
+                                gl = lightEntry & 0x03C00;
+                                bl = lightEntry & 0x78000;
 
-                            ll -= opacity & 0x0000F;
-                            //rl -= opacity & 0x001E0;
-                            //gl -= opacity & 0x03C00;
-                            //bl -= opacity & 0x78000;
+                                ll -= opacity & 0x0000F;
+                                //rl -= opacity & 0x001E0;
+                                //gl -= opacity & 0x03C00;
+                                //bl -= opacity & 0x78000;
 
-                            if ( ((ll > (edgeEntryLight & 0x0000F)) ||
-                                  (rl > (edgeEntryLight & 0x001E0)) ||
-                                  (gl > (edgeEntryLight & 0x03C00)) ||
-                                  (bl > (edgeEntryLight & 0x78000)) )  && (i1 < CLWorldHelper.lightUpdateBlockList.length))
-                                CLWorldHelper.lightUpdateBlockList[i1++] = (xFace - parX + 32) | ((yFace - parY + 32) << 6) | ((zFace - parZ + 32) << 12) | ((ll | rl | gl | bl) << 18);
+                                if (((ll > (edgeEntryLight & 0x0000F)) ||
+                                        (rl > (edgeEntryLight & 0x001E0)) ||
+                                        (gl > (edgeEntryLight & 0x03C00)) ||
+                                        (bl > (edgeEntryLight & 0x78000))) && (i1 < CLWorldHelper.lightUpdateBlockList.length))
+                                    CLWorldHelper.lightUpdateBlockList[i1++] = (xFace - parX + 32) | ((yFace - parY + 32) << 6) | ((zFace - parZ + 32) << 12) | ((ll | rl | gl | bl) << 18);
+                            }
                         }
                     }
                 }
-
                 //world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
             } else if (((compLightValue - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
                 //TODO: clear and backfill
