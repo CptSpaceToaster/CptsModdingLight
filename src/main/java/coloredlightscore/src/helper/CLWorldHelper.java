@@ -226,22 +226,15 @@ public class CLWorldHelper {
                     y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
                     z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
                     lightEntry = (int) (l1 >>> 18) & 0x7bdef; //Get Entry's saved Light (0111 1011 1101 1110 1111)
-                    edgeEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location - Instead of comparing against the calue saved on disk, and checking to see if it's been updated already... Consider storing values in a temp 3D array and applying it all at once
+                    edgeEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk, and checking to see if it's been updated already... Consider storing values in a temp 3D array and applying it all at once
 
-                    if (((edgeEntryLight - lightEntry) & 0x84210) > 0) {
-
-
+                    if ((lightEntry&0x0000F) > (edgeEntryLight&0x0000F)) {
                         x2 = MathHelper.abs_int(x1 - parX);
                         y2 = MathHelper.abs_int(y1 - parY);
                         z2 = MathHelper.abs_int(z1 - parZ);
-
                         manhattan_distance = x2 + y2 + z2;
-                        if (manhattan_distance == 15 && y2 == 0) {
-                            edgeEntryLight = 0; //for breaking with a debugger... delete this line otherwise
-                        }
 
                         world.setLightValue(par1Enu, x1, y1, z1, lightEntry);
-
 
                         if (manhattan_distance < 14) { //The 17 or 15 MAY need to change
                             for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
