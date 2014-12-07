@@ -81,6 +81,7 @@ public class NameMapper {
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147751_a (Lnet/minecraft/block/Block;IIIFFF)Z");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusionPartial (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147808_b (Lnet/minecraft/block/Block;IIIFFF)Z");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147736_d (Lnet/minecraft/block/Block;IIIFFF)Z");
+        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderBlockLiquid (Lnet/minecraft/block/Block;III)Z net/minecraft/client/renderer/RenderBlocks/func_147721_p (Lnet/minecraft/block/Block;III)Z");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/getAoBrightness (IIII)I net/minecraft/client/renderer/RenderBlocks/func_147778_a (IIII)I");
 
         // RendererLivingEntity
