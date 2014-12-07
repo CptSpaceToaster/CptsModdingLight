@@ -23,6 +23,7 @@ public class TransformTessellator extends HelperMethodTransformer {
     String obfTexture = "field_78400_o";
     String unObfByteBuffer = "byteBuffer";
     String obfByteBuffer = "field_78394_d";
+    boolean byteBufferIsStatic = false;
 
     // These methods will be replaced by statics in CLTessellatorHelper
     String methodsToReplace[] = { "addVertex (DDD)V" };
@@ -59,6 +60,20 @@ public class TransformTessellator extends HelperMethodTransformer {
 
     @Override
     public boolean preTransformClass(ClassNode classNode) {
+        //Some mods like to wholesale replace classes; unfortunately, not all fields survive this transformation
+        boolean hasRawBufferSize = false;
+        String byteBuffer = ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT ? unObfByteBuffer : obfByteBuffer;
+        for (FieldNode field : classNode.fields) {
+            if (field.name.equals("rawBufferSize") && field.desc.equals("I")) {
+                hasRawBufferSize = true;
+            }
+            if (field.name.equals(byteBuffer)) {
+                byteBufferIsStatic = (field.access & Opcodes.ACC_STATIC) != 0;
+            }
+        }
+        if (!hasRawBufferSize) {
+            classNode.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "rawBufferSize", "I", null, null));
+        }
         //Don't mind this.  Just cramming a getter and setter into the Tessellator for later use
         //getter
         MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, "getRawBufferSize", "()I", null, null);
@@ -159,11 +174,21 @@ public class TransformTessellator extends HelperMethodTransformer {
                 if (!transformedEnableLightmap) {
                     insn = it.next(); // IFEQ L17 (or similar)
                     String byteBuffer = ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT ? unObfByteBuffer : obfByteBuffer;
-                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    if (byteBufferIsStatic) {
+                        it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    } else {
+                        it.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        it.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    }
                     it.add(new IntInsnNode(Opcodes.BIPUSH, 28));
                     it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ByteBuffer", "position", "(I)Ljava/nio/Buffer;"));
                     it.add(new InsnNode(Opcodes.POP));
-                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    if (byteBufferIsStatic) {
+                        it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    } else {
+                        it.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        it.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    }
                     it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "coloredlightscore/src/helper/CLTessellatorHelper", "setLightCoord", "(Ljava/nio/ByteBuffer;)V"));
                     transformedEnableLightmap = true;
                 } else {

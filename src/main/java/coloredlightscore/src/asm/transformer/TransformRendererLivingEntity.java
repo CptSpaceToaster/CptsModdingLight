@@ -30,7 +30,6 @@ public class TransformRendererLivingEntity extends MethodTransformer {
         if (NameMapper.getInstance().isMethod(methodNode, classNode.name, "doRender (Lnet/minecraft/entity/EntityLivingBase;DDDFF)V")) {
             return true;
         }
-        System.out.println(methodNode.name + " " + methodNode.desc);
         return false;
     }
 
