@@ -184,9 +184,6 @@ public class CLWorldHelper {
     }
 
     public static boolean updateLightByType(World world, EnumSkyBlock par1Enu, int parX, int parY, int parZ) {
-        if (parX == -650 && parZ == 750) {
-            System.out.println("Nailed it");
-        }
         if (!world.doChunksNearChunkExist(parX, parY, parZ, 17)) {
             return false;
         } else {
@@ -271,7 +268,7 @@ public class CLWorldHelper {
                                                 (rl > (edgeEntryLight & 0x001E0)) ||
                                                 (gl > (edgeEntryLight & 0x03C00)) ||
                                                 (bl > (edgeEntryLight & 0x78000))) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) {
-                                            CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | (((long)ll | (long)rl | (long)gl | (long)bl) << 18L);
+                                            CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | ((ll | rl | gl | bl) << 18L);
                                         }
                                     }
                                 }
