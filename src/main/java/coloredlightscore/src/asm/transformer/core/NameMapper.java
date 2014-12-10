@@ -67,6 +67,11 @@ public class NameMapper {
         registerSrgName("MD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/getExtBlocklightValue (III)I net/minecraft/world/chunk/storage/ExtendedBlockStorage/func_76674_d (III)I");
         registerSrgName("FD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/blockLSBArray net/minecraft/world/chunk/storage/ExtendedBlockStorage/field_76680_d");
 
+        // FontRenderer
+        registerSrgName("CL: net/minecraft/client/gui/FontRenderer net/minecraft/client/gui/FontRenderer");
+        registerSrgName("MD: net/minecraft/client/gui/FontRenderer/renderDefaultChar (IZ)F net/minecraft/client/gui/FontRenderer/func_78266_a (IZ)F");
+        registerSrgName("MD: net/minecraft/client/gui/FontRenderer/renderUnicodeChar (CZ)F net/minecraft/client/gui/FontRenderer/func_78277_a (CZ)F");
+
         // OpenGlHelper
         registerSrgName("CL: net/minecraft/client/renderer/OpenGlHelper net/minecraft/client/renderer/OpenGlHelper");
         registerSrgName("MD: net/minecraft/client/renderer/OpenGlHelper/setLightmapTextureCoords (IFF)V net/minecraft/client/renderer/OpenGlHelper/func_77475_a (IFF)V");

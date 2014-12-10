@@ -34,4 +34,12 @@ public class Tessellator {
     public void setBrightness(int brightness) {}
 
     public void setColorOpaque_F(float f10, float f13, float f16) {}
+
+    public void addVertexWithUV(double x, double y, double z, double u, double v) {}
+
+    public void startDrawing(int drawMode) {}
+
+    public int draw() {
+        return 0;
+    }
 }
