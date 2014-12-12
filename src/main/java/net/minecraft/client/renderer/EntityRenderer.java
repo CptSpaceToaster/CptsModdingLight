@@ -2,6 +2,7 @@ package net.minecraft.client.renderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -15,4 +16,8 @@ public class EntityRenderer {
 
     // Added by TransformEntityRenderer
     public void setLightmapTexture(int[] map) {}
+
+    public float getNightVisionBrightness(EntityPlayer thePlayer, float partialTickTime) {
+        return 0.0f;
+    }
 }
