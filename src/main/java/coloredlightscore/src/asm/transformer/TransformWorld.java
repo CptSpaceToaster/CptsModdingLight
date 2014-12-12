@@ -1,7 +1,8 @@
 package coloredlightscore.src.asm.transformer;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import coloredlightscore.src.asm.transformer.core.ASMUtils;
-import cpw.mods.fml.common.FMLLog;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -80,7 +81,7 @@ public class TransformWorld extends HelperMethodTransformer {
 
         AbstractInsnNode returnNode = ASMUtils.findLastReturn(methodNode);
         methodNode.instructions.insertBefore(returnNode, initSunColor);
-        FMLLog.info("Transformed World constructor!");
+        CLLog.info("Transformed World constructor!");
         return true;
     }
 }

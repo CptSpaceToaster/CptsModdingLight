@@ -1,7 +1,9 @@
 package coloredlightscore.src.asm;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 import java.util.Arrays;
 
+import cpw.mods.fml.common.*;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import coloredlightscore.fmlevents.ChunkDataEventHandler;
@@ -12,31 +14,25 @@ import coloredlightscore.src.helper.CLEntityRendererHelper;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import cpw.mods.fml.common.DummyModContainer;
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.LoadController;
-import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ColoredLightsCoreDummyContainer extends DummyModContainer {
     public ChunkDataEventHandler chunkDataEventHandler;
 
-    public static org.apache.logging.log4j.Logger CLLog = FMLLog.getLogger();
-
     public static int VERSION_MAJOR = 1;
-    public static int VERSION_MINOR = 1;
-    public static int VERSION_REVISION = 2;
+    public static int VERSION_MINOR = 2;
+    public static int VERSION_REVISION = 0;
 
     public ColoredLightsCoreDummyContainer() {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
         meta.modId = "coloredlightscore";
         meta.name = "Colored Lights Core";
-        meta.version = String.format("%s.%s.%s", VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION);
+        meta.version = String.format("%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION);
         meta.credits = "";
-        meta.authorList = Arrays.asList("heaton84", "CptSpaceToaster");
-        meta.description = "The coremod for Colored Lights " + (((VERSION_REVISION & 1) != 0) ? "(Unstable Revision)" : "");
+        meta.authorList = Arrays.asList("AJWGeek", "Kovu", "CptSpaceToaster", "heaton84", "Murray65536");
+        meta.description = "The coremod for Colored Lights" + (((VERSION_REVISION & 1) != 0) ? " (Unstable Revision)" : "");
 
         chunkDataEventHandler = new ChunkDataEventHandler();
     }

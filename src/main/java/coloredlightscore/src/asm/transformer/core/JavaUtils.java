@@ -1,5 +1,6 @@
 package coloredlightscore.src.asm.transformer.core;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.lang.reflect.Field;
@@ -11,8 +12,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Iterables;
-
-import cpw.mods.fml.common.FMLLog;
 
 /**
  * The JavaUtils.class was was written by diesieben07, 
@@ -151,7 +150,7 @@ public final class JavaUtils {
             Class.forName("sun.misc.SharedSecrets");
             ENUM_GETTER = Class.forName("de.take_weiland.mods.commons.util.EnumGetterShared").asSubclass(EnumValueGetter.class).newInstance();
         } catch (Exception e) {
-            FMLLog.info("sun.misc.SharedSecrets not found. Falling back to default EnumGetter");
+            CLLog.info("sun.misc.SharedSecrets not found. Falling back to default EnumGetter");
             ENUM_GETTER = new EnumGetterCloned();
         }
     }

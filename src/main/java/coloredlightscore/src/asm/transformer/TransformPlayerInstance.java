@@ -1,6 +1,6 @@
 package coloredlightscore.src.asm.transformer;
 
-import static coloredlightscore.src.asm.ColoredLightsCoreDummyContainer.CLLog;
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -13,7 +13,6 @@ import org.objectweb.asm.tree.VarInsnNode;
 import coloredlightscore.src.asm.transformer.core.ASMUtils;
 import coloredlightscore.src.asm.transformer.core.MethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
-import cpw.mods.fml.common.FMLLog;
 
 public class TransformPlayerInstance extends MethodTransformer {
 
@@ -53,7 +52,7 @@ public class TransformPlayerInstance extends MethodTransformer {
         String chunkLocationDescriptor = NameMapper.getInstance().getJVMTypeObfuscated("Lnet/minecraft/world/ChunkCoordIntPair;");
         String helperDescriptor = NameMapper.getInstance().getJVMTypeObfuscated("(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/world/ChunkCoordIntPair;)V");
 
-        FMLLog.info("debug->field name is %s", chunkLocation);
+        CLLog.debug("debug->field name is {}", chunkLocation);
 
         // Push EntityPlayerMP
         helperInvoke.add(new VarInsnNode(Opcodes.ALOAD, 3));

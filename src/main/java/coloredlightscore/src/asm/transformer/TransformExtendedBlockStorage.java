@@ -1,6 +1,6 @@
 package coloredlightscore.src.asm.transformer;
 
-import static coloredlightscore.src.asm.ColoredLightsCoreDummyContainer.CLLog;
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -168,7 +168,7 @@ public class TransformExtendedBlockStorage extends MethodTransformer {
         AbstractInsnNode returnNode = ASMUtils.findLastReturn(m);
 
         if (returnNode == null) {
-            CLLog.error(String.format("Failed to find RETURN statement on %s/%s %s", clazz.name, m.name, m.desc));
+            CLLog.error(String.format("Failed to find RETURN statement on {}/{} {}", clazz.name, m.name, m.desc));
         } else
             m.instructions.remove(returnNode);
 

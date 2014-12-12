@@ -1,9 +1,9 @@
 package coloredlightscore.src.asm.transformer.core;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-
-import cpw.mods.fml.common.FMLLog;
 
 /**
  * The MethodTransformer.class was based on code written by diesieben07, 
@@ -23,7 +23,7 @@ public abstract class MethodTransformer extends SelectiveTransformer {
 
         for (MethodNode method : clazz.methods) {
             if (transforms(clazz, method)) {
-                FMLLog.info("Transforming method " + method.name);
+                CLLog.info("Transforming method " + method.name);
                 result &= transform(clazz, method);
             }
         }

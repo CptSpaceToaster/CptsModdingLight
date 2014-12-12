@@ -1,9 +1,10 @@
 package coloredlightscore.src.api;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import cpw.mods.fml.common.FMLLog;
 
 /**
  * Public API for ColoredLightsCore
@@ -51,8 +52,8 @@ public class CLApi {
             b = 1.0f;
 
         //		if (currentLightValue != Math.max(r, Math.max(g, b))) {
-        //			FMLLog.warning("One of the color value should be equal to Current Light Brightness, but not exceed it");
-        //			FMLLog.warning("r: " + r + "  g: " + g + "  b: " + b + "  l: " + currentLightValue);
+        //			CLLog.warning("One of the color value should be equal to Current Light Brightness, but not exceed it");
+        //			CLLog.warning("r: " + r + "  g: " + g + "  b: " + b + "  l: " + currentLightValue);
         //		}
 
         int brightness = (int) (currentLightValue * 15.0f);
@@ -94,8 +95,8 @@ public class CLApi {
         brightness &= 0xf;
 
         if (brightness != Math.max(r, Math.max(g, b))) {
-            FMLLog.warning("One of the color value should be equal to Current Light Brightness, but not exceed it");
-            FMLLog.warning("r: " + r + "  g: " + g + "  b: " + b + "  l: " + brightness);
+            CLLog.warn("One of the color value should be equal to Current Light Brightness, but not exceed it");
+            CLLog.warn("r: " + r + "  g: " + g + "  b: " + b + "  l: " + brightness);
         }
 
         return brightness | ((b << 15) + (g << 10) + (r << 5));

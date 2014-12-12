@@ -1,5 +1,7 @@
 package coloredlightscore.network;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import io.netty.buffer.ByteBuf;
 
 import java.util.zip.DataFormatException;
@@ -10,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import coloredlightscore.server.ChunkStorageRGB;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -50,9 +51,9 @@ public class ChunkColorDataPacket implements IMessage, IMessageHandler<ChunkColo
 
         if (targetChunk != null) {
             ChunkStorageRGB.loadColorData(targetChunk, ccdPacket.arraySize, ccdPacket.yLocation, ccdPacket.RedColorArray, ccdPacket.GreenColorArray, ccdPacket.BlueColorArray);
-            //FMLLog.info("ProcessColorDataPacket() loaded RGB for (%s,%s)", ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);			
+            //CLLog.info("ProcessColorDataPacket() loaded RGB for ({},{})", ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);
         } else
-            FMLLog.warning("ProcessColorDataPacket()  Chunk located at (%s, %s) could not be found in the local world!", ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);
+            CLLog.warn("ProcessColorDataPacket()  Chunk located at ({}, {}) could not be found in the local world!", ccdPacket.chunkXPosition, ccdPacket.chunkZPosition);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class ChunkColorDataPacket implements IMessage, IMessageHandler<ChunkColo
                 try {
                     inflater.inflate(rawColorData);
                 } catch (DataFormatException e) {
-                    FMLLog.warning("ChunkColorDataPacket()  ", e);
+                    CLLog.warn("ChunkColorDataPacket()  ", e);
                 } finally {
                     inflater.end();
                 }
@@ -126,7 +127,7 @@ public class ChunkColorDataPacket implements IMessage, IMessageHandler<ChunkColo
             }
 
         } catch (Exception e) {
-            FMLLog.getLogger().error("fromBytes ", e);
+            CLLog.error("fromBytes ", e);
         }
     }
 
@@ -169,7 +170,7 @@ public class ChunkColorDataPacket implements IMessage, IMessageHandler<ChunkColo
                 compressedSize = deflate.deflate(compressedColorData);
 
                 if (compressedSize == 0)
-                    FMLLog.warning("writePacket compression failed");
+                    CLLog.warn("writePacket compression failed");
 
                 bytes.writeInt(compressedSize);
                 bytes.writeBytes(compressedColorData, 0, compressedSize);
@@ -177,7 +178,7 @@ public class ChunkColorDataPacket implements IMessage, IMessageHandler<ChunkColo
                 // !USE_COMPRESSION
                 bytes.writeBytes(rawColorData, 0, rawColorData.length);
         } catch (Exception e) {
-            FMLLog.getLogger().error("toBytes  ", e);
+            CLLog.error("toBytes  ", e);
         }
     }
 

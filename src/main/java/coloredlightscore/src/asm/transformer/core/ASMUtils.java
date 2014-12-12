@@ -1,6 +1,6 @@
 package coloredlightscore.src.asm.transformer.core;
 
-import static coloredlightscore.src.asm.ColoredLightsCoreDummyContainer.CLLog;
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLASSLOADER;
 import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
 
@@ -112,7 +112,7 @@ public final class ASMUtils {
     	
     	String descriptor = MCP_ENVIRONMENT ? internalMethod + " " + internalDesc : FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(internalOwner, internalMethod, internalDesc);
     	
-    	FMLLog.info("TQ:%s ^ %s %s", descriptor, m.name, m.desc);
+    	CLLog.info("TQ:{} ^ {} {}", descriptor, m.name, m.desc);
     	
     	return descriptor.equals(m.name + " " + m.desc);
     }
@@ -169,7 +169,7 @@ public final class ASMUtils {
     			
     			className = descriptor.substring(i + 1, j);
     			
-    			//FMLLog.info("getMethodDescriptorObfuscated - Found class %s", className);
+    			//CLLog.info("getMethodDescriptorObfuscated - Found class {}", className);
     			
     			result = result + "L" + ASMUtils.getClassName(className) + ";";
     			

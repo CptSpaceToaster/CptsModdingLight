@@ -1,5 +1,7 @@
 package coloredlightscore.src.asm.transformer;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import java.util.ListIterator;
 
 import coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin;
@@ -13,8 +15,6 @@ import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
 
 import com.google.common.base.Throwables;
-
-import cpw.mods.fml.common.FMLLog;
 
 public class TransformTessellator extends HelperMethodTransformer {
     String unObfBrightness = "hasBrightness";
@@ -37,20 +37,20 @@ public class TransformTessellator extends HelperMethodTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
         if (bytes != null && transforms(transformedName)) {
-            FMLLog.info("Class %s is a candidate for transforming", transformedName);
+            CLLog.info("Class {} is a candidate for transforming", transformedName);
 
             try {
                 ClassNode clazz = ASMUtils.getClassNode(bytes);
 
                 if (transform(clazz, transformedName)) {
-                    FMLLog.info("Finished Transforming class " + transformedName);
+                    CLLog.info("Finished Transforming class " + transformedName);
                     ClassWriter writer = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
                     clazz.accept(writer);
                     bytes = writer.toByteArray();
                 } else
-                    FMLLog.warning("Did not transform %s", transformedName);
+                    CLLog.warn("Did not transform {}", transformedName);
             } catch (Exception e) {
-                FMLLog.severe("Exception during transformation of class " + transformedName);
+                CLLog.error("Exception during transformation of class " + transformedName);
                 e.printStackTrace();
                 Throwables.propagate(e);
             }
@@ -105,7 +105,6 @@ public class TransformTessellator extends HelperMethodTransformer {
     @Override
     protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
         for (String name : methodsToReplace) {
-            //System.out.println(" : " + (methodNode.name + " " + methodNode.desc));
             if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
                 return true;
         }

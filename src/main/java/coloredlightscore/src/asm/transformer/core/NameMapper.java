@@ -1,11 +1,11 @@
 package coloredlightscore.src.asm.transformer.core;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import java.util.HashMap;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.MethodNode;
-
-import cpw.mods.fml.common.FMLLog;
 
 //TODO: trianglecube36: less string operations, more support for more types
 //EPIC IDEA: 1. create a dummy function that calls EVERYTHING that we need to override/modify with asm
@@ -125,7 +125,7 @@ public class NameMapper {
         //This should be set in the plugin, where we have this information!
         //MCP_ENVIRONMENT = (this.getClass().getClassLoader().getResource("net/minecraft/world/World.class") != null);
 
-        FMLLog.info("ColoredLightsCore: MCP_ENVIRONMENT=%s", MCP_ENVIRONMENT);
+        //CLLog.info("ColoredLightsCore: MCP_ENVIRONMENT={}", MCP_ENVIRONMENT);
     }
 
     public boolean isObfuscated() {
@@ -134,7 +134,7 @@ public class NameMapper {
 
     public void setObfuscated(boolean obfuscated) {
         MCP_ENVIRONMENT = !obfuscated;
-        FMLLog.info("ColoredLightsCore: MCP_ENVIRONMENT=%s", MCP_ENVIRONMENT);
+        CLLog.debug("ColoredLightsCore: MCP_ENVIRONMENT={}", MCP_ENVIRONMENT);
     }
 
     /**
@@ -241,7 +241,7 @@ public class NameMapper {
         String methodSig = internalizeName(methodNode.desc);
 
         // BROKE: methodName=/a methodSig=(Lahu;)Z srgNameObf=amm/a srgSigObf=(Lahu;)Z
-        //FMLLog.info("MethodIs: methodName=" + methodName + " methodSig=" + methodSig + " srgNameObf=" + srg.objectNameObfuscated + " srgSigObf=" + srg.objectSignatureObfuscated);
+        //CLLog.info("MethodIs: methodName=" + methodName + " methodSig=" + methodSig + " srgNameObf=" + srg.objectNameObfuscated + " srgSigObf=" + srg.objectSignatureObfuscated);
 
         if (srg != null) {
             // srg.objectName = net/path/to/class/myMethodName
@@ -278,7 +278,7 @@ public class NameMapper {
 
                 className = descriptor.substring(i + 1, j);
 
-                //FMLLog.info("getMethodDescriptorObfuscated - Found class %s", className);
+                //CLLog.info("getMethodDescriptorObfuscated - Found class {}", className);
 
                 result = result + "L" + getClassName(className) + ";";
 

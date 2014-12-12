@@ -1,11 +1,12 @@
 package coloredlightscore.src.helper;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
-import cpw.mods.fml.common.FMLLog;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.*;
@@ -103,23 +104,23 @@ public class CLTessellatorHelper {
         GL20.glCompileShader(vertShader);
         GL20.glCompileShader(fragShader);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            System.out.println("Error compiling shaders");
+            CLLog.error("Error compiling shaders");
         }
 
         clProgram = GL20.glCreateProgram();
         GL20.glAttachShader(clProgram, vertShader);
         GL20.glAttachShader(clProgram, fragShader);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            System.out.println("Error attaching shaders");
+            CLLog.error("Error attaching shaders");
         }
 
         GL20.glLinkProgram(clProgram);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            System.out.println("Error linking program");
+            CLLog.error("Error linking program");
         }
         GL20.glValidateProgram(clProgram);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            System.out.println("Error validating program");
+            CLLog.error("Error validating program");
         }
         texCoordParam = GL20.glGetAttribLocation(clProgram, "TexCoord");
         lightCoordParam = GL20.glGetAttribLocation(clProgram, "LightCoord");
@@ -144,7 +145,7 @@ public class CLTessellatorHelper {
     public static void setTextureCoord(FloatBuffer buffer) {
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
             if (!hasFlaggedOpenglError) {
-                FMLLog.warning("Render error entering CLTessellatorHelper.setTextureCoord()! Trying to proceed anyway...");
+                CLLog.warn("Render error entering CLTessellatorHelper.setTextureCoord()! Trying to proceed anyway...");
                 hasFlaggedOpenglError = true;
             }
         }

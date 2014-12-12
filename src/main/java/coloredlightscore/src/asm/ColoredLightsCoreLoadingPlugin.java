@@ -7,6 +7,7 @@ import coloredlightscore.src.asm.transformer.core.NameMapper;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
+import org.apache.logging.log4j.*;
 
 @TransformerExclusions("coloredlightscore.*")
 @MCVersion("1.7.10")
@@ -15,6 +16,8 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.*;
 public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin {
     public static LaunchClassLoader CLASSLOADER;
     public static boolean MCP_ENVIRONMENT;
+
+    public static org.apache.logging.log4j.Logger CLLog = LogManager.getLogger("coloredlightscore");
 
     @Override
     public String[] getASMTransformerClass() {
