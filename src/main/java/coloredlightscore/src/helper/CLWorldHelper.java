@@ -235,7 +235,7 @@ public class CLWorldHelper {
                     y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
                     z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
                     lightEntry = ((int) ((l1 >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
-                    edgeLightEntry = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk, and checking to see if it's been updated already... Consider storing values in a temp 3D array and applying it all at once
+                    edgeLightEntry = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
 
                     //if ((lightEntry&0x0000F) > (edgeEntryLight&0x0000F)) { // No splat overlap lightEntry's L value is brighter than the edgeLightEntry
                     if ((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) { // Components in lightEntry are brighter than in edgeLightEntry
@@ -294,7 +294,59 @@ public class CLWorldHelper {
                 //world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
             } else if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
                 //TODO: clear
-                world.setLightValue(par1Enu, parX, parY, parZ, 0);
+                world.setLightValue(par1Enu, parX, parY, parZ, 0); // This kills the light
+                CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (savedLightValue << 18L));
+
+                while (l < i1) {
+                    l1 = CLWorldHelper.lightUpdateBlockList[l++]; //Get Entry at l, which starts at 0
+                    x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
+                    y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
+                    z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
+                    lightEntry = ((int) ((l1 >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
+
+                    x2 = MathHelper.abs_int(x1 - parX);
+                    y2 = MathHelper.abs_int(y1 - parY);
+                    z2 = MathHelper.abs_int(z1 - parZ);
+                    manhattan_distance = x2 + y2 + z2;
+
+                    if (manhattan_distance == 8) {
+                        manhattan_distance = 8;
+                    }
+
+
+
+                    if (manhattan_distance < ((savedLightValue & 0x0000F) - 1)) { //Limits the splat size to the initial brightness value
+                        for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
+                            xFace = x1 + Facing.offsetsXForSide[faceIndex];
+                            yFace = y1 + Facing.offsetsYForSide[faceIndex];
+                            zFace = z1 + Facing.offsetsZForSide[faceIndex];
+
+                            x2 = MathHelper.abs_int(xFace - parX);
+                            y2 = MathHelper.abs_int(yFace - parY);
+                            z2 = MathHelper.abs_int(zFace - parZ);
+
+
+
+
+                            if (x2 + y2 + z2 > manhattan_distance) { // Only look outwards as the cube expands out
+                                opacity = Math.max(1, world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace));
+
+                                if (opacity < 15) {
+                                    //Get Saved light value from face
+                                    edgeLightEntry = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
+                                    //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
+                                    if (((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) && (edgeLightEntry != 0) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) { // Components in lightEntry are brighter than in edgeLightEntry
+                                        world.setLightValue(par1Enu, xFace, yFace, zFace, 0); // This kills the light
+                                        CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | (edgeLightEntry << 18L);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+
                 //TODO:  backfill
             }
 
