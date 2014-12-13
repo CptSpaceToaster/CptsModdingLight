@@ -163,9 +163,15 @@ public class CLWorldHelper {
                     int bl = neighborLight & 0x78000;
 
                     ll -= opacity & 0x0000F;
-                    //rl -= opacity & 0x001E0;
-                    //gl -= opacity & 0x03C00;
-                    //bl -= opacity & 0x78000;
+                    /* TODO: Colored Opacity
+                    rl -= opacity & 0x001E0;
+                    gl -= opacity & 0x03C00;
+                    bl -= opacity & 0x78000;
+                    */
+                    //Use vanilla light opacity for now
+                    rl =  Math.max(0, rl - (opacity << 5));
+                    gl =  Math.max(0, gl - (opacity << 10));
+                    bl =  Math.max(0, bl - (opacity << 15));
 
                     // For each component, retain greater of currentLight, (neighborLight - opacity)
                     if (ll > (currentLight & 0x0000F)) {
@@ -196,7 +202,6 @@ public class CLWorldHelper {
             long savedLightValue = world.getSavedLightValue(par1Enu, parX, parY, parZ);
             //TODO: Most of ths call to computeLightValue was crammed in here... it's probably not necessary anymore
             long compLightValue = CLWorldHelper.computeLightValue(world, parX, parY, parZ, par1Enu);
-            long initialLight = compLightValue;
             long l1;
             int x1;
             int y1;
@@ -221,8 +226,8 @@ public class CLWorldHelper {
             // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
             // x/y/z are relative offsets
 
-            if ((initialLight&0x0000F) > (savedLightValue&0x0000F)) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
-                CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (initialLight << 18L));
+            if ((compLightValue&0x0000F) > (savedLightValue&0x0000F)) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
+                CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (compLightValue << 18L));
 
                 while (l < i1) {
                     l1 = CLWorldHelper.lightUpdateBlockList[l++]; //Get Entry at l, which starts at 0
@@ -233,7 +238,7 @@ public class CLWorldHelper {
                     edgeLightEntry = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk, and checking to see if it's been updated already... Consider storing values in a temp 3D array and applying it all at once
 
                     //if ((lightEntry&0x0000F) > (edgeEntryLight&0x0000F)) { // No splat overlap lightEntry's L value is brighter than the edgeLightEntry
-                    if ((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) { // Components in lightEntry's are brighter than in edgeLightEntry
+                    if ((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) { // Components in lightEntry are brighter than in edgeLightEntry
                         x2 = MathHelper.abs_int(x1 - parX);
                         y2 = MathHelper.abs_int(y1 - parY);
                         z2 = MathHelper.abs_int(z1 - parZ);
@@ -241,7 +246,7 @@ public class CLWorldHelper {
 
                         world.setLightValue(par1Enu, x1, y1, z1, lightEntry);
 
-                        if (manhattan_distance < ((initialLight&0x0000F) - 1)) { //Limits the splat size to the initial brightness value
+                        if (manhattan_distance < ((compLightValue&0x0000F) - 1)) { //Limits the splat size to the initial brightness value
                             for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
                                 xFace = x1 + Facing.offsetsXForSide[faceIndex];
                                 yFace = y1 + Facing.offsetsYForSide[faceIndex];
@@ -259,15 +264,20 @@ public class CLWorldHelper {
                                         //Get Saved light value from face
                                         edgeLightEntry = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
                                         ll = (lightEntry & 0x0000F) > (edgeLightEntry & 0x0000F) ? lightEntry & 0x0000F : edgeLightEntry & 0x0000F;
-                                        rl = (initialLight & 0x001E0) > (edgeLightEntry & 0x001E0) ? initialLight & 0x001E0 : edgeLightEntry & 0x001E0;
-                                        gl = (initialLight & 0x03C00) > (edgeLightEntry & 0x03C00) ? initialLight & 0x03C00 : edgeLightEntry & 0x03C00;
-                                        bl = (initialLight & 0x78000) > (edgeLightEntry & 0x78000) ? initialLight & 0x78000 : edgeLightEntry & 0x78000;
+                                        rl = (lightEntry & 0x001E0) > (edgeLightEntry & 0x001E0) ? lightEntry & 0x001E0 : edgeLightEntry & 0x001E0;
+                                        gl = (lightEntry & 0x03C00) > (edgeLightEntry & 0x03C00) ? lightEntry & 0x03C00 : edgeLightEntry & 0x03C00;
+                                        bl = (lightEntry & 0x78000) > (edgeLightEntry & 0x78000) ? lightEntry & 0x78000 : edgeLightEntry & 0x78000;
 
                                         ll = Math.max(0, ll - (opacity & 0x0000F)); // L shouldn't be going negative
-
-                                        //rl -= opacity & 0x001E0;
-                                        //gl -= opacity & 0x03C00;
-                                        //bl -= opacity & 0x78000;
+                                        /* TODO: Colored Opacity
+                                        rl -= opacity & 0x001E0;
+                                        gl -= opacity & 0x03C00;
+                                        bl -= opacity & 0x78000;
+                                        */
+                                        //Use vanilla light opacity for now
+                                        rl =  Math.max(0, rl - (opacity << 5));
+                                        gl =  Math.max(0, gl - (opacity << 10));
+                                        bl =  Math.max(0, bl - (opacity << 15));
 
                                         if (((ll > (edgeLightEntry & 0x0000F)) ||
                                              (rl > (edgeLightEntry & 0x001E0)) ||
@@ -283,10 +293,9 @@ public class CLWorldHelper {
                 }
                 //world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
             } else if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
-                //TODO: clear and backfill
+                //TODO: clear
                 world.setLightValue(par1Enu, parX, parY, parZ, 0);
-
-
+                //TODO:  backfill
             }
 
             world.theProfiler.endSection();
