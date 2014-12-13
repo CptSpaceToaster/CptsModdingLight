@@ -331,7 +331,7 @@ public class CLWorldHelper {
                                     //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
                                     if (((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) && (edgeLightEntry != 0) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) { // Components in lightEntry are brighter than in edgeLightEntry
                                         world.setLightValue(par1Enu, xFace, yFace, zFace, 0); // This kills the light
-                                        CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | (edgeLightEntry << 18L);
+                                        CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | ((long )edgeLightEntry << 18L);
                                     }
                                 }
                             }
