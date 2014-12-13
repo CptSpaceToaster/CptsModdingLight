@@ -275,9 +275,9 @@ public class CLWorldHelper {
                                         bl -= opacity & 0x78000;
                                         */
                                         //Use vanilla light opacity for now
-                                        rl =  Math.max(0, rl - (opacity << 5));
-                                        gl =  Math.max(0, gl - (opacity << 10));
-                                        bl =  Math.max(0, bl - (opacity << 15));
+                                        rl = Math.max(0, rl - (opacity << 5));
+                                        gl = Math.max(0, gl - (opacity << 10));
+                                        bl = Math.max(0, bl - (opacity << 15));
 
                                         if (((ll > (edgeLightEntry & 0x0000F)) ||
                                              (rl > (edgeLightEntry & 0x001E0)) ||
@@ -297,7 +297,7 @@ public class CLWorldHelper {
                 world.setLightValue(par1Enu, parX, parY, parZ, 0); // This kills the light
                 CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (savedLightValue << 18L));
 
-                while (l < i1) {
+                while (l <= (i1)) {
                     l1 = CLWorldHelper.lightUpdateBlockList[l++]; //Get Entry at l, which starts at 0
                     x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
                     y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
@@ -308,12 +308,6 @@ public class CLWorldHelper {
                     y2 = MathHelper.abs_int(y1 - parY);
                     z2 = MathHelper.abs_int(z1 - parZ);
                     manhattan_distance = x2 + y2 + z2;
-
-                    if (manhattan_distance == 8) {
-                        manhattan_distance = 8;
-                    }
-
-
 
                     if (manhattan_distance < ((savedLightValue & 0x0000F) - 1)) { //Limits the splat size to the initial brightness value
                         for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
@@ -344,6 +338,8 @@ public class CLWorldHelper {
                         }
                     }
                 }
+
+                l = 0;
 
 
 
