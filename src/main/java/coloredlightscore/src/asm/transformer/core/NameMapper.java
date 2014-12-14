@@ -81,6 +81,9 @@ public class NameMapper {
         registerSrgName("MD: net/minecraft/server/management/PlayerManager$PlayerInstance/sendToAllPlayersWatchingChunk (Lnet/minecraft/network/Packet;)V net/minecraft/server/management/PlayerManager$PlayerInstance/func_151251_a (Lnet/minecraft/network/Packet;)V");
         registerSrgName("FD: net/minecraft/server/management/PlayerManager$PlayerInstance/chunkLocation net/minecraft/server/management/PlayerManager$PlayerInstance/field_73264_c");
 
+        registerSrgName("CL: net/minecraft/client/renderer/entity/Render net/minecraft/client/renderer/entity/Render");
+        registerSrgName("MD: net/minecraft/client/renderer/entity/Render/renderEntityOnFire (Lnet/minecraft/entity/Entity;DDDF)V net/minecraft/client/renderer/entity/Render/func_76977_a (Lnet/minecraft/entity/Entity;DDDF)V");
+
         // RenderBlocks
         registerSrgName("CL: net/minecraft/client/renderer/RenderBlocks net/minecraft/client/renderer/RenderBlocks");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147751_a (Lnet/minecraft/block/Block;IIIFFF)Z");

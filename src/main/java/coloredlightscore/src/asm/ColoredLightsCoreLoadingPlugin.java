@@ -34,7 +34,8 @@ public class ColoredLightsCoreLoadingPlugin implements IFMLLoadingPlugin {
                               TransformChunk.class.getName(),
                               TransformOpenGlHelper.class.getName(),
                               TransformRendererLivingEntity.class.getName(),
-                              TransformFontRenderer.class.getName()};
+                              TransformFontRenderer.class.getName(),
+                              TransformRender.class.getName()};
     }
 
     @Override
