@@ -13,7 +13,8 @@ public class CLEntityRendererHelper {
     public static final float f = (1.0F/4096.0F);
     public static final float t = 8.0f;
     public static final float nightVisionMinBrightness = 0.7f;
-    
+    private static boolean ignoreNextEnableLightmap;
+
     public static void Initialize() {
     }
     
@@ -87,6 +88,10 @@ public class CLEntityRendererHelper {
     }
 
     public static void enableLightmap(EntityRenderer instance, double par1) {
+        if (ignoreNextEnableLightmap) {
+            ignoreNextEnableLightmap = false;
+            return;
+        }
         OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         GL11.glMatrixMode(GL11.GL_TEXTURE);
         GL11.glLoadIdentity();
@@ -111,5 +116,13 @@ public class CLEntityRendererHelper {
         glDisable(GL_TEXTURE_2D);
         
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+    }
+
+    public static void disableLightmap(EntityRenderer instance, double par1, boolean forRealz) {
+        if (!forRealz) {
+            ignoreNextEnableLightmap = true;
+            return;
+        }
+        disableLightmap(instance, par1);
     }
 }

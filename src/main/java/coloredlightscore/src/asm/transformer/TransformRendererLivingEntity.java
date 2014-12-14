@@ -1,11 +1,21 @@
 package coloredlightscore.src.asm.transformer;
 
 import coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin;
-import coloredlightscore.src.asm.transformer.core.HelperMethodTransformer;
 import coloredlightscore.src.asm.transformer.core.MethodTransformer;
 import coloredlightscore.src.asm.transformer.core.NameMapper;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.commons.LocalVariablesSorter;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FrameNode;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LocalVariableNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import java.util.ListIterator;
 
@@ -69,7 +79,8 @@ public class TransformRendererLivingEntity extends MethodTransformer {
             iterator.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/RenderBlocks", minecraftRB, "Lnet/minecraft/client/Minecraft;"));
             iterator.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/Minecraft", entityRenderer, "Lnet/minecraft/client/renderer/EntityRenderer;"));
             iterator.add(new InsnNode(Opcodes.DCONST_0));
-            iterator.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/client/renderer/EntityRenderer", disableLightmap, "(D)V"));
+            iterator.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "coloredlightscore/src/helper/CLTessellatorHelper", "isProgramInUse", "()Z"));
+            iterator.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "coloredlightscore/src/helper/CLEntityRendererHelper", "disableLightmap", "(Lnet/minecraft/client/renderer/EntityRenderer;DZ)V"));
 
             while (iterator.hasNext() && !hasFoundSecondLightmap) {
                 insn = iterator.next();
