@@ -12,6 +12,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class CLWorldHelper {
 
     public static long[] lightUpdateBlockList = new long[32768]; // Note... this is ridiculously huge...  something tells me that we can size this down safely  near 15000 or so
+    public static long[] sortedBlockList = new long[4991];
+    public static int[] manhattenShellIndexes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public static final int[] manhattanShellOffsets = {0, 1, 7, 25, 63, 129, 231, 377, 575, 833, 1159, 1561, 2047, 2625, 3303, 4089}; // Number of blocks in the diamond shell where index == manhattanDistance
 
     //Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC
     //Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
@@ -263,21 +266,11 @@ public class CLWorldHelper {
                                     if (opacity < 15) {
                                         //Get Saved light value from face
                                         edgeLightEntry = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
-                                        ll = (lightEntry & 0x0000F) > (edgeLightEntry & 0x0000F) ? lightEntry & 0x0000F : edgeLightEntry & 0x0000F;
-                                        rl = (lightEntry & 0x001E0) > (edgeLightEntry & 0x001E0) ? lightEntry & 0x001E0 : edgeLightEntry & 0x001E0;
-                                        gl = (lightEntry & 0x03C00) > (edgeLightEntry & 0x03C00) ? lightEntry & 0x03C00 : edgeLightEntry & 0x03C00;
-                                        bl = (lightEntry & 0x78000) > (edgeLightEntry & 0x78000) ? lightEntry & 0x78000 : edgeLightEntry & 0x78000;
-
-                                        ll = Math.max(0, ll - (opacity & 0x0000F)); // L shouldn't be going negative
-                                        /* TODO: Colored Opacity
-                                        rl -= opacity & 0x001E0;
-                                        gl -= opacity & 0x03C00;
-                                        bl -= opacity & 0x78000;
-                                        */
-                                        //Use vanilla light opacity for now
-                                        rl = Math.max(0, rl - (opacity << 5));
-                                        gl = Math.max(0, gl - (opacity << 10));
-                                        bl = Math.max(0, bl - (opacity << 15));
+                                        //TODO: Colored Opacity
+                                        ll = (lightEntry & 0x0000F) > (edgeLightEntry & 0x0000F) ? Math.max(0, (lightEntry & 0x0000F) - (opacity)) : edgeLightEntry & 0x0000F;
+                                        rl = (lightEntry & 0x001E0) > (edgeLightEntry & 0x001E0) ? Math.max(0, (lightEntry & 0x001E0) - (opacity << 5)) : edgeLightEntry & 0x001E0;
+                                        gl = (lightEntry & 0x03C00) > (edgeLightEntry & 0x03C00) ? Math.max(0, (lightEntry & 0x03C00) - (opacity << 10)) : edgeLightEntry & 0x03C00;
+                                        bl = (lightEntry & 0x78000) > (edgeLightEntry & 0x78000) ? Math.max(0, (lightEntry & 0x78000) - (opacity << 15)) : edgeLightEntry & 0x78000;
 
                                         if (((ll > (edgeLightEntry & 0x0000F)) ||
                                              (rl > (edgeLightEntry & 0x001E0)) ||
@@ -295,9 +288,10 @@ public class CLWorldHelper {
             } else if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
                 //TODO: clear
                 world.setLightValue(par1Enu, parX, parY, parZ, 0); // This kills the light
+                CLWorldHelper.sortedBlockList[(CLWorldHelper.manhattenShellIndexes[0]++) + CLWorldHelper.manhattanShellOffsets[0]] = 0x20820L;
                 CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (savedLightValue << 18L));
 
-                while (l <= (i1)) {
+                while (l <= i1) {
                     l1 = CLWorldHelper.lightUpdateBlockList[l++]; //Get Entry at l, which starts at 0
                     x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
                     y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
@@ -319,32 +313,110 @@ public class CLWorldHelper {
                             y2 = MathHelper.abs_int(yFace - parY);
                             z2 = MathHelper.abs_int(zFace - parZ);
 
-
-
-
                             if (x2 + y2 + z2 > manhattan_distance) { // Only look outwards as the cube expands out
                                 opacity = Math.max(1, world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace));
 
                                 if (opacity < 15) {
                                     //Get Saved light value from face
                                     edgeLightEntry = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
+
                                     //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
                                     if (((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) && (edgeLightEntry != 0) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) { // Components in lightEntry are brighter than in edgeLightEntry
-                                        world.setLightValue(par1Enu, xFace, yFace, zFace, 0); // This kills the light
-                                        CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | ((long )edgeLightEntry << 18L);
+                                        //On a per-channel basis, calculate each color component at the location, and compare it to the distance we're out.  Destroy if it matches
+                                        ll = (savedLightValue & 0x0000F) - (edgeLightEntry & 0x0000F) == (x2 + y2 + z2) ? 0 : (edgeLightEntry & 0x0000F);
+                                        rl = (savedLightValue & 0x001E0) - (edgeLightEntry & 0x001E0) == ((x2 + y2 + z2) << 5) ? 0 : (edgeLightEntry & 0x001E0);
+                                        gl = (savedLightValue & 0x03C00) - (edgeLightEntry & 0x03C00) == ((x2 + y2 + z2) << 10) ? 0 : (edgeLightEntry & 0x03C00);
+                                        bl = (savedLightValue & 0x78000) - (edgeLightEntry & 0x78000) == ((x2 + y2 + z2) << 15) ? 0 : (edgeLightEntry & 0x78000);
+
+                                        int test = (int)(ll | rl | gl | bl); //NOP TO BREAKPOINT
+
+                                        world.setLightValue(par1Enu, xFace, yFace, zFace, (int)(ll | rl | gl | bl)); // This kills the light
+
+                                        //CLWorldHelper.sortedBlockList[(CLWorldHelper.manhattenShellIndexes[x2 + y2 + z2]++) + CLWorldHelper.manhattanShellOffsets[x2 + y2 + z2]] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L); //sort entries into piles based on their manhattan distance
+                                        CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | ((long)edgeLightEntry << 18L); //this array keeps the algorithm going, don't touch
                                     }
                                 }
                             }
                         }
                     }
                 }
-
-                l = 0;
-
-
+                /*
+                l = (int)(savedLightValue&0x0000F); //NOP TO BREAKPOINT
 
                 //TODO:  backfill
+                for (l = (int)(savedLightValue&0x0000F); l >= 0; l--) {
+                    while (CLWorldHelper.manhattenShellIndexes[l] > 0) {
+                        l1 = CLWorldHelper.sortedBlockList[(--CLWorldHelper.manhattenShellIndexes[l]) + CLWorldHelper.manhattanShellOffsets[l]]; //Get furthest light entries
+                        x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
+                        y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
+                        z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
+
+                        compLightValue = CLWorldHelper.computeLightValue(world, x1, y1, z1, par1Enu);
+
+                        if (compLightValue > 0) {
+                            world.setLightValue(par1Enu, x1, y1, z1, (int) compLightValue);
+                        }
+                    }
+                }
+                */
+
+                /*
+                while (l > 1) {
+
+                    l1 = CLWorldHelper.lightUpdateBlockList[--l]; //Get Entry at l, which starts at wherever i1 ended...
+                    x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
+                    y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
+                    z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
+                    //lightEntry = ((int) ((l1 >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)  Not needed for now
+                    //TODO: Optimize computeLightValue() to take manhatten distance into account, and only look away from the current position
+                    //TODO: This is called up to 4091 times (one for each block bothered in the destruction routine above, but it the edges is black, it doesn't need to travel farther in...
+                    compLightValue = CLWorldHelper.computeLightValue(world, x1, y1, z1, par1Enu);
+
+                    if (compLightValue > 0) { // oop... there should be light here and there isn't!
+                        world.setLightValue(par1Enu, x1, y1, z1, (int)compLightValue); //TODO: This is a redundent call... mostly...
+                        CLWorldHelper.lightUpdateBlockList[i1++] = ((long)x1 + 32L) | (((long)y1 + 32L) << 6L) | (((long)z1 + 32L) << 12L) | (compLightValue << 18L);
+                    }
+                }
+
+                while (j1 < i1) {
+                    l1 = CLWorldHelper.lightUpdateBlockList[j1++]; //Get Entry at j1, which starts at wherever i1 ended...
+                    x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
+                    y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
+                    z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
+                    //lightEntry = ((int) ((l1 >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)  Not needed for now
+
+                    x2 = MathHelper.abs_int(x1 - parX);
+                    y2 = MathHelper.abs_int(y1 - parY);
+                    z2 = MathHelper.abs_int(z1 - parZ);
+                    manhattan_distance = x2 + y2 + z2;
+
+                    //world.setLightValue(par1Enu, x1, y1, z1, lightEntry); //TODO: This is a redundent call... mostly...
+
+                    for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
+                        xFace = x1 + Facing.offsetsXForSide[faceIndex];
+                        yFace = y1 + Facing.offsetsYForSide[faceIndex];
+                        zFace = z1 + Facing.offsetsZForSide[faceIndex];
+
+                        x2 = MathHelper.abs_int(xFace - parX);
+                        y2 = MathHelper.abs_int(yFace - parY);
+                        z2 = MathHelper.abs_int(zFace - parZ);
+
+                        if (x2 + y2 + z2 < manhattan_distance) { // Only look inwards as the cube shrinks back in
+                            if (world.getSavedLightValue(par1Enu, xFace, yFace, zFace) == 0) {
+
+                                compLightValue = CLWorldHelper.computeLightValue(world, xFace, yFace, zFace, par1Enu);
+
+                                if (compLightValue > 0) { // oop... there should be light here and there isn't!
+                                    world.setLightValue(par1Enu, xFace, yFace, zFace, (int) compLightValue);
+                                    CLWorldHelper.lightUpdateBlockList[i1++] = ((long) xFace - (long) parX + 32L) | (((long) yFace - (long) parY + 32L) << 6L) | (((long) zFace - (long) parZ + 32L) << 12L) | (compLightValue << 18L);
+                                }
+                            }
+                        }
+                    }
+                }
+                */
             }
+
 
             world.theProfiler.endSection();
             world.theProfiler.startSection("checkedPosition < toCheckCount");
