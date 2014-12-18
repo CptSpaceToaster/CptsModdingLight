@@ -4,6 +4,7 @@ import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 import java.util.Arrays;
 
 import cpw.mods.fml.common.*;
+import cpw.mods.fml.relauncher.*;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import coloredlightscore.fmlevents.ChunkDataEventHandler;
@@ -61,7 +62,9 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
 
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt) {
-        CLEntityRendererHelper.Initialize();
+        if (evt.getSide() == Side.CLIENT) {
+            CLEntityRendererHelper.Initialize();
+        }
 
         // Inject RGB values into vanilla blocks		
         CLApi.setBlockColorRGB(Blocks.lava, 15, 11, 10);
