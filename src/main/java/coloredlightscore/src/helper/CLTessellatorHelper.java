@@ -22,6 +22,7 @@ public class CLTessellatorHelper {
     private static IntBuffer cachedLightCoord;
     private static int cachedShader;
     private static boolean hasFlaggedOpenglError;
+    private static int lastGLErrorCode = GL11.GL_NO_ERROR;
 
     static {
         cachedLightCoord = ByteBuffer.allocateDirect(16).asIntBuffer();
@@ -143,9 +144,10 @@ public class CLTessellatorHelper {
     }
 
     public static void setTextureCoord(FloatBuffer buffer) {
-        if (GL11.glGetError() != GL11.GL_NO_ERROR) {
+        lastGLErrorCode = GL11.glGetError();
+        if (lastGLErrorCode != GL11.GL_NO_ERROR) {
             if (!hasFlaggedOpenglError) {
-                CLLog.warn("Render error entering CLTessellatorHelper.setTextureCoord()! Trying to proceed anyway...");
+                CLLog.warn("Render error entering CLTessellatorHelper.setTextureCoord()! Error Code: " + lastGLErrorCode + ". Trying to proceed anyway...");
                 hasFlaggedOpenglError = true;
             }
         }
