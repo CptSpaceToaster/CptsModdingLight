@@ -41,7 +41,8 @@ public class CLTessellatorHelper {
     public static void setupShaders() {
         int vertShader = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
         int fragShader = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
-        GL20.glShaderSource(vertShader, "uniform sampler2D Texture;" +
+        GL20.glShaderSource(vertShader, "#version 120\n" +
+                "uniform sampler2D Texture;" +
                 "uniform sampler2D LightMap;" +
                 "uniform vec4 u_LightCoord;" +
                 "attribute vec2 TexCoord;" +
@@ -59,7 +60,8 @@ public class CLTessellatorHelper {
                         "p_LightCoord = u_LightCoord;" +
                     "}" +
                 "}");
-        GL20.glShaderSource(fragShader, "uniform sampler2D Texture;" +
+        GL20.glShaderSource(fragShader, "#version 120\n" +
+                "uniform sampler2D Texture;" +
                 "uniform sampler2D LightMap;" +
                 "varying vec2 p_TexCoord;" +
                 "varying vec4 p_Color;" +
