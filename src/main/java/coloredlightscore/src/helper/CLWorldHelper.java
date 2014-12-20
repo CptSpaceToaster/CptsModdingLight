@@ -60,7 +60,7 @@ public class CLWorldHelper {
                 x &= 0xf;
                 z &= 0xf;
 
-                //FMLLog.info("NEWTEST %s,%s:%s", cx, cz, Integer.toBinaryString(chunk.getBlockLightValue(0, 0, 0, 15)));
+                //CLLog.info("NEWTEST {},{}:{}", cx, cz, Integer.toBinaryString(chunk.getBlockLightValue(0, 0, 0, 15)));
 
                 return chunk.getBlockLightValue(x, y, z, world.skylightSubtracted);
             }

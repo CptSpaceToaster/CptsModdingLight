@@ -1,5 +1,7 @@
 package coloredlightscore.src.asm.transformer;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import java.util.ListIterator;
 
 import coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin;
@@ -14,8 +16,6 @@ import coloredlightscore.src.asm.transformer.core.NameMapper;
 
 import com.google.common.base.Throwables;
 
-import cpw.mods.fml.common.FMLLog;
-
 public class TransformTessellator extends HelperMethodTransformer {
     String unObfBrightness = "hasBrightness";
     String obfBrightness = "field_78414_p"; //It could also be field_147580_e (trianglecube36: I checked this it is field_78414_p)
@@ -23,6 +23,7 @@ public class TransformTessellator extends HelperMethodTransformer {
     String obfTexture = "field_78400_o";
     String unObfByteBuffer = "byteBuffer";
     String obfByteBuffer = "field_78394_d";
+    boolean byteBufferIsStatic = false;
 
     // These methods will be replaced by statics in CLTessellatorHelper
     String methodsToReplace[] = { "addVertex (DDD)V" };
@@ -36,20 +37,20 @@ public class TransformTessellator extends HelperMethodTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
         if (bytes != null && transforms(transformedName)) {
-            FMLLog.info("Class %s is a candidate for transforming", transformedName);
+            CLLog.info("Class {} is a candidate for transforming", transformedName);
 
             try {
                 ClassNode clazz = ASMUtils.getClassNode(bytes);
 
                 if (transform(clazz, transformedName)) {
-                    FMLLog.info("Finished Transforming class " + transformedName);
+                    CLLog.info("Finished Transforming class " + transformedName);
                     ClassWriter writer = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
                     clazz.accept(writer);
                     bytes = writer.toByteArray();
                 } else
-                    FMLLog.warning("Did not transform %s", transformedName);
+                    CLLog.warn("Did not transform {}", transformedName);
             } catch (Exception e) {
-                FMLLog.severe("Exception during transformation of class " + transformedName);
+                CLLog.error("Exception during transformation of class " + transformedName);
                 e.printStackTrace();
                 Throwables.propagate(e);
             }
@@ -59,6 +60,20 @@ public class TransformTessellator extends HelperMethodTransformer {
 
     @Override
     public boolean preTransformClass(ClassNode classNode) {
+        //Some mods like to wholesale replace classes; unfortunately, not all fields survive this transformation
+        boolean hasRawBufferSize = false;
+        String byteBuffer = ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT ? unObfByteBuffer : obfByteBuffer;
+        for (FieldNode field : classNode.fields) {
+            if (field.name.equals("rawBufferSize") && field.desc.equals("I")) {
+                hasRawBufferSize = true;
+            }
+            if (field.name.equals(byteBuffer)) {
+                byteBufferIsStatic = (field.access & Opcodes.ACC_STATIC) != 0;
+            }
+        }
+        if (!hasRawBufferSize) {
+            classNode.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "rawBufferSize", "I", null, null));
+        }
         //Don't mind this.  Just cramming a getter and setter into the Tessellator for later use
         //getter
         MethodNode getter = new MethodNode(Opcodes.ACC_PUBLIC, "getRawBufferSize", "()I", null, null);
@@ -90,7 +105,6 @@ public class TransformTessellator extends HelperMethodTransformer {
     @Override
     protected boolean transforms(ClassNode classNode, MethodNode methodNode) {
         for (String name : methodsToReplace) {
-            //System.out.println(" : " + (methodNode.name + " " + methodNode.desc));
             if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
                 return true;
         }
@@ -159,11 +173,21 @@ public class TransformTessellator extends HelperMethodTransformer {
                 if (!transformedEnableLightmap) {
                     insn = it.next(); // IFEQ L17 (or similar)
                     String byteBuffer = ColoredLightsCoreLoadingPlugin.MCP_ENVIRONMENT ? unObfByteBuffer : obfByteBuffer;
-                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    if (byteBufferIsStatic) {
+                        it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    } else {
+                        it.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        it.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    }
                     it.add(new IntInsnNode(Opcodes.BIPUSH, 28));
                     it.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/nio/ByteBuffer", "position", "(I)Ljava/nio/Buffer;"));
                     it.add(new InsnNode(Opcodes.POP));
-                    it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    if (byteBufferIsStatic) {
+                        it.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    } else {
+                        it.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                        it.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/Tessellator", byteBuffer, "Ljava/nio/ByteBuffer;"));
+                    }
                     it.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "coloredlightscore/src/helper/CLTessellatorHelper", "setLightCoord", "(Ljava/nio/ByteBuffer;)V"));
                     transformedEnableLightmap = true;
                 } else {

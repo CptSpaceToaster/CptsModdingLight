@@ -1,11 +1,12 @@
 package coloredlightscore.server;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
-import cpw.mods.fml.common.FMLLog;
 
 public class PlayerManagerHelper {
 
@@ -21,7 +22,7 @@ public class PlayerManagerHelper {
      * @param chunkLocation
      */
     public static void sendToPlayerWatchingChunk(EntityPlayerMP player, ChunkCoordIntPair chunkLocation) {
-        //FMLLog.info("Server just sent chunk (%s, %s) to player %s", chunkLocation.chunkXPos, chunkLocation.chunkZPos, player.getDisplayName());
+        //CLLog.info("Server just sent chunk ({}, {}) to player {}", chunkLocation.chunkXPos, chunkLocation.chunkZPos, player.getDisplayName());
 
         // TODO: Load chunk from server
         //sendChunkRGBDataToPlayer(player, chunkLocation.chunkXPos, chunkLocation.chunkZPos, null);
@@ -29,7 +30,7 @@ public class PlayerManagerHelper {
 
     public static void entityPlayerMP_onUpdate(ArrayList<Chunk> chunks, EntityPlayerMP player) {
         for (Chunk c : chunks) {
-            //FMLLog.info("S26: Server just sent chunk (%s, %s) to player %s", c.xPosition, c.zPosition, player.getDisplayName());
+            //CLLog.info("S26: Server just sent chunk ({}, {}) to player {}", c.xPosition, c.zPosition, player.getDisplayName());
 
             sendChunkRGBDataToPlayer(player, c.xPosition, c.zPosition, c);
         }
@@ -42,7 +43,7 @@ public class PlayerManagerHelper {
             //chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(chunkX, chunkZ);
 
             if (chunk == null) {
-                FMLLog.warning("Could not load chunk (%s, %s) for RGB color data!", chunkX, chunkZ);
+                CLLog.warn("Could not load chunk ({}, {}) for RGB color data!", chunkX, chunkZ);
                 return;
             }
         }

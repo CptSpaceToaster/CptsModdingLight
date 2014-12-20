@@ -1,13 +1,13 @@
 package coloredlightscore.src.asm.transformer.core;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
 import com.google.common.base.Throwables;
-
-import cpw.mods.fml.common.FMLLog;
 
 /**
  * The SelectiveTransformer.class was based on code written by diesieben07, 
@@ -23,19 +23,19 @@ public abstract class SelectiveTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
         if (bytes != null && transforms(transformedName)) {
-            FMLLog.info("Class %s is a candidate for transforming", transformedName);
+            CLLog.info("Class {} is a candidate for transforming", transformedName);
 
             try {
                 ClassNode clazz = ASMUtils.getClassNode(bytes);
                 if (transform(clazz, transformedName)) {
-                    FMLLog.info("Finished Transforming class " + transformedName);
+                    CLLog.info("Finished Transforming class " + transformedName);
                     ClassWriter writer = new ExtendedClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
                     clazz.accept(writer);
                     bytes = writer.toByteArray();
                 } else
-                    FMLLog.warning("Did not transform %s", transformedName);
+                    CLLog.warn("Did not transform {}", transformedName);
             } catch (Exception e) {
-                FMLLog.severe("Exception during transformation of class " + transformedName);
+                CLLog.error("Exception during transformation of class " + transformedName);
                 e.printStackTrace();
                 Throwables.propagate(e);
             }

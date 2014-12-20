@@ -1,10 +1,11 @@
 package coloredlightscore.network;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import coloredlightscore.server.ChunkStorageRGB;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
@@ -44,9 +45,9 @@ public class PacketHandler {
             //Think this is right 
             INSTANCE.sendTo(packet, player);
 
-            //FMLLog.info("SendChunkColorData()  Sent for %s, %s", chunk.xPosition, chunk.zPosition);
+            //CLLog.info("SendChunkColorData()  Sent for {}, {}", chunk.xPosition, chunk.zPosition);
         } catch (Exception e) {
-            FMLLog.getLogger().warn("SendChunkColorData()  ", e);
+            CLLog.warn("SendChunkColorData()  ", e);
         }
 
     }

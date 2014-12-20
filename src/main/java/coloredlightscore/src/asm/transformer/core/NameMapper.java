@@ -1,11 +1,11 @@
 package coloredlightscore.src.asm.transformer.core;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
 import java.util.HashMap;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.MethodNode;
-
-import cpw.mods.fml.common.FMLLog;
 
 //TODO: trianglecube36: less string operations, more support for more types
 //EPIC IDEA: 1. create a dummy function that calls EVERYTHING that we need to override/modify with asm
@@ -67,6 +67,11 @@ public class NameMapper {
         registerSrgName("MD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/getExtBlocklightValue (III)I net/minecraft/world/chunk/storage/ExtendedBlockStorage/func_76674_d (III)I");
         registerSrgName("FD: net/minecraft/world/chunk/storage/ExtendedBlockStorage/blockLSBArray net/minecraft/world/chunk/storage/ExtendedBlockStorage/field_76680_d");
 
+        // FontRenderer
+        registerSrgName("CL: net/minecraft/client/gui/FontRenderer net/minecraft/client/gui/FontRenderer");
+        registerSrgName("MD: net/minecraft/client/gui/FontRenderer/renderDefaultChar (IZ)F net/minecraft/client/gui/FontRenderer/func_78266_a (IZ)F");
+        registerSrgName("MD: net/minecraft/client/gui/FontRenderer/renderUnicodeChar (CZ)F net/minecraft/client/gui/FontRenderer/func_78277_a (CZ)F");
+
         // OpenGlHelper
         registerSrgName("CL: net/minecraft/client/renderer/OpenGlHelper net/minecraft/client/renderer/OpenGlHelper");
         registerSrgName("MD: net/minecraft/client/renderer/OpenGlHelper/setLightmapTextureCoords (IFF)V net/minecraft/client/renderer/OpenGlHelper/func_77475_a (IFF)V");
@@ -76,11 +81,15 @@ public class NameMapper {
         registerSrgName("MD: net/minecraft/server/management/PlayerManager$PlayerInstance/sendToAllPlayersWatchingChunk (Lnet/minecraft/network/Packet;)V net/minecraft/server/management/PlayerManager$PlayerInstance/func_151251_a (Lnet/minecraft/network/Packet;)V");
         registerSrgName("FD: net/minecraft/server/management/PlayerManager$PlayerInstance/chunkLocation net/minecraft/server/management/PlayerManager$PlayerInstance/field_73264_c");
 
+        registerSrgName("CL: net/minecraft/client/renderer/entity/Render net/minecraft/client/renderer/entity/Render");
+        registerSrgName("MD: net/minecraft/client/renderer/entity/Render/renderEntityOnFire (Lnet/minecraft/entity/Entity;DDDF)V net/minecraft/client/renderer/entity/Render/func_76977_a (Lnet/minecraft/entity/Entity;DDDF)V");
+
         // RenderBlocks
         registerSrgName("CL: net/minecraft/client/renderer/RenderBlocks net/minecraft/client/renderer/RenderBlocks");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusion (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147751_a (Lnet/minecraft/block/Block;IIIFFF)Z");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithAmbientOcclusionPartial (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147808_b (Lnet/minecraft/block/Block;IIIFFF)Z");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderStandardBlockWithColorMultiplier (Lnet/minecraft/block/Block;IIIFFF)Z net/minecraft/client/renderer/RenderBlocks/func_147736_d (Lnet/minecraft/block/Block;IIIFFF)Z");
+        registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/renderBlockLiquid (Lnet/minecraft/block/Block;III)Z net/minecraft/client/renderer/RenderBlocks/func_147721_p (Lnet/minecraft/block/Block;III)Z");
         registerSrgName("MD: net/minecraft/client/renderer/RenderBlocks/getAoBrightness (IIII)I net/minecraft/client/renderer/RenderBlocks/func_147778_a (IIII)I");
 
         // RendererLivingEntity
@@ -119,7 +128,7 @@ public class NameMapper {
         //This should be set in the plugin, where we have this information!
         //MCP_ENVIRONMENT = (this.getClass().getClassLoader().getResource("net/minecraft/world/World.class") != null);
 
-        FMLLog.info("ColoredLightsCore: MCP_ENVIRONMENT=%s", MCP_ENVIRONMENT);
+        //CLLog.info("ColoredLightsCore: MCP_ENVIRONMENT={}", MCP_ENVIRONMENT);
     }
 
     public boolean isObfuscated() {
@@ -128,7 +137,7 @@ public class NameMapper {
 
     public void setObfuscated(boolean obfuscated) {
         MCP_ENVIRONMENT = !obfuscated;
-        FMLLog.info("ColoredLightsCore: MCP_ENVIRONMENT=%s", MCP_ENVIRONMENT);
+        CLLog.debug("ColoredLightsCore: MCP_ENVIRONMENT={}", MCP_ENVIRONMENT);
     }
 
     /**
@@ -235,7 +244,7 @@ public class NameMapper {
         String methodSig = internalizeName(methodNode.desc);
 
         // BROKE: methodName=/a methodSig=(Lahu;)Z srgNameObf=amm/a srgSigObf=(Lahu;)Z
-        //FMLLog.info("MethodIs: methodName=" + methodName + " methodSig=" + methodSig + " srgNameObf=" + srg.objectNameObfuscated + " srgSigObf=" + srg.objectSignatureObfuscated);
+        //CLLog.info("MethodIs: methodName=" + methodName + " methodSig=" + methodSig + " srgNameObf=" + srg.objectNameObfuscated + " srgSigObf=" + srg.objectSignatureObfuscated);
 
         if (srg != null) {
             // srg.objectName = net/path/to/class/myMethodName
@@ -272,7 +281,7 @@ public class NameMapper {
 
                 className = descriptor.substring(i + 1, j);
 
-                //FMLLog.info("getMethodDescriptorObfuscated - Found class %s", className);
+                //CLLog.info("getMethodDescriptorObfuscated - Found class {}", className);
 
                 result = result + "L" + getClassName(className) + ";";
 

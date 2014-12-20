@@ -1,11 +1,13 @@
 package coloredlightscore.server;
 
+import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import cpw.mods.fml.common.FMLLog;
 
 /**
  * Methods for loading/saving RGB data to/from world save
@@ -27,7 +29,7 @@ public class ChunkStorageRGB {
         if (rawdata.length == 0) {
             return new NibbleArray(4096, 4);
         } else if (rawdata.length < 2048) {
-            FMLLog.warning("checkedGetNibbleArray: rawdata is too short: %s, expected 2048", rawdata.length);
+            CLLog.warn("checkedGetNibbleArray: rawdata is too short: {}, expected 2048", rawdata.length);
             return new NibbleArray(4096, 4);
         } else
             return new NibbleArray(rawdata, 4);
@@ -67,10 +69,10 @@ public class ChunkStorageRGB {
 
                     foundColorData = true;
 
-                    //FMLLog.info("Loaded nibble array for %s %s %s", chunk.xPosition, chunk.zPosition, k);
+                    //CLLog.info("Loaded nibble array for {} {} {}", chunk.xPosition, chunk.zPosition, k);
                 }
                 //else
-                //FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
+                //CLLog.warning("NO NIBBLE ARRAY EXISTS FOR {} {} {}", chunk.xPosition, chunk.zPosition, k);
             }
         }
 
@@ -93,7 +95,7 @@ public class ChunkStorageRGB {
         for (int k = 0; k < arraySize; ++k) {
             if (chunkStorageArrays[k] != null) {
                 if (chunkStorageArrays[k].getYLocation() != yLocation[k])
-                    FMLLog.severe("EBS DATA OUT OF SEQUENCE. Expected %s, got %s", chunkStorageArrays[k].getYLocation(), yLocation[k]);
+                    CLLog.error("EBS DATA OUT OF SEQUENCE. Expected {}, got {}", chunkStorageArrays[k].getYLocation(), yLocation[k]);
 
                 rColorArray = redColorData[k];
                 gColorArray = greenColorData[k];
@@ -107,10 +109,10 @@ public class ChunkStorageRGB {
 
                 foundColorData = true;
 
-                //FMLLog.info("Loaded nibble array for %s %s %s", chunk.xPosition, chunk.zPosition, k);
+                //CLLog.info("Loaded nibble array for {} {} {}", chunk.xPosition, chunk.zPosition, k);
             }
             //else
-            //FMLLog.warning("NO NIBBLE ARRAY EXISTS FOR %s %s %s", chunk.xPosition, chunk.zPosition, k);
+            //CLLog.warning("NO NIBBLE ARRAY EXISTS FOR {} {} {}", chunk.xPosition, chunk.zPosition, k);
         }
 
         return foundColorData;
@@ -140,9 +142,22 @@ public class ChunkStorageRGB {
                 gColorArray = chunkStorageArrays[k].getGreenColorArray();
                 bColorArray = chunkStorageArrays[k].getBlueColorArray();
 
+
+                //Cauldron adds .getValueArray() instead of .data
+                if (FMLCommonHandler.instance().getModName().contains("cauldron")) {
+                    nbtYCompound.setByteArray("RedColorArray", rColorArray.getValueArray());
+                    nbtYCompound.setByteArray("GreenColorArray", gColorArray.getValueArray());
+                    nbtYCompound.setByteArray("BlueColorArray", bColorArray.getValueArray());
+                } else {
+                    nbtYCompound.setByteArray("RedColorArray", rColorArray.data);
+                    nbtYCompound.setByteArray("GreenColorArray", gColorArray.data);
+                    nbtYCompound.setByteArray("BlueColorArray", bColorArray.data);
+                }
+                /*
                 nbtYCompound.setByteArray("RedColorArray", rColorArray.data);
                 nbtYCompound.setByteArray("GreenColorArray", gColorArray.data);
                 nbtYCompound.setByteArray("BlueColorArray", bColorArray.data);
+                */
             }
         }
 
