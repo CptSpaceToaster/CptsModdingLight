@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.*;
 
 public class CLTessellatorHelper {
-
     //private static int nativeBufferSize = 0x200000;
     public static int texCoordParam;
     public static int lightCoordParam;
@@ -23,6 +22,7 @@ public class CLTessellatorHelper {
     private static int cachedShader;
     private static boolean hasFlaggedOpenglError;
     private static int lastGLErrorCode = GL11.GL_NO_ERROR;
+    private static String infoStr;
 
     static {
         cachedLightCoord = ByteBuffer.allocateDirect(16).asIntBuffer();
@@ -104,10 +104,25 @@ public class CLTessellatorHelper {
                                       "texel1111 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * fract(p_LightCoord.w);" +
                     "gl_FragColor = texture2D(Texture, p_TexCoord) * p_Color * lightColor;" +
                 "}");
+
         GL20.glCompileShader(vertShader);
-        GL20.glCompileShader(fragShader);
+        infoStr = GL20.glGetShaderInfoLog(vertShader, 2000);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            CLLog.error("Error compiling shaders");
+            CLLog.error("Compiling vertShader");
+            CLLog.error(infoStr);
+        } else if (infoStr != "") {
+            CLLog.info("Compiling vertShader");
+            CLLog.info(infoStr);
+        }
+
+        GL20.glCompileShader(fragShader);
+        infoStr = GL20.glGetShaderInfoLog(fragShader, 2000);
+        if (GL11.glGetError() != GL11.GL_NO_ERROR) {
+            CLLog.error("Compiling fragShader");
+            CLLog.error(infoStr);
+        } else if (infoStr != "") {
+            CLLog.info("Compiling fragShader");
+            CLLog.info(infoStr);
         }
 
         clProgram = GL20.glCreateProgram();
@@ -118,10 +133,14 @@ public class CLTessellatorHelper {
         }
 
         GL20.glLinkProgram(clProgram);
+        infoStr = GL20.glGetProgramInfoLog(clProgram, 2000);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            CLLog.error("Error linking program");
+            CLLog.error("Linking Program");
+            CLLog.error(infoStr);
+        } else if (infoStr != "") {
+            CLLog.info("Linking Program");
+            CLLog.info(infoStr);
         }
-
         GL20.glDetachShader(clProgram, vertShader);
         GL20.glDetachShader(clProgram, fragShader);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
@@ -130,11 +149,10 @@ public class CLTessellatorHelper {
 
         GL20.glDeleteShader(vertShader);
         GL20.glDeleteShader(fragShader);
-
-        GL20.glValidateProgram(clProgram);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
-            CLLog.error("Error validating program");
+            CLLog.error("Error deleting shaders (WHAT DID YOU DO?!?)");
         }
+
         texCoordParam = GL20.glGetAttribLocation(clProgram, "TexCoord");
         lightCoordParam = GL20.glGetAttribLocation(clProgram, "LightCoord");
         lightCoordUniform = GL20.glGetUniformLocation(clProgram, "u_LightCoord");
