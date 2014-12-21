@@ -136,9 +136,15 @@ public class CLTessellatorHelper {
         lightCoordParam = GL20.glGetAttribLocation(clProgram, "LightCoord");
         lightCoordUniform = GL20.glGetUniformLocation(clProgram, "u_LightCoord");
 
-        CLLog.info("texCoordParam Loc: " + texCoordParam);
-        CLLog.info("lightCoordParam Loc: " + lightCoordParam);
-        CLLog.info("lightCoordUniform Loc: " + lightCoordUniform);
+        if (texCoordParam <= 0) {
+            CLLog.error("texCoordParam attribute location returned: " + texCoordParam);
+        }
+        if (lightCoordParam <= 0) {
+            CLLog.error("lightCoordParam attribute location returned: " + lightCoordParam);
+        }
+        if (lightCoordUniform <= 0) {
+            CLLog.error("lightCoordUniform attribute location returned: " + lightCoordUniform);
+        }
     }
 
     public static void enableShader() {
