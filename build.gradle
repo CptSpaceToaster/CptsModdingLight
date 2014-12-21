@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.2.3"
+version = "1.2.3.01"
 group= "coloredlightscore"
 archivesBaseName = "ColoredLightsCore"
 

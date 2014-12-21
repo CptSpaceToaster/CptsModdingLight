@@ -44,7 +44,7 @@ public class CLTessellatorHelper {
         GL20.glShaderSource(vertShader, "#version 120\n" +
                 "uniform sampler2D Texture;" +
                 "uniform sampler2D LightMap;" +
-                "uniform vec4 u_LightCoord;" +
+                "uniform ivec4 u_LightCoord;" +
                 "attribute vec2 TexCoord;" +
                 "varying vec2 p_TexCoord;" +
                 "attribute vec4 LightCoord;" +
@@ -54,7 +54,7 @@ public class CLTessellatorHelper {
                     "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;" +
                     "p_TexCoord = TexCoord;" +
                     "p_Color = gl_Color;" +
-                    "if (u_LightCoord == vec4(0.0, 0.0, 0.0, 0.0)) {" +
+                    "if (u_LightCoord == ivec4(0, 0, 0, 0)) {" +
                         "p_LightCoord = LightCoord;" +
                     "} else {" +
                         "p_LightCoord = u_LightCoord;" +
@@ -66,7 +66,7 @@ public class CLTessellatorHelper {
                 "varying vec2 p_TexCoord;" +
                 "varying vec4 p_Color;" +
                 "varying vec4 p_LightCoord;" +
-                "uniform vec4 u_LightCoord;" +
+                "uniform ivec4 u_LightCoord;" +
                 "void main() {" +
                     "float scale = 256;" +
                     "float bias = 0.5;" +
