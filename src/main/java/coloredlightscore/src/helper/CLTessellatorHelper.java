@@ -128,6 +128,9 @@ public class CLTessellatorHelper {
             CLLog.error("Error detaching shaders");
         }
 
+        GL20.glDeleteShader(vertShader);
+        GL20.glDeleteShader(fragShader);
+
         GL20.glValidateProgram(clProgram);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
             CLLog.error("Error validating program");
