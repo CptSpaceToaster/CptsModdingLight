@@ -2,6 +2,10 @@ package coloredlightscore.src.helper;
 
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -41,76 +45,22 @@ public class CLTessellatorHelper {
     public static void setupShaders() {
         int vertShader = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
         int fragShader = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
-        GL20.glShaderSource(vertShader, "#version 120\n" +
-                "uniform sampler2D Texture;" +
-                "uniform sampler2D LightMap;" +
-                "uniform ivec4 u_LightCoord;" +
-                "attribute vec2 TexCoord;" +
-                "varying vec2 p_TexCoord;" +
-                "attribute vec4 LightCoord;" +
-                "varying vec4 p_LightCoord;" +
-                "varying vec4 p_Color;" +
-                "void main() {" +
-                    "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;" +
-                    "p_TexCoord = TexCoord;" +
-                    "p_Color = gl_Color;" +
-                    "if (u_LightCoord == ivec4(0, 0, 0, 0)) {" +
-                        "p_LightCoord = LightCoord;" +
-                    "} else {" +
-                        "p_LightCoord = u_LightCoord;" +
-                    "}" +
-                "}");
-        GL20.glShaderSource(fragShader, "#version 120\n" +
-                "uniform sampler2D Texture;" +
-                "uniform sampler2D LightMap;" +
-                "varying vec2 p_TexCoord;" +
-                "varying vec4 p_Color;" +
-                "varying vec4 p_LightCoord;" +
-                "uniform ivec4 u_LightCoord;" +
-                "void main() {" +
-                    "float scale = 256;" +
-                    "float bias = 0.5;" +
-                    "vec4 texel0000 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel0001 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel0010 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel0011 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel0100 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel0101 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel0110 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel0111 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel1000 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel1001 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel1010 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel1011 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel1100 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel1101 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel1110 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));" +
-                    "vec4 texel1111 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));" +
-                    "vec4 lightColor = texel0000 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +" +
-                                      "texel0001 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +" +
-                                      "texel0010 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +" +
-                                      "texel0011 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * fract(p_LightCoord.w) +" +
-                                      "texel0100 * (1 - fract(p_LightCoord.x)) * fract(p_LightCoord.y) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +" +
-                                      "texel0101 * (1 - fract(p_LightCoord.x)) * fract(p_LightCoord.y) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +" +
-                                      "texel0110 * (1 - fract(p_LightCoord.x)) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +" +
-                                      "texel0111 * (1 - fract(p_LightCoord.x)) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * fract(p_LightCoord.w) +" +
-                                      "texel1000 * fract(p_LightCoord.x) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +" +
-                                      "texel1001 * fract(p_LightCoord.x) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +" +
-                                      "texel1010 * fract(p_LightCoord.x) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +" +
-                                      "texel1011 * fract(p_LightCoord.x) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * fract(p_LightCoord.w) +" +
-                                      "texel1100 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +" +
-                                      "texel1101 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +" +
-                                      "texel1110 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +" +
-                                      "texel1111 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * fract(p_LightCoord.w);" +
-                    "gl_FragColor = texture2D(Texture, p_TexCoord) * p_Color * lightColor;" +
-                "}");
+
+        String vertSource = readResourceAsString("/shaders/lightOverlay.vert");
+        String fragSource = readResourceAsString("/shaders/lightOverlay.frag");
+
+        GL20.glShaderSource(vertShader, vertSource);
+        GL20.glShaderSource(fragShader, fragSource);
+
 
         GL20.glCompileShader(vertShader);
         infoStr = GL20.glGetShaderInfoLog(vertShader, 2000);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
+            CLLog.error(vertSource);
             CLLog.error("Compiling vertShader");
             CLLog.error(infoStr);
         } else if (infoStr != "") {
+            CLLog.info(vertSource);
             CLLog.info("Compiling vertShader");
             CLLog.info(infoStr);
         }
@@ -118,9 +68,11 @@ public class CLTessellatorHelper {
         GL20.glCompileShader(fragShader);
         infoStr = GL20.glGetShaderInfoLog(fragShader, 2000);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {
+            CLLog.error(fragSource);
             CLLog.error("Compiling fragShader");
             CLLog.error(infoStr);
         } else if (infoStr != "") {
+            CLLog.info(fragSource);
             CLLog.info("Compiling fragShader");
             CLLog.info(infoStr);
         }
@@ -166,6 +118,22 @@ public class CLTessellatorHelper {
         if (lightCoordUniform <= 0) {
             CLLog.error("lightCoordUniform attribute location returned: " + lightCoordUniform);
         }
+    }
+
+    private static String readResourceAsString(String path) {
+        InputStream is = CLTessellatorHelper.class.getResourceAsStream(path);
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        StringBuilder source = new StringBuilder();
+        String line;
+        try {
+            while ((line = br.readLine()) != null) {
+                    source.append(line + "\n");
+                }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return source.toString();
     }
 
     public static void enableShader() {
