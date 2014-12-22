@@ -255,11 +255,11 @@ public class CLWorldHelper {
                                 yFace = y1 + Facing.offsetsYForSide[faceIndex];
                                 zFace = z1 + Facing.offsetsZForSide[faceIndex];
 
-                                x2 = MathHelper.abs_int(xFace - parX);
-                                y2 = MathHelper.abs_int(yFace - parY);
-                                z2 = MathHelper.abs_int(zFace - parZ);
+                                //x2 = MathHelper.abs_int(xFace - parX);
+                                //y2 = MathHelper.abs_int(yFace - parY);
+                                //z2 = MathHelper.abs_int(zFace - parZ);
 
-                                if (x2 + y2 + z2 > manhattan_distance) { // Only look outwards as the cube expands out
+                                //if (x2 + y2 + z2 > manhattan_distance) { // Only look outwards as the cube expands out
 
                                     opacity = Math.max(1, world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace));
 
@@ -279,7 +279,7 @@ public class CLWorldHelper {
                                             CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | ((ll | rl | gl | bl) << 18L);
                                         }
                                     }
-                                }
+                                //}
                             }
                         }
                     }
@@ -313,7 +313,7 @@ public class CLWorldHelper {
                             y2 = MathHelper.abs_int(yFace - parY);
                             z2 = MathHelper.abs_int(zFace - parZ);
 
-                            if (x2 + y2 + z2 > manhattan_distance) { // Only look outwards as the cube expands out
+                            //if (x2 + y2 + z2 > manhattan_distance) { // Only look outwards as the cube expands out
                                 opacity = Math.max(1, world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace));
 
                                 if (opacity < 15) {
@@ -323,10 +323,10 @@ public class CLWorldHelper {
                                     //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
                                     if (((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) && (edgeLightEntry != 0) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) { // Components in lightEntry are brighter than in edgeLightEntry
                                         //On a per-channel basis, calculate each color component at the location, and compare it to the distance we're out.  Destroy if it matches
-                                        ll = (savedLightValue & 0x0000F) - (edgeLightEntry & 0x0000F) == (x2 + y2 + z2) ? 0 : (edgeLightEntry & 0x0000F);
-                                        rl = (savedLightValue & 0x001E0) - (edgeLightEntry & 0x001E0) == ((x2 + y2 + z2) << 5) ? 0 : (edgeLightEntry & 0x001E0);
-                                        gl = (savedLightValue & 0x03C00) - (edgeLightEntry & 0x03C00) == ((x2 + y2 + z2) << 10) ? 0 : (edgeLightEntry & 0x03C00);
-                                        bl = (savedLightValue & 0x78000) - (edgeLightEntry & 0x78000) == ((x2 + y2 + z2) << 15) ? 0 : (edgeLightEntry & 0x78000);
+                                        ll = (savedLightValue & 0x0000F) - (edgeLightEntry & 0x0000F) >= (x2 + y2 + z2) ? 0 : (edgeLightEntry & 0x0000F);
+                                        rl = (savedLightValue & 0x001E0) - (edgeLightEntry & 0x001E0) >= ((x2 + y2 + z2) << 5) ? 0 : (edgeLightEntry & 0x001E0);
+                                        gl = (savedLightValue & 0x03C00) - (edgeLightEntry & 0x03C00) >= ((x2 + y2 + z2) << 10) ? 0 : (edgeLightEntry & 0x03C00);
+                                        bl = (savedLightValue & 0x78000) - (edgeLightEntry & 0x78000) >= ((x2 + y2 + z2) << 15) ? 0 : (edgeLightEntry & 0x78000);
 
                                         int test = (int)(ll | rl | gl | bl); //NOP TO BREAKPOINT
 
@@ -336,7 +336,7 @@ public class CLWorldHelper {
                                         CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | ((long)edgeLightEntry << 18L); //this array keeps the algorithm going, don't touch
                                     }
                                 }
-                            }
+                            //}
                         }
                     }
                 }
