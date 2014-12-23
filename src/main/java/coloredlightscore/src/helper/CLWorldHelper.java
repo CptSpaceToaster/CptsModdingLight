@@ -287,7 +287,11 @@ public class CLWorldHelper {
                 //world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
             } else if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
                 //TODO: clear
-                world.setLightValue(par1Enu, parX, parY, parZ, 0); // This kills the light
+                for(int i=0; i<16; i++)  {
+                    manhattenShellIndexes[i] = 0; // Clean up the index array
+                }
+
+                world.setLightValue(par1Enu, parX, parY, parZ, (int)compLightValue); // This kills the light - Does this need to be set to compLightValue
                 CLWorldHelper.sortedBlockList[(CLWorldHelper.manhattenShellIndexes[0]++) + CLWorldHelper.manhattanShellOffsets[0]] = 0x20820L;
                 CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (savedLightValue << 18L));
 
@@ -320,17 +324,23 @@ public class CLWorldHelper {
                                     //Get Saved light value from face
                                     edgeLightEntry = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
 
-                                    //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
-                                    if (((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) && (edgeLightEntry != 0) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) { // Components in lightEntry are brighter than in edgeLightEntry
-                                        //On a per-channel basis, calculate each color component at the location, and compare it to the distance we're out.  Destroy if it matches
-                                        ll = (savedLightValue & 0x0000F) - (edgeLightEntry & 0x0000F) >= (x2 + y2 + z2) ? 0 : (edgeLightEntry & 0x0000F);
-                                        rl = (savedLightValue & 0x001E0) - (edgeLightEntry & 0x001E0) >= ((x2 + y2 + z2) << 5) ? 0 : (edgeLightEntry & 0x001E0);
-                                        gl = (savedLightValue & 0x03C00) - (edgeLightEntry & 0x03C00) >= ((x2 + y2 + z2) << 10) ? 0 : (edgeLightEntry & 0x03C00);
-                                        bl = (savedLightValue & 0x78000) - (edgeLightEntry & 0x78000) >= ((x2 + y2 + z2) << 15) ? 0 : (edgeLightEntry & 0x78000);
+                                    //   |-------------maximum theoretical light value--------------|    |----saved light value----|
+                                    ll = (Math.max((savedLightValue & 0x0000F) - ((x2 + y2 + z2)), 0) >= (edgeLightEntry & 0x0000F)) ? 0 : (edgeLightEntry & 0x0000F);
+                                    rl = (Math.max((savedLightValue & 0x001E0) - ((x2 + y2 + z2) << 5), 0) >= (edgeLightEntry & 0x001E0)) ? 0 : (edgeLightEntry & 0x001E0);;
+                                    gl = (Math.max((savedLightValue & 0x03C00) - ((x2 + y2 + z2) << 10), 0) >= (edgeLightEntry & 0x03C00)) ? 0 : (edgeLightEntry & 0x03C00);;
+                                    bl = (Math.max((savedLightValue & 0x78000) - ((x2 + y2 + z2) << 15), 0) >= (edgeLightEntry & 0x78000)) ? 0 : (edgeLightEntry & 0x78000);;
 
-                                        int test = (int)(ll | rl | gl | bl); //NOP TO BREAKPOINT
+                                    //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
+                                    //if (((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) && (edgeLightEntry != 0) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) { // Components in lightEntry are brighter than in edgeLightEntry
+                                    if (edgeLightEntry != (ll | rl | gl | bl)) {
+                                        //On a per-channel basis, calculate each color component at the location, and compare it to the distance we're out.  Destroy if it matches
+
+                                        //if (i1 == 4000) {
+                                        //    int test = (int) (ll | rl | gl | bl); //NOP TO BREAKPOINT
+                                        //}
 
                                         world.setLightValue(par1Enu, xFace, yFace, zFace, (int)(ll | rl | gl | bl)); // This kills the light
+                                        CLWorldHelper.manhattenShellIndexes[x2 + y2 + z2]++;
 
                                         //CLWorldHelper.sortedBlockList[(CLWorldHelper.manhattenShellIndexes[x2 + y2 + z2]++) + CLWorldHelper.manhattanShellOffsets[x2 + y2 + z2]] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L); //sort entries into piles based on their manhattan distance
                                         CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | ((long)edgeLightEntry << 18L); //this array keeps the algorithm going, don't touch
@@ -340,6 +350,9 @@ public class CLWorldHelper {
                         }
                     }
                 }
+
+
+
                 /*
                 l = (int)(savedLightValue&0x0000F); //NOP TO BREAKPOINT
 
