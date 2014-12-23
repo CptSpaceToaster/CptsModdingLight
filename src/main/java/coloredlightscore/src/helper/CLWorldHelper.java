@@ -201,8 +201,7 @@ public class CLWorldHelper {
             return false;
         } else {
             int l = 0;
-            int i1 = 0; // filler1
-            int i2 = 0; // filler2
+            int i1 = 0;
             world.theProfiler.startSection("getBrightness");
             long savedLightValue = world.getSavedLightValue(par1Enu, parX, parY, parZ);
             long compLightValue = CLWorldHelper.computeLightValue(world, parX, parY, parZ, par1Enu);
@@ -250,7 +249,7 @@ public class CLWorldHelper {
                         manhattan_distance = x2 + y2 + z2;
 
                         world.setLightValue(par1Enu, x1, y1, z1, lightEntry);
-                        lightBackfillNeeded[x2][y2][z2] = false;
+                        CLWorldHelper.lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = false;
 
                         if (manhattan_distance < ((compLightValue&0x0000F) - 1)) { //Limits the splat size to the initial brightness value
                             for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
@@ -282,8 +281,8 @@ public class CLWorldHelper {
                 }
                 //world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
             } else if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
-                for(int i=0; i<lightBackfillIndexes.length; i++)  {
-                    lightBackfillIndexes[i] = 0; // Clean up the index array
+                for(int i=0; i<CLWorldHelper.lightBackfillIndexes.length; i++)  {
+                    CLWorldHelper.lightBackfillIndexes[i] = 0; // Clean up the index array
                 }
 
                 world.setLightValue(par1Enu, parX, parY, parZ, (int)compLightValue); // This kills the light - Does this need to be set to compLightValue
@@ -317,7 +316,7 @@ public class CLWorldHelper {
                                 //Get Saved light value from face
                                 edgeLightEntry = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
 
-                                //   |-------------maximum theoretical light value--------------|    |----saved light value----|
+                                //   |-------------maximum theoretical light value-------------|    |----saved light value----|
                                 ll = (Math.max((lightEntry & 0x0000F) - ((x2 + y2 + z2)), 0) >= (edgeLightEntry & 0x0000F)) ? 0 : (edgeLightEntry & 0x0000F);
                                 rl = (Math.max((lightEntry & 0x001E0) - ((x2 + y2 + z2) << 5), 0) >= (edgeLightEntry & 0x001E0)) ? 0 : (edgeLightEntry & 0x001E0);
                                 gl = (Math.max((lightEntry & 0x03C00) - ((x2 + y2 + z2) << 10), 0) >= (edgeLightEntry & 0x03C00)) ? 0 : (edgeLightEntry & 0x03C00);
@@ -343,7 +342,6 @@ public class CLWorldHelper {
                                 if (edgeLightEntry != (ll | rl | gl | bl)) {
 
                                     if (sortValue != 0) {
-
                                         if (ll == sortValue) {
                                             lightEntry &= ~(0x0000F);
                                         }
@@ -356,34 +354,40 @@ public class CLWorldHelper {
                                         if ((bl>>15) == sortValue) {
                                             lightEntry &= ~(0x78000);
                                         }
-                                        lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = true;
-                                        lightBackfillBlockList[sortValue-1][CLWorldHelper.lightBackfillIndexes[sortValue-1]++] = (x1 - parX + 32) | ((y1 - parY + 32) << 6) | ((z1 - parZ + 32) << 12); //record coordinates for backfill
+                                        CLWorldHelper.lightBackfillNeeded[xFace - parX + 14][yFace - parY + 14][zFace - parZ + 14] = true;
+                                        CLWorldHelper.lightBackfillBlockList[sortValue-1][CLWorldHelper.lightBackfillIndexes[sortValue-1]++] = (xFace - parX + 32) | ((yFace - parY + 32) << 6) | ((zFace - parZ + 32) << 12); //record coordinates for backfill
                                     }
 
                                     world.setLightValue(par1Enu, xFace, yFace, zFace, (int) (ll | rl | gl | bl)); // This kills the light
                                     CLWorldHelper.lightUpdateBlockList[i1++] = ((long) xFace - (long) parX + 32L) | (((long) yFace - (long) parY + 32L) << 6L) | (((long) zFace - (long) parZ + 32L) << 12L) | ((long) lightEntry << 18L); //this array keeps the algorithm going, don't touch
                                 } else {
                                     if (sortValue != 0) {
-                                        lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = true;
-                                        lightBackfillBlockList[sortValue-1][CLWorldHelper.lightBackfillIndexes[sortValue-1]++] = (x1 - parX + 32) | ((y1 - parY + 32) << 6) | ((z1 - parZ + 32) << 12); //record coordinates for backfill
+                                        CLWorldHelper.lightBackfillNeeded[xFace - parX + 14][yFace - parY + 14][zFace - parZ + 14] = true;
+                                        CLWorldHelper.lightBackfillBlockList[sortValue-1][CLWorldHelper.lightBackfillIndexes[sortValue-1]++] = (xFace - parX + 32) | ((yFace - parY + 32) << 6) | ((zFace - parZ + 32) << 12); //record coordinates for backfill
                                     }
                                 }
                             }
                         }
+                    } else {
+                        if ((manhattan_distance == ((savedLightValue & 0x0000F) - 1)) && (!CLWorldHelper.lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14])) {
+                            CLWorldHelper.lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = true;
+                            CLWorldHelper.lightBackfillBlockList[0][CLWorldHelper.lightBackfillIndexes[0]++] = (x1 - parX + 32) | ((y1 - parY + 32) << 6) | ((z1 - parZ + 32) << 12); //record coordinates for backfill
+                        }
                     }
                 }
 
-
+                nop();
                 //TODO:  backfill
 
-                for (l=lightBackfillIndexes.length - 1; l >= 0; l--) {
-                    if (lightBackfillIndexes[l]>0) {
-                        i1 = lightBackfillBlockList[l][--lightBackfillIndexes[l]];
+                for (l=CLWorldHelper.lightBackfillIndexes.length - 1; l >= 0; l--) {
+                    while (CLWorldHelper.lightBackfillIndexes[l] > 0) {
+                        i1 = CLWorldHelper.lightBackfillBlockList[l][--CLWorldHelper.lightBackfillIndexes[l]];
                         x1 = (i1 & 0x3f) - 32; //Get Entry X coord
                         y1 = (i1 >> 6 & 0x3f) - 32; //Get Entry Y coord
                         z1 = (i1 >> 12 & 0x3f) - 32; //Get Entry Z coord
 
-                        if (lightBackfillNeeded[x1 + 14][y1 + 14][z1 + 14]) {
+                        if (CLWorldHelper.lightBackfillNeeded[x1 + 14][y1 + 14][z1 + 14]) {
+                            world.setLightValue(par1Enu, x1 + parX, y1 + parY, z1 + parZ, 0); // Forcibly clear the light, so the backfill routine notices it's missing, and fixes it!
                             updateLightByType(world, par1Enu, x1 + parX, y1 + parY, z1 + parZ); ///oooooOOOOoooo spoooky!
                         }
                     }
