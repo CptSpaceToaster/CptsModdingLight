@@ -357,7 +357,7 @@ public class CLWorldHelper {
                                             lightEntry &= ~(0x78000);
                                         }
                                         lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = true;
-                                        lightBackfillBlockList[sortValue-1][CLWorldHelper.lightBackfillIndexes[sortValue-1]++] = (xFace - parX + 32) | ((yFace - parY + 32) << 6) | ((zFace - parZ + 32) << 12); //record coordinates for backfill
+                                        lightBackfillBlockList[sortValue-1][CLWorldHelper.lightBackfillIndexes[sortValue-1]++] = (x1 - parX + 32) | ((y1 - parY + 32) << 6) | ((z1 - parZ + 32) << 12); //record coordinates for backfill
                                     }
 
                                     world.setLightValue(par1Enu, xFace, yFace, zFace, (int) (ll | rl | gl | bl)); // This kills the light
@@ -365,7 +365,7 @@ public class CLWorldHelper {
                                 } else {
                                     if (sortValue != 0) {
                                         lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = true;
-                                        lightBackfillBlockList[sortValue-1][CLWorldHelper.lightBackfillIndexes[sortValue-1]++] = (xFace - parX + 32) | ((yFace - parY + 32) << 6) | ((zFace - parZ + 32) << 12); //record coordinates for backfill
+                                        lightBackfillBlockList[sortValue-1][CLWorldHelper.lightBackfillIndexes[sortValue-1]++] = (x1 - parX + 32) | ((y1 - parY + 32) << 6) | ((z1 - parZ + 32) << 12); //record coordinates for backfill
                                     }
                                 }
                             }
@@ -379,12 +379,12 @@ public class CLWorldHelper {
                 for (l=lightBackfillIndexes.length - 1; l >= 0; l--) {
                     if (lightBackfillIndexes[l]>0) {
                         i1 = lightBackfillBlockList[l][--lightBackfillIndexes[l]];
-                        x1 = (i1 & 0x3f) - 32 + 14; //Get Entry X coord
-                        y1 = (i1 >> 6 & 0x3f) - 32 + 14; //Get Entry Y coord
-                        z1 = (i1 >> 12 & 0x3f) - 32 + 14; //Get Entry Z coord
+                        x1 = (i1 & 0x3f) - 32; //Get Entry X coord
+                        y1 = (i1 >> 6 & 0x3f) - 32; //Get Entry Y coord
+                        z1 = (i1 >> 12 & 0x3f) - 32; //Get Entry Z coord
 
-                        if (lightBackfillNeeded[x1][y1][z1]) {
-                            updateLightByType(world, par1Enu, x1 - 14 + parX, y1 - 14 + parY, z1 - 14 + parZ); ///oooooOOOOoooo spoooky!
+                        if (lightBackfillNeeded[x1 + 14][y1 + 14][z1 + 14]) {
+                            updateLightByType(world, par1Enu, x1 + parX, y1 + parY, z1 + parZ); ///oooooOOOOoooo spoooky!
                         }
                     }
                 }
