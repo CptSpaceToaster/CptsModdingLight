@@ -5,34 +5,42 @@ uniform sampler2D LightMap;
 varying vec2 p_TexCoord;
 varying vec4 p_Color;
 varying vec4 p_LightCoord;
-uniform vec4 u_LightCoord;
+uniform ivec4 u_LightCoord;
 
 void main() {
     float scale = 256;
     float bias = 0.5;
-
-    // required state:
-    // LightMap GL_TEXTURE_MIN_FILTER GL_LINEAR
-    //	    GL_TEXTURE_MAG_FILTER GL_LINEAR
-    //	    GL_TEXTURE_WRAP_S	  GL_CLAMP_TO_EDGE
-    //	    GL_TEXTURE_WRAP_T	  GL_CLAMP_TO_EDGE
-
-    // exploit separability of *-linear interpolation:
-
-    // hardware does the bilinear interpolation for the zw channels
-    vec4 texel00 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 0)) * 16 + p_LightCoord.zw) / scale);
-    vec4 texel01 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(0, 1)) * 16 + p_LightCoord.zw) / scale);
-    vec4 texel10 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 0)) * 16 + p_LightCoord.zw) / scale);
-    vec4 texel11 = texture2D(LightMap, (floor(p_LightCoord.xy + vec2(1, 1)) * 16 + p_LightCoord.zw) / scale);
-
-    vec2 factors = fract(p_LightCoord.xy);
-
-    // do the y interpolation steps ourselves
-    vec4 y0 = mix(texel00, texel01, factors.y);
-    vec4 y1 = mix(texel10, texel11, factors.y);
-
-    // finally do the x step between the y results
-    vec4 lightColor = mix(y0, y1, factors.x);
-
+    vec4 texel0000 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));
+    vec4 texel0001 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));
+    vec4 texel0010 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));
+    vec4 texel0011 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));
+    vec4 texel0100 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));
+    vec4 texel0101 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));
+    vec4 texel0110 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));
+    vec4 texel0111 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(0, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));
+    vec4 texel1000 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));
+    vec4 texel1001 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));
+    vec4 texel1010 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));
+    vec4 texel1011 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 0)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));
+    vec4 texel1100 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 0)) + bias)) / scale, 0, 1));
+    vec4 texel1101 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(0, 1)) + bias)) / scale, 0, 1));
+    vec4 texel1110 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 0)) + bias)) / scale, 0, 1));
+    vec4 texel1111 = texture2D(LightMap, clamp((floor(p_LightCoord.xy + vec2(1, 1)) * 16 + (floor(p_LightCoord.zw + vec2(1, 1)) + bias)) / scale, 0, 1));
+    vec4 lightColor =   texel0000 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +
+                        texel0001 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +
+                        texel0010 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +
+                        texel0011 * (1 - fract(p_LightCoord.x)) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * fract(p_LightCoord.w) +
+                        texel0100 * (1 - fract(p_LightCoord.x)) * fract(p_LightCoord.y) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +
+                        texel0101 * (1 - fract(p_LightCoord.x)) * fract(p_LightCoord.y) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +
+                        texel0110 * (1 - fract(p_LightCoord.x)) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +
+                        texel0111 * (1 - fract(p_LightCoord.x)) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * fract(p_LightCoord.w) +
+                        texel1000 * fract(p_LightCoord.x) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +
+                        texel1001 * fract(p_LightCoord.x) * (1 - fract(p_LightCoord.y)) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +
+                        texel1010 * fract(p_LightCoord.x) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +
+                        texel1011 * fract(p_LightCoord.x) * (1 - fract(p_LightCoord.y)) * fract(p_LightCoord.z) * fract(p_LightCoord.w) +
+                        texel1100 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * (1 - fract(p_LightCoord.z)) * (1 - fract(p_LightCoord.w)) +
+                        texel1101 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * (1 - fract(p_LightCoord.z)) * fract(p_LightCoord.w) +
+                        texel1110 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * (1 - fract(p_LightCoord.w)) +
+                        texel1111 * fract(p_LightCoord.x) * fract(p_LightCoord.y) * fract(p_LightCoord.z) * fract(p_LightCoord.w);
     gl_FragColor = texture2D(Texture, p_TexCoord) * p_Color * lightColor;
 }

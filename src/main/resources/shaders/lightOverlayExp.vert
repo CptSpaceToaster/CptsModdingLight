@@ -2,7 +2,7 @@
 
 uniform sampler2D Texture;
 uniform sampler2D LightMap;
-uniform ivec4 u_LightCoord;
+uniform vec4 u_LightCoord;
 attribute vec2 TexCoord;
 varying vec2 p_TexCoord;
 attribute vec4 LightCoord;
@@ -13,7 +13,7 @@ void main() {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     p_TexCoord = TexCoord;
     p_Color = gl_Color;
-    if (u_LightCoord == ivec4(0, 0, 0, 0)) {
+    if (u_LightCoord == vec4(0.0, 0.0, 0.0, 0.0)) {
         p_LightCoord = LightCoord;
     } else {
         p_LightCoord = u_LightCoord;
