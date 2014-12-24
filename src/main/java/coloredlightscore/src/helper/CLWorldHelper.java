@@ -203,6 +203,9 @@ public class CLWorldHelper {
             int l = 0;
             int i1 = 0;
             world.theProfiler.startSection("getBrightness");
+            world.theProfiler.endSection();
+            world.theProfiler.startSection("checkedPosition < toCheckCount");
+            world.theProfiler.endSection();
             long savedLightValue = world.getSavedLightValue(par1Enu, parX, parY, parZ);
             long compLightValue = CLWorldHelper.computeLightValue(world, parX, parY, parZ, par1Enu);
             long l1;
@@ -231,6 +234,7 @@ public class CLWorldHelper {
             // x/y/z are relative offsets
 
             if ((compLightValue&0x0000F) > (savedLightValue&0x0000F)) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
+                //Light Splat/Spread
                 CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (compLightValue << 18L));
 
                 while (l < i1) {
@@ -241,7 +245,6 @@ public class CLWorldHelper {
                     lightEntry = ((int) ((l1 >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
                     edgeLightEntry = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
 
-                    //if ((lightEntry&0x0000F) > (edgeEntryLight&0x0000F)) { // No splat overlap lightEntry's L value is brighter than the edgeLightEntry
                     if ((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) { // Components in lightEntry are brighter than in edgeLightEntry
                         x2 = MathHelper.abs_int(x1 - parX);
                         y2 = MathHelper.abs_int(y1 - parY);
@@ -279,13 +282,14 @@ public class CLWorldHelper {
                         }
                     }
                 }
-                //world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
             } else if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
+                //Light Destruction
+
                 for(int i=0; i<CLWorldHelper.lightBackfillIndexes.length; i++)  {
                     CLWorldHelper.lightBackfillIndexes[i] = 0; // Clean up the index array
                 }
 
-                world.setLightValue(par1Enu, parX, parY, parZ, (int)compLightValue); // This kills the light - Does this need to be set to compLightValue
+                world.setLightValue(par1Enu, parX, parY, parZ, (int)compLightValue); // This kills the light
                 CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (savedLightValue << 18L));
 
                 while (l <= i1) {
@@ -338,7 +342,6 @@ public class CLWorldHelper {
                                 }
 
                                 //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
-                                //if (((((0x100000 | edgeLightEntry) - lightEntry) & 0x84210) > 0) && (edgeLightEntry != 0) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) { // Components in lightEntry are brighter than in edgeLightEntry
                                 if (edgeLightEntry != (ll | rl | gl | bl)) {
 
                                     if (sortValue != 0) {
@@ -377,8 +380,8 @@ public class CLWorldHelper {
                 }
 
                 nop();
-                //TODO:  backfill
 
+                //Backfill
                 for (l=CLWorldHelper.lightBackfillIndexes.length - 1; l >= 0; l--) {
                     while (CLWorldHelper.lightBackfillIndexes[l] > 0) {
                         i1 = CLWorldHelper.lightBackfillBlockList[l][--CLWorldHelper.lightBackfillIndexes[l]];
@@ -392,94 +395,7 @@ public class CLWorldHelper {
                         }
                     }
                 }
-
-
-                /*
-                l = (int)(savedLightValue&0x0000F); //NOP TO BREAKPOINT
-
-                //while (queue has things) {
-                // get point from queue,
-                   //check if point needs update using lightBackfillNeeded[][][]
-                       //Call updateLightByType(World world, EnumSkyBlock par1Enu, int parX, int parY, int parZ) at that location
-                //}
-
-                for (l = (int)(savedLightValue&0x0000F); l >= 0; l--) {
-                    while (CLWorldHelper.lightBackfillIndexes[l] > 0) {
-                        l1 = CLWorldHelper.sortedBlockList[(--CLWorldHelper.lightBackfillIndexes[l]) + CLWorldHelper.manhattanShellOffsets[l]]; //Get furthest light entries
-                        x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
-                        y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
-                        z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
-
-                        compLightValue = CLWorldHelper.computeLightValue(world, x1, y1, z1, par1Enu);
-
-                        if (compLightValue > 0) {
-                            world.setLightValue(par1Enu, x1, y1, z1, (int) compLightValue);
-                        }
-                    }
-                }
-                */
-
-                /*
-                while (l > 1) {
-
-                    l1 = CLWorldHelper.lightUpdateBlockList[--l]; //Get Entry at l, which starts at wherever i1 ended...
-                    x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
-                    y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
-                    z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
-                    //lightEntry = ((int) ((l1 >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)  Not needed for now
-                    //TODO: Optimize computeLightValue() to take manhatten distance into account, and only look away from the current position
-                    //TODO: This is called up to 4091 times (one for each block bothered in the destruction routine above, but it the edges is black, it doesn't need to travel farther in...
-                    compLightValue = CLWorldHelper.computeLightValue(world, x1, y1, z1, par1Enu);
-
-                    if (compLightValue > 0) { // oop... there should be light here and there isn't!
-                        world.setLightValue(par1Enu, x1, y1, z1, (int)compLightValue); //TODO: This is a redundent call... mostly...
-                        CLWorldHelper.lightUpdateBlockList[i1++] = ((long)x1 + 32L) | (((long)y1 + 32L) << 6L) | (((long)z1 + 32L) << 12L) | (compLightValue << 18L);
-                    }
-                }
-
-                while (j1 < i1) {
-                    l1 = CLWorldHelper.lightUpdateBlockList[j1++]; //Get Entry at j1, which starts at wherever i1 ended...
-                    x1 = ((int) (l1 & 0x3f) - 32 + parX); //Get Entry X coord
-                    y1 = ((int) (l1 >> 6 & 0x3f) - 32 + parY); //Get Entry Y coord
-                    z1 = ((int) (l1 >> 12 & 0x3f) - 32 + parZ); //Get Entry Z coord
-                    //lightEntry = ((int) ((l1 >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)  Not needed for now
-
-                    x2 = MathHelper.abs_int(x1 - parX);
-                    y2 = MathHelper.abs_int(y1 - parY);
-                    z2 = MathHelper.abs_int(z1 - parZ);
-                    manhattan_distance = x2 + y2 + z2;
-
-                    //world.setLightValue(par1Enu, x1, y1, z1, lightEntry); //TODO: This is a redundent call... mostly...
-
-                    for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
-                        xFace = x1 + Facing.offsetsXForSide[faceIndex];
-                        yFace = y1 + Facing.offsetsYForSide[faceIndex];
-                        zFace = z1 + Facing.offsetsZForSide[faceIndex];
-
-                        x2 = MathHelper.abs_int(xFace - parX);
-                        y2 = MathHelper.abs_int(yFace - parY);
-                        z2 = MathHelper.abs_int(zFace - parZ);
-
-                        if (x2 + y2 + z2 < manhattan_distance) { // Only look inwards as the cube shrinks back in
-                            if (world.getSavedLightValue(par1Enu, xFace, yFace, zFace) == 0) {
-
-                                compLightValue = CLWorldHelper.computeLightValue(world, xFace, yFace, zFace, par1Enu);
-
-                                if (compLightValue > 0) { // oop... there should be light here and there isn't!
-                                    world.setLightValue(par1Enu, xFace, yFace, zFace, (int) compLightValue);
-                                    CLWorldHelper.lightUpdateBlockList[i1++] = ((long) xFace - (long) parX + 32L) | (((long) yFace - (long) parY + 32L) << 6L) | (((long) zFace - (long) parZ + 32L) << 12L) | (compLightValue << 18L);
-                                }
-                            }
-                        }
-                    }
-                }
-                */
             }
-
-
-            world.theProfiler.endSection();
-            world.theProfiler.startSection("checkedPosition < toCheckCount");
-            world.theProfiler.endSection();
             return true;
         }
     }
@@ -488,146 +404,4 @@ public class CLWorldHelper {
     private static void nop() {
         return;
     }
-
-    /*public static boolean updateLightByType(World world, EnumSkyBlock par1Enu, int x, int y, int z) {
-        if (!world.doChunksNearChunkExist(x, y, z, 17)) {
-            return false;
-        } else {
-            int l = 0;
-            int i1 = 0;
-            world.theProfiler.startSection("getBrightness");
-            int savedLightValue = world.getSavedLightValue(par1Enu, x, y, z);
-            int compLightValue = CLWorldHelper.computeLightValue(world, x, y, z, par1Enu);
-            long l1;
-            int x1;
-            int y1;
-            int z1;
-            int lightEntry;
-            int expectedEntryLight;
-            int x2;
-            int z2;
-            int y2;
-
-            // Format of lightUpdateBlockList word:
-            // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
-            // x/y/z are relative offsets
-
-            if (compLightValue > savedLightValue) {
-                // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
-                // push               100000100000100000  (0,0,0):black
-                CLWorldHelper.lightUpdateBlockList[i1++] = 0x20820; //Save Entry at pos 0 (move i1)
-            } else if (compLightValue < savedLightValue) {
-                // Do nothing here, let the computed light take over
-                // push (0,0,0):savedLightVale
-                CLWorldHelper.lightUpdateBlockList[i1++] = 0x20820 | savedLightValue << 18; //Save Entry at pos 0 with its Light Value (move i1)
-
-                while (l < i1) {
-                    l1 = CLWorldHelper.lightUpdateBlockList[l++]; //Get Entry at l, which starts at 0
-                    x1 = ((int) (l1 & 0x3f) - 32 + x); //Get Entry X coord
-                    y1 = ((int) (l1 >> 6 & 0x3f) - 32 + y); //Get Entry Y coord
-                    z1 = ((int) (l1 >> 12 & 0x3f) - 32 + z); //Get Entry Z coord
-                    lightEntry = (int) (l1 >>> 18) & 0x7bdef; //Get Entry's saved Light (0111 1011 1101 1110 1111)
-                    expectedEntryLight = world.getSavedLightValue(par1Enu, x1, y1, z1); //Get the saved Light Level at the entry's location
-
-                    if ((expectedEntryLight & 0xf) >= (lightEntry & 0xf)) // if we pushed black earlier....
-                    {
-                        world.setLightValue(par1Enu, x1, y1, z1, 0);
-
-                        if (lightEntry > 0) {
-                            x2 = MathHelper.abs_int(x1 - x);
-                            y2 = MathHelper.abs_int(y1 - y);
-                            z2 = MathHelper.abs_int(z1 - z);
-
-                            if (x2 + y2 + z2 < 17) {
-                                for (int faceIndex = 0; faceIndex < 6; ++faceIndex) {
-                                    int xFace = x1 + Facing.offsetsXForSide[faceIndex];
-                                    int yFace = y1 + Facing.offsetsYForSide[faceIndex];
-                                    int zFace = z1 + Facing.offsetsZForSide[faceIndex];
-
-                                    int blockOpacity = world.getBlock(xFace, yFace, zFace).getLightOpacity(world, xFace, yFace, zFace);
-                                    int opacity = Math.max(1, blockOpacity);
-                                    //Get Saved light value from face
-                                    expectedEntryLight = world.getSavedLightValue(par1Enu, xFace, yFace, zFace);
-                                    int ll = lightEntry & 0xf;
-                                    int rl = lightEntry & 0x1e0;
-                                    int gl = lightEntry & 0x3c00;
-                                    int bl = lightEntry & 0x78000;
-
-                                    ll -= opacity;
-                                    rl -= 0x20 * opacity;
-                                    gl -= 0x400 * opacity;
-                                    bl -= 0x8000 * opacity;
-
-                                    if (((expectedEntryLight & 0xf) >= ll) && (i1 < CLWorldHelper.lightUpdateBlockList.length))
-                                        CLWorldHelper.lightUpdateBlockList[i1++] = xFace - x + 32 | (yFace - y + 32 << 6) | (zFace - z + 32 << 12) | ((ll | rl | gl | bl) << 18);
-                                }
-                            }
-                        }
-                    }
-                }
-                //reset l, so we can loop through all of the updates again!
-                l = 0;
-            }
-
-            world.theProfiler.endSection();
-            world.theProfiler.startSection("checkedPosition < toCheckCount");
-
-            while (l < i1) {
-                l1 = CLWorldHelper.lightUpdateBlockList[l++]; //Get Entry and it's light value (if there is one)
-                x1 = ((int) (l1 & 0x3f) - 32 + x); //Get Entry X coord
-                y1 = ((int) (l1 >> 6 & 0x3f) - 32 + y); //Get Entry Y coord
-                z1 = ((int) (l1 >> 12 & 0x3f) - 32 + z); //Get Entry Z coord
-
-                //Get the Saved Light at the Entry's Position
-                lightEntry = world.getSavedLightValue(par1Enu, x1, y1, z1);
-
-                //Compute the light level at the entry's location.  If the light's have been set to zero before this occurs,
-                //then the computation will change dynamically
-                expectedEntryLight = CLWorldHelper.computeLightValue(world, x1, y1, z1, par1Enu);
-
-                if (expectedEntryLight != lightEntry) {
-                    int tempStorageLightValue = lightEntry;
-
-                    // For each component, choose the greater of expectedEntryLight and lightEntry
-                    if ((expectedEntryLight & 0xf) > (lightEntry & 0xf))
-                        tempStorageLightValue = tempStorageLightValue & 0x7bde0 | expectedEntryLight & 0xf;
-                    if ((expectedEntryLight & 0x1e0) > (lightEntry & 0x1e0))
-                        tempStorageLightValue = tempStorageLightValue & 0x7bc0f | expectedEntryLight & 0x1e0;
-                    if ((expectedEntryLight & 0x3c00) > (lightEntry & 0x3c00))
-                        tempStorageLightValue = tempStorageLightValue & 0x781ef | expectedEntryLight & 0x3c00;
-                    if ((expectedEntryLight & 0x78000) > (lightEntry & 0x78000))
-                        tempStorageLightValue = tempStorageLightValue & 0x3def | expectedEntryLight & 0x78000;
-
-                    if ((((0x100000 | lightEntry) - expectedEntryLight) & 0x84210) > 0)//If any component of the light entry is smaller
-                    {
-                        //Moved this here, from the lines above
-                        world.setLightValue(par1Enu, x1, y1, z1, tempStorageLightValue);
-
-                        x2 = Math.abs(x1 - x);
-                        y2 = Math.abs(y1 - y);
-                        z2 = Math.abs(z1 - z);
-                        boolean flag = i1 < CLWorldHelper.lightUpdateBlockList.length - 6; //Sanity check to avoid going beyond the array bounds below
-
-                        if (x2 + y2 + z2 < 17 && flag) {
-                            if ((((0x100000 | world.getSavedLightValue(par1Enu, x1 - 1, y1, z1)) - expectedEntryLight) & 0x84210) > 0)
-                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - 1 - x + 32 + (y1 - y + 32 << 6) + (z1 - z + 32 << 12);
-                            if ((((0x100000 | world.getSavedLightValue(par1Enu, x1 + 1, y1, z1)) - expectedEntryLight) & 0x84210) > 0)
-                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 + 1 - x + 32 + (y1 - y + 32 << 6) + (z1 - z + 32 << 12);
-                            if ((((0x100000 | world.getSavedLightValue(par1Enu, x1, y1 - 1, z1)) - expectedEntryLight) & 0x84210) > 0)
-                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - 1 - y + 32 << 6) + (z1 - z + 32 << 12);
-                            if ((((0x100000 | world.getSavedLightValue(par1Enu, x1, y1 + 1, z1)) - expectedEntryLight) & 0x84210) > 0)
-                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 + 1 - y + 32 << 6) + (z1 - z + 32 << 12);
-                            if ((((0x100000 | world.getSavedLightValue(par1Enu, x1, y1, z1 - 1)) - expectedEntryLight) & 0x84210) > 0)
-                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - y + 32 << 6) + (z1 - 1 - z + 32 << 12);
-                            if ((((0x100000 | world.getSavedLightValue(par1Enu, x1, y1, z1 + 1)) - expectedEntryLight) & 0x84210) > 0)
-                                CLWorldHelper.lightUpdateBlockList[i1++] = x1 - x + 32 + (y1 - y + 32 << 6) + (z1 + 1 - z + 32 << 12);
-                        }
-                    }
-                }
-            }
-
-            world.theProfiler.endSection();
-            return true;
-        }
-    }*/
 }
