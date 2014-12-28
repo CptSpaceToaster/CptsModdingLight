@@ -1,5 +1,5 @@
 ##Colored Light Core##
-The colored light core is an open source Forge Core-Mod that aims to replace Minecraft's lighting engine with a backwards compatible system that adds three new channels of light.  With the addition of Red, Green, and Blue color data, blocks can be configured with customized light values, and a rewritten lighting engine will spread their colored light values around, while a modified rendering engine deals with the new information.  That's not all though!  While colored lights are awesome, the ultimate goal of this project is to extend an API for other mod writers to use!  Expect to see some mods show up that hook into the API we provide!
+The colored light core is an open source Forge Core-Mod that aims to replace Minecraft's lighting engine with a backwards compatible system that adds three new channels of light.  A new set of lighting update routines will spread colors around, while a modified rendering engine deals with the new information.  That's not all though!  While colored lights are awesome, the ultimate goal of this project is to extend an API for other mod writers to use!  Expect to see some mods show up that hook into the API we provide!
 
 ![splash](http://i.imgur.com/DpmhN9Q.png "Minecraft Forge 1.7.10")
 
