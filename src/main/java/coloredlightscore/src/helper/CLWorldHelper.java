@@ -1,5 +1,7 @@
 package coloredlightscore.src.helper;
 
+
+import net.minecraft.init.Blocks;
 import net.minecraft.block.Block;
 import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;
@@ -221,7 +223,7 @@ public class CLWorldHelper {
                         manhattan_distance = x2 + y2 + z2;
 
                         world.setLightValue(par1Enu, x1, y1, z1, lightEntry);
-                        CLWorldHelper.lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = false;
+                        //CLWorldHelper.lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = false;
 
                         if (manhattan_distance < ((compLightValue&0x0000F) - 1)) { //Limits the splat size to the initial brightness value
                             for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
@@ -246,12 +248,13 @@ public class CLWorldHelper {
                                          (gl > (edgeLightEntry & 0x03C00)) ||
                                          (bl > (edgeLightEntry & 0x78000))) && (i1 < CLWorldHelper.lightUpdateBlockList.length)) {
                                         CLWorldHelper.lightUpdateBlockList[i1++] = ((long)xFace - (long)parX + 32L) | (((long)yFace - (long)parY + 32L) << 6L) | (((long)zFace - (long)parZ + 32L) << 12L) | ((ll | rl | gl | bl) << 18L);
-                                    } else if ((ll < (edgeLightEntry & 0x0000F) + (opacity)) ||
-                                               (rl < (edgeLightEntry & 0x001E0) + (opacity<<5)) ||
-                                               (gl < (edgeLightEntry & 0x03C00) + (opacity<<10)) ||
-                                               (bl < (edgeLightEntry & 0x78000) + (opacity<<15))) {
-                                        CLWorldHelper.lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = true; // TODO:
                                     }
+                                    /*else if (((lightEntry & 0x0000F) < (edgeLightEntry & 0x0000F) + (opacity)) ||
+                                               ((lightEntry & 0x001E0) < (edgeLightEntry & 0x001E0) + (opacity<<5)) ||
+                                               ((lightEntry & 0x03C00) < (edgeLightEntry & 0x03C00) + (opacity<<10)) ||
+                                               ((lightEntry & 0x78000) < (edgeLightEntry & 0x78000) + (opacity<<15))) {
+                                        CLWorldHelper.lightBackfillNeeded[x1 - parX + 14][y1 - parY + 14][z1 - parZ + 14] = true; // TODO:
+                                    }*/
                                 }
                             }
                         }
@@ -358,12 +361,15 @@ public class CLWorldHelper {
                         z1 = (i1 >> 12 & 0x3f) - 32; //Get Entry Z coord
 
                         if (CLWorldHelper.lightBackfillNeeded[x1 + 14][y1 + 14][z1 + 14]) {
+                            CLWorldHelper.lightBackfillNeeded[x1 + 14][y1 + 14][z1 + 14] = false;
+
+                            world.setBlock(x1 + parX, y1 + parY, z1 + parZ, Blocks.stone, 0, 0);
+
                             world.setLightValue(par1Enu, x1 + parX, y1 + parY, z1 + parZ, 0); // Forcibly clear the light, so the backfill routine notices it's missing, and fixes it!
                             updateLightByType(world, par1Enu, x1 + parX, y1 + parY, z1 + parZ); ///oooooOOOOoooo spoooky!
                         }
                     }
                 }
-
             }
             return true;
         }
