@@ -282,7 +282,7 @@ public class CLWorldHelper {
                     y2 = MathHelper.abs_int(y1 - parY);
                     z2 = MathHelper.abs_int(z1 - parZ);
                     manhattan_distance = x2 + y2 + z2;
-                    
+
                     if (manhattan_distance < ((savedLightValue & 0x0000F))) { //Limits the splat size to the initial brightness value
                         for (faceIndex = 0; faceIndex < 6; ++faceIndex) {
                             xFace = x1 + Facing.offsetsXForSide[faceIndex];
