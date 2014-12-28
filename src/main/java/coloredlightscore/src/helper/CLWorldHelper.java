@@ -203,8 +203,8 @@ public class CLWorldHelper {
             // Format of lightUpdateBlockList word:
             // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
             // x/y/z are relative offsets
-
-            if ((compLightValue&0x0000F) > (savedLightValue&0x0000F)) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
+            if ((((0x100000 | savedLightValue) - compLightValue) & 0x84210) > 0) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
+            //if ((compLightValue&0x0000F) > (savedLightValue&0x0000F)) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
                 //Light Splat/Spread
                 CLWorldHelper.lightUpdateBlockList[i1++] = (0x20820L | (compLightValue << 18L));
 
@@ -260,7 +260,8 @@ public class CLWorldHelper {
                         }
                     }
                 }
-            } else if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
+            } else if ((((0x100000 | compLightValue) - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
+            //if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
                 //Light Destruction
 
                 for(int i=0; i<CLWorldHelper.lightBackfillIndexes.length; i++)  {
