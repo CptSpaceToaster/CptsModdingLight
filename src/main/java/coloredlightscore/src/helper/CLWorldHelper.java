@@ -200,6 +200,11 @@ public class CLWorldHelper {
             long bl;
             int sortValue;
 
+            if (savedLightValue == (0xF | 0xF<<5)) {
+                nop();
+            }
+
+
             // Format of lightUpdateBlockList word:
             // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
             // x/y/z are relative offsets
@@ -260,7 +265,8 @@ public class CLWorldHelper {
                         }
                     }
                 }
-            } else if ((((0x100000 | compLightValue) - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
+            }
+            if ((((0x100000 | compLightValue) - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
             //if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
                 //Light Destruction
 
