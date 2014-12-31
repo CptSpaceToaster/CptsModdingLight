@@ -13,7 +13,8 @@ import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
 public class CLWorldHelper {
 
-    public static long[] lightUpdateBlockList = new long[6000]; // Note... this is ridiculously huge...  something tells me that we can size this down safely  near 15000 or so
+    // 32768 = 16x16x128.  The size of an old chunk.  Now... it's half of a chunk.
+    public static long[] lightUpdateBlockList = new long[32768]; // Note... this is ridiculously huge...  something tells me that we can size this down safely  near 15000 or so
     public static int[][][] lightUpdateNeeded = new int[29][29][29];
     public static int[] lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
     public static int[][] lightBackfillBlockList = new int[15][4991]; // theoretical maximum... "I think"
