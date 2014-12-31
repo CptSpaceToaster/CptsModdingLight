@@ -29,10 +29,12 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
         meta.modId = "coloredlightscore";
         meta.name = "Colored Lights Core";
         meta.version = version;
+        meta.logoFile = "/mod_ColoredLightCore.logo.png";
+        meta.url = "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/wip-mods/1445251-1-7-10-beta-wip-colored-light-progress-and";
         meta.credits = "";
         meta.authorList = Arrays.asList("heaton84", "Murray65536", "Kovu", "Biggerfisch", "CptSpaceToaster");
         meta.description = "The coremod for Colored Lights";
-
+        meta.useDependencyInformation = true;
         chunkDataEventHandler = new ChunkDataEventHandler();
     }
 
