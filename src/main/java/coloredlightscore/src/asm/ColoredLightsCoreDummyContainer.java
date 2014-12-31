@@ -22,8 +22,8 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
     public ChunkDataEventHandler chunkDataEventHandler;
 
     public static int VERSION_MAJOR = 1;
-    public static int VERSION_MINOR = 2;
-    public static int VERSION_REVISION = 0;
+    public static int VERSION_MINOR = 3;
+    public static int VERSION_REVISION = 3;
 
     public ColoredLightsCoreDummyContainer() {
         super(new ModMetadata());
