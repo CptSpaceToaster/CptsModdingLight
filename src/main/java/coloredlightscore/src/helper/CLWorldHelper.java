@@ -174,9 +174,6 @@ public class CLWorldHelper {
             int getter = 0;
 
             world.theProfiler.startSection("getBrightness");
-            world.theProfiler.endSection();
-            world.theProfiler.startSection("checkedPosition < toCheckCount");
-            world.theProfiler.endSection();
 
             long savedLightValue = world.getSavedLightValue(par1Enu, par_x, par_y, par_z);
             long compLightValue = CLWorldHelper.computeLightValue(world, par_x, par_y, par_z, par1Enu);
@@ -205,12 +202,17 @@ public class CLWorldHelper {
             int neighborIndex;
             int neighborLightEntry;
 
+            world.theProfiler.endSection();
+            world.theProfiler.startSection("lightAddition");
+
             // Format of lightUpdateBlockList word:
             // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
             // x/y/z are relative offsets
             if ((((0x100000 | savedLightValue) - compLightValue) & 0x84210) > 0) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
             //if ((compLightValue&0x0000F) > (savedLightValue&0x0000F)) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
                 //Light Splat/Spread
+
+
                 CLWorldHelper.lightUpdateNeeded[14][14][14] = true;
                 CLWorldHelper.lightUpdateBlockList[getter++] = (0x20820L | (compLightValue << 18L));
 
@@ -272,9 +274,12 @@ public class CLWorldHelper {
                 }
             }
 
-            if (filler > 4089) {
-                CLLog.warn("THAT SHOULD NOT HAVE HAPPENED: " + filler);
+            if (filler > 4089) {    
+                CLLog.warn("Light Adition Overfilled: " + filler + (par1Enu==EnumSkyBlock.Block?" (isBlock)": " (isSky)"));
             }
+
+            world.theProfiler.endSection();
+            world.theProfiler.startSection("lightSubtraction");
 
             //Reset indexes
             filler = 0;
@@ -369,6 +374,9 @@ public class CLWorldHelper {
                     }
                 }
 
+                world.theProfiler.endSection();
+                world.theProfiler.startSection("lightBackfill");
+
                 //Backfill
                 for (filler=CLWorldHelper.lightBackfillIndexes.length - 1; filler >= 0; filler--) {
                     while (CLWorldHelper.lightBackfillIndexes[filler] > 0) {
@@ -388,6 +396,7 @@ public class CLWorldHelper {
                     }
                 }
             }
+            world.theProfiler.endSection();
             return true;
         }
     }
