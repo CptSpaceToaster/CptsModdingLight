@@ -21,19 +21,17 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 public class ColoredLightsCoreDummyContainer extends DummyModContainer {
     public ChunkDataEventHandler chunkDataEventHandler;
 
-    public static int VERSION_MAJOR = 1;
-    public static int VERSION_MINOR = 3;
-    public static int VERSION_REVISION = 3;
+    public static final String version = "1.3.3";
 
     public ColoredLightsCoreDummyContainer() {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
         meta.modId = "coloredlightscore";
         meta.name = "Colored Lights Core";
-        meta.version = String.format("%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION);
+        meta.version = version;
         meta.credits = "";
-        meta.authorList = Arrays.asList("AJWGeek", "Kovu", "CptSpaceToaster", "heaton84", "Murray65536");
-        meta.description = "The coremod for Colored Lights" + (((VERSION_REVISION & 1) != 0) ? " (Unstable Revision)" : "");
+        meta.authorList = Arrays.asList("heaton84", "Murray65536", "Kovu", "Biggerfisch", "CptSpaceToaster");
+        meta.description = "The coremod for Colored Lights";
 
         chunkDataEventHandler = new ChunkDataEventHandler();
     }
