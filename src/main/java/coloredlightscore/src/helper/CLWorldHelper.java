@@ -280,10 +280,6 @@ public class CLWorldHelper {
             //if ((savedLightValue&0x0000F) > (compLightValue&0x0000F)) { //savedLightValue has components that are larger than compLightValue
                 //Light Destruction
 
-                for(int i=0; i<CLWorldHelper.lightBackfillIndexes.length; i++)  {
-                    CLWorldHelper.lightBackfillIndexes[i] = 0; // Clean up the index array - May not be necessary
-                }
-
                 world.setLightValue(par1Enu, parX, parY, parZ, (int)compLightValue); // This kills the light
                 CLWorldHelper.lightUpdateBlockList[getter++] = (0x20820L | (savedLightValue << 18L));
 
