@@ -15,6 +15,7 @@ import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 public class CLWorldHelper {
 
     // 32768 = 16x16x128.  The size of an old chunk.  Now... it's half of a chunk.
+    //TODO: make private
     public static long[] lightUpdateBlockList = new long[32768]; // Note... this is ridiculously huge...  removed the odd backfill on skylights, and this should be something close to 29*29*29 at it's worst
     public static int[][][] lightUpdateNeeded = new int[29][29][29];
     public static int[] lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
@@ -188,6 +189,8 @@ public class CLWorldHelper {
 
             world.theProfiler.startSection("getBrightness");
 
+            int tempFlag = updateFlag;
+
             int lightUpdatesSatisfied = 0;
             int lightUpdatesCalled = 0;
             int light_entry = 0;
@@ -235,6 +238,11 @@ public class CLWorldHelper {
 
                 //while (filler < getter) {
                 while (lightUpdatesSatisfied < lightUpdatesCalled) {
+
+                    if (tempFlag != updateFlag) {
+                        nop();
+                    }
+
                     queueEntry = CLWorldHelper.lightUpdateBlockList[filler++]; //Get Entry at l, which starts at 0
                     queue_x = ((int) (queueEntry & 0x3f) - 32 + par_x); //Get Entry X coord
                     queue_y = ((int) (queueEntry >> 6 & 0x3f) - 32 + par_y); //Get Entry Y coord
@@ -266,7 +274,7 @@ public class CLWorldHelper {
                                     neighbor_y = queue_y + Facing.offsetsYForSide[neighborIndex];
                                     neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
 
-                                    light_entry = lightUpdateNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
+                                    light_entry = CLWorldHelper.lightUpdateNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
                                     if ((light_entry != updateFlag) && (light_entry != updateFlag + 1)) {
 
                                         opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
