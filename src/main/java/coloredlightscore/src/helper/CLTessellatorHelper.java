@@ -84,6 +84,8 @@ public class CLTessellatorHelper {
             CLLog.error("Error attaching shaders");
         }
 
+
+
         GL20.glLinkProgram(clProgram);
         infoStr = GL20.glGetProgramInfoLog(clProgram, 2000);
         if (GL11.glGetError() != GL11.GL_NO_ERROR) {

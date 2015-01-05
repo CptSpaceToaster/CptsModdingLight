@@ -81,6 +81,9 @@ public class TransformWorld extends HelperMethodTransformer {
 
         AbstractInsnNode returnNode = ASMUtils.findLastReturn(methodNode);
         methodNode.instructions.insertBefore(returnNode, initSunColor);
+        CLLog.info("Added clSunColor!");
+
+
         CLLog.info("Transformed World constructor!");
         return true;
     }
