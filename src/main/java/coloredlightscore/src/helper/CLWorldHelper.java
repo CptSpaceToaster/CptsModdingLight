@@ -20,7 +20,8 @@ public class CLWorldHelper {
     public static int[] lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
     public static int[][] lightBackfillBlockList = new int[15][4991]; // theoretical maximum of 4991 per bin... "I think"... but it would be really hard to get to this maximum
     public static int[][][] lightBackfillNeeded = new int[29][29][29]; // TODO: I may not need a separate array for backfill and addition
-    private static int updateFlag = 0;
+    public static int updateFlag = 0;
+    public static EnumSkyBlock flagEntry;
 
     //Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC
     //Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
@@ -177,6 +178,7 @@ public class CLWorldHelper {
         if (!world.doChunksNearChunkExist(par_x, par_y, par_z, 17)) {
             return false;
         } else {
+            flagEntry = par1Enu;
             if (shouldIncrement) {
                 //Increment the updateFlag ONLY on a fresh call... This keeps the updateFlag consistent when the algorithm recurses
                 // if ((flag_entry != updateFlag) && (flag_entry != updateFlag+1)) { // Light has not been visited by the algorithm yet

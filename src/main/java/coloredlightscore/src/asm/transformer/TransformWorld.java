@@ -3,6 +3,7 @@ package coloredlightscore.src.asm.transformer;
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
 import coloredlightscore.src.asm.transformer.core.ASMUtils;
+import net.minecraft.world.EnumSkyBlock;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
@@ -48,7 +49,8 @@ public class TransformWorld extends HelperMethodTransformer {
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillIndexes", "[I", null, null));
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillBlockList", "[[I", null, null));
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillNeeded", "[[[I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "flag_entry", "Lnet/minecraft/world/EnumSkyBlock;", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "updateFlag", "I", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "flagEntry", "Lnet/minecraft/world/EnumSkyBlock;", null, null));
 
         return true;
     }
@@ -67,38 +69,32 @@ public class TransformWorld extends HelperMethodTransformer {
     }
 
     private boolean transformConstructor(MethodNode methodNode) {
-        InsnList initSunColor = new InsnList();
-
-        // this.clSunColor = new float[]{1.0f, 1.0f, 1.0f};
-        initSunColor.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initSunColor.add(new IntInsnNode(Opcodes.BIPUSH, 3));
-        initSunColor.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_FLOAT));
-        initSunColor.add(new InsnNode(Opcodes.DUP));
-        initSunColor.add(new InsnNode(Opcodes.ICONST_0));
-        initSunColor.add(new InsnNode(Opcodes.FCONST_1));
-        initSunColor.add(new InsnNode(Opcodes.FASTORE));
-        initSunColor.add(new InsnNode(Opcodes.DUP));
-        initSunColor.add(new InsnNode(Opcodes.ICONST_1));
-        initSunColor.add(new InsnNode(Opcodes.FCONST_1));
-        initSunColor.add(new InsnNode(Opcodes.FASTORE));
-        initSunColor.add(new InsnNode(Opcodes.DUP));
-        initSunColor.add(new InsnNode(Opcodes.ICONST_2));
-        initSunColor.add(new InsnNode(Opcodes.FCONST_1));
-        initSunColor.add(new InsnNode(Opcodes.FASTORE));
-        initSunColor.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "clSunColor", "[F"));
-
-        AbstractInsnNode returnNode = ASMUtils.findLastReturn(methodNode);
-        methodNode.instructions.insertBefore(returnNode, initSunColor);
-        CLLog.info("Added clSunColor!");
-
         InsnList initInternalLightVariables = new InsnList();
-        //public static long[] lightAdditionBlockList = new long[32768]; // Note... this is ridiculously huge...  removed the odd backfill on skylights, and this should be something close to 29*29*29 at it's worst
+        // this.clSunColor = new float[]{1.0f, 1.0f, 1.0f};
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 3));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_FLOAT));
+        initInternalLightVariables.add(new InsnNode(Opcodes.DUP));
+        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_0));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FCONST_1));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FASTORE));
+        initInternalLightVariables.add(new InsnNode(Opcodes.DUP));
+        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_1));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FCONST_1));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FASTORE));
+        initInternalLightVariables.add(new InsnNode(Opcodes.DUP));
+        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_2));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FCONST_1));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FASTORE));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "clSunColor", "[F"));
+
+        //this.lightAdditionBlockList = new long[32768];
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new LdcInsnNode(32768));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_LONG));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightAdditionBlockList", "[J"));
 
-        //public static int[][][] lightAdditionNeeded = new int[29][29][29];
+        //this.lightAdditionNeeded = new int[29][29][29];
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
@@ -106,20 +102,20 @@ public class TransformWorld extends HelperMethodTransformer {
         initInternalLightVariables.add(new MultiANewArrayInsnNode("[[[I", 3));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightAdditionNeeded", "[[[I"));
 
-        //public static int[] lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
+        //this.lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 15));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_INT));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillIndexes", "[I"));
 
-        //public static int[][] lightBackfillBlockList = new int[15][4991]; // theoretical maximum... "I think"
+        //this.lightBackfillBlockList = new int[15][4991]; // theoretical maximum... "I think"
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 15));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.SIPUSH, 4991));
         initInternalLightVariables.add(new MultiANewArrayInsnNode("[[I", 2));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillBlockList", "[[I"));
 
-        //public static int[][][] lightBackfillNeeded = new int[29][29][29];
+        //this.lightBackfillNeeded = new int[29][29][29];
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
         initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
@@ -127,6 +123,20 @@ public class TransformWorld extends HelperMethodTransformer {
         initInternalLightVariables.add(new MultiANewArrayInsnNode("[[[I", 3));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillNeeded", "[[[I"));
 
+        //clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "updateFlag", "I", null, null));
+        //this.updateFlag = 0;
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 0));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "updateFlag", "I"));
+
+        //clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "flagEntry", "Lnet/minecraft/world/EnumSkyBlock;", null, null));
+        //this.flagEntry = EnumSkyBlock.Block;
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/world/EnumSkyBlock", "Block", "Lnet/minecraft/world/EnumSkyBlock;"));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "updateFlag", "I"));
+
+        AbstractInsnNode returnNode = ASMUtils.findLastReturn(methodNode);
+        methodNode.instructions.insertBefore(returnNode, initInternalLightVariables);
         CLLog.info("Transformed World constructor!");
         return true;
     }
