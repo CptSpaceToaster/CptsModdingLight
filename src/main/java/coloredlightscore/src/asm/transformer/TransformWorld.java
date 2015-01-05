@@ -33,7 +33,7 @@ public class TransformWorld extends HelperMethodTransformer {
             if (NameMapper.getInstance().isMethod(methodNode, super.className, name))
                 return true;
         }
-        if (methodNode.name.equals("<init>")) {
+        if (methodNode.name.equals("<init>")) { // TODO: make sure we're transforming both the client, and server constructors?
             return true;
         }
         return false;
@@ -42,6 +42,22 @@ public class TransformWorld extends HelperMethodTransformer {
     @Override
     protected boolean preTransformClass(ClassNode clazz) {
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "clSunColor", "[F", null, null));
+
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightAdditionBlockList", "[J", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightAdditionNeeded", "[[[I", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillIndexes", "[I", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillBlockList", "[[I", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillNeeded", "[[[I", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "flag_entry", "Lnet/minecraft/world/EnumSkyBlock;", null, null));
+        /*
+        public static long[] lightAdditionBlockList = new long[32768]; // Note... this is ridiculously huge...  removed the odd backfill on skylights, and this should be something close to 29*29*29 at it's worst
+        public static int[][][] lightAdditionNeeded = new int[29][29][29];
+        public static int[] lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
+        public static int[][] lightBackfillBlockList = new int[15][4991]; // theoretical maximum... "I think"
+        public static int[][][] lightBackfillNeeded = new int[29][29][29];
+        */
+
+
         return true;
     }
 

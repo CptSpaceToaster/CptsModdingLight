@@ -15,11 +15,11 @@ public class CLWorldHelper {
 
     // 32768 = 16x16x128.  The size of an old chunk.  Now... it's half of a chunk.
     //TODO: make private
-    public static long[] lightUpdateBlockList = new long[32768]; // Note... this is ridiculously huge...  removed the odd backfill on skylights, and this should be something close to 29*29*29 at it's worst
-    public static int[][][] lightUpdateNeeded = new int[29][29][29];
+    public static long[] lightAdditionBlockList = new long[32768]; // this should be something close to 29*29*29 at it's worst... but hey... what's a couple thousand extra Long's?
+    public static int[][][] lightAdditionNeeded = new int[29][29][29]; // TODO: Looks like a redundent copy of lightBackfillNeeded
     public static int[] lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
-    public static int[][] lightBackfillBlockList = new int[15][4991]; // theoretical maximum... "I think"
-    public static int[][][] lightBackfillNeeded = new int[29][29][29];
+    public static int[][] lightBackfillBlockList = new int[15][4991]; // theoretical maximum of 4991 per bin... "I think"... but it would be really hard to get to this maximum
+    public static int[][][] lightBackfillNeeded = new int[29][29][29]; // TODO: I may not need a separate array for backfill and addition
     private static int updateFlag = 0;
 
     //Copied from the world class in 1.7.2, modified from the source from 1.6.4, made the method STATIC
@@ -169,6 +169,7 @@ public class CLWorldHelper {
     }
 
     public static boolean updateLightByType(World world, EnumSkyBlock par1Enu, int par_x, int par_y, int par_z) {
+        //TODO: Get rid of extra argument, and reimplement the "last flag_entry"
         return CLWorldHelper.updateLightByType_withIncrement(world, par1Enu, par_x, par_y, par_z, true);
     }
 
@@ -186,8 +187,8 @@ public class CLWorldHelper {
 
             world.theProfiler.startSection("getBrightness");
 
-            int lightUpdatesSatisfied = 0;
-            int lightUpdatesCalled = 0;
+            int lightAdditionsSatisfied = 0;
+            int lightAdditionsCalled = 0;
             int filler = 0;
             int getter = 0;
             int lightEntry;
@@ -221,20 +222,20 @@ public class CLWorldHelper {
 
             world.theProfiler.endStartSection("lightAddition");
 
-            // Format of lightUpdateBlockList word:
+            // Format of lightAdditionBlockList word:
             // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
             // x/y/z are relative offsets
             if ((((0x100000 | savedLightValue) - compLightValue) & 0x84210) > 0) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
                 //Light Splat/Spread
 
-                CLWorldHelper.lightUpdateNeeded[14][14][14] = updateFlag;   // Light needs processing processed
-                lightUpdatesCalled++;
-                CLWorldHelper.lightUpdateBlockList[getter++] = (0x20820L | (compLightValue << 18L));
+                CLWorldHelper.lightAdditionNeeded[14][14][14] = updateFlag;   // Light needs processing processed
+                lightAdditionsCalled++;
+                CLWorldHelper.lightAdditionBlockList[getter++] = (0x20820L | (compLightValue << 18L));
 
                 //while (filler < getter) {
-                while (lightUpdatesSatisfied < lightUpdatesCalled) {
+                while (lightAdditionsSatisfied < lightAdditionsCalled) {
 
-                    queueEntry = CLWorldHelper.lightUpdateBlockList[filler++]; //Get Entry at l, which starts at 0
+                    queueEntry = CLWorldHelper.lightAdditionBlockList[filler++]; //Get Entry at l, which starts at 0
                     queue_x = ((int) (queueEntry & 0x3f) - 32 + par_x); //Get Entry X coord
                     queue_y = ((int) (queueEntry >> 6 & 0x3f) - 32 + par_y); //Get Entry Y coord
                     queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
@@ -242,14 +243,14 @@ public class CLWorldHelper {
                         nop();
                     }
 
-                    if (CLWorldHelper.lightUpdateNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == updateFlag) { // Light has been marked for a later update
+                    if (CLWorldHelper.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == updateFlag) { // Light has been marked for a later update
 
                         queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
                         neighborLightEntry = world.getSavedLightValue(par1Enu, queue_x, queue_y, queue_z); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
 
-                        CLWorldHelper.lightUpdateNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = updateFlag + 1; // Light has been visited and processed
+                        CLWorldHelper.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = updateFlag + 1; // Light has been visited and processed
                         CLWorldHelper.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = updateFlag + 1; // Light has been visited and processed
-                        lightUpdatesSatisfied++;
+                        lightAdditionsSatisfied++;
 
                         if ((((0x100000 | neighborLightEntry) - queueLightEntry) & 0x84210) > 0) { // Components in queueLightEntry are brighter than in edgeLightEntry
                             man_x = MathHelper.abs_int(queue_x - par_x);
@@ -265,7 +266,7 @@ public class CLWorldHelper {
                                     neighbor_y = queue_y + Facing.offsetsYForSide[neighborIndex];
                                     neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
 
-                                    lightEntry = CLWorldHelper.lightUpdateNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
+                                    lightEntry = CLWorldHelper.lightAdditionNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
                                     if ((lightEntry != updateFlag) && (lightEntry != updateFlag + 1)) {
 
                                         opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
@@ -293,10 +294,10 @@ public class CLWorldHelper {
                                             if (((ll > (neighborLightEntry & 0x0000F)) ||
                                                     (rl > (neighborLightEntry & 0x001E0)) ||
                                                     (gl > (neighborLightEntry & 0x03C00)) ||
-                                                    (bl > (neighborLightEntry & 0x78000))) && (getter < CLWorldHelper.lightUpdateBlockList.length)) {
-                                                CLWorldHelper.lightUpdateNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14] = updateFlag; // Mark neighbor to be processed
-                                                CLWorldHelper.lightUpdateBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((ll | rl | gl | bl) << 18L);
-                                                lightUpdatesCalled++;
+                                                    (bl > (neighborLightEntry & 0x78000))) && (getter < CLWorldHelper.lightAdditionBlockList.length)) {
+                                                CLWorldHelper.lightAdditionNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14] = updateFlag; // Mark neighbor to be processed
+                                                CLWorldHelper.lightAdditionBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((ll | rl | gl | bl) << 18L);
+                                                lightAdditionsCalled++;
                                             } else if (((queueLightEntry & 0x0000F) < (neighborLightEntry & 0x0000F) + (opacity)) ||
                                                     ((queueLightEntry & 0x001E0) < (neighborLightEntry & 0x001E0) + (opacity << 5)) ||
                                                     ((queueLightEntry & 0x03C00) < (neighborLightEntry & 0x03C00) + (opacity << 10)) ||
@@ -315,8 +316,8 @@ public class CLWorldHelper {
                 }
             }
 
-            if ((filler > 24389) || (lightUpdatesCalled != lightUpdatesSatisfied)) {
-                CLLog.warn("Error in Light Addition:" + filler + (par1Enu==EnumSkyBlock.Block?" (isBlock)": " (isSky)") + " Saved:" + Integer.toBinaryString((int) savedLightValue) + " Comp:" + Integer.toBinaryString((int)compLightValue) + " isBackfill:" + (shouldIncrement?"no":"yes") + " updateFlag:" + updateFlag + " Called:" + lightUpdatesCalled + " Satisfied:" + lightUpdatesSatisfied);
+            if ((filler > 24389) || (lightAdditionsCalled != lightAdditionsSatisfied)) {
+                CLLog.warn("Error in Light Addition:" + filler + (par1Enu==EnumSkyBlock.Block?" (isBlock)": " (isSky)") + " Saved:" + Integer.toBinaryString((int) savedLightValue) + " Comp:" + Integer.toBinaryString((int)compLightValue) + " isBackfill:" + (shouldIncrement?"no":"yes") + " updateFlag:" + updateFlag + " Called:" + lightAdditionsCalled + " Satisfied:" + lightAdditionsSatisfied);
             }
 
             world.theProfiler.endStartSection("lightSubtraction");
@@ -329,10 +330,10 @@ public class CLWorldHelper {
                 //Light Destruction
 
                 world.setLightValue(par1Enu, par_x, par_y, par_z, (int)compLightValue); // This kills the light
-                CLWorldHelper.lightUpdateBlockList[getter++] = (0x20820L | (savedLightValue << 18L));
+                CLWorldHelper.lightAdditionBlockList[getter++] = (0x20820L | (savedLightValue << 18L));
 
                 while (filler <= getter) {
-                    queueEntry = CLWorldHelper.lightUpdateBlockList[filler++]; //Get Entry at l, which starts at 0
+                    queueEntry = CLWorldHelper.lightAdditionBlockList[filler++]; //Get Entry at l, which starts at 0
                     queue_x = ((int) (queueEntry & 0x3f) - 32 + par_x); //Get Entry X coord
                     queue_y = ((int) (queueEntry >> 6 & 0x3f) - 32 + par_y); //Get Entry Y coord
                     queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
@@ -401,7 +402,7 @@ public class CLWorldHelper {
                                     }
 
                                     world.setLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z, (int) (ll | rl | gl | bl)); // This kills the light
-                                    CLWorldHelper.lightUpdateBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((long) queueLightEntry << 18L); //this array keeps the algorithm going, don't touch
+                                    CLWorldHelper.lightAdditionBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((long) queueLightEntry << 18L); //this array keeps the algorithm going, don't touch
                                 } else {
                                     if (sortValue != 0) {
                                         CLWorldHelper.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = updateFlag;
@@ -414,7 +415,7 @@ public class CLWorldHelper {
                 }
 
                 if (filler > 4097) {
-                    CLLog.warn("Light Subtraction Overfilled:" + filler + (par1Enu==EnumSkyBlock.Block?" (isBlock)": " (isSky)") + " Saved:" + Integer.toBinaryString((int) savedLightValue) + " Comp:" + Integer.toBinaryString((int)compLightValue) + " isBackfill:" + (shouldIncrement?"no":"yes") + " updateFlag:" + updateFlag + " Called:" + lightUpdatesCalled + " Satisfied:" + lightUpdatesSatisfied);
+                    CLLog.warn("Light Subtraction Overfilled:" + filler + (par1Enu==EnumSkyBlock.Block?" (isBlock)": " (isSky)") + " Saved:" + Integer.toBinaryString((int) savedLightValue) + " Comp:" + Integer.toBinaryString((int)compLightValue) + " isBackfill:" + (shouldIncrement?"no":"yes") + " updateFlag:" + updateFlag + " Called:" + lightAdditionsCalled + " Satisfied:" + lightAdditionsSatisfied);
                 }
 
                 world.theProfiler.endStartSection("lightBackfill");
