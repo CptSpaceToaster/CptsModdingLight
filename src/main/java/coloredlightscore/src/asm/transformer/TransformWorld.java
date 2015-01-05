@@ -128,13 +128,11 @@ public class TransformWorld extends HelperMethodTransformer {
         initInternalLightVariables.add(new MultiANewArrayInsnNode("[[[I", 3));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillNeeded", "[[[I"));
 
-        //clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "updateFlag", "I", null, null));
         //this.updateFlag = 0;
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_1)); // started at one, because the array is full of zeros
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "updateFlag", "I"));
 
-        //clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "flagEntry", "Lnet/minecraft/world/EnumSkyBlock;", null, null));
         //this.flagEntry = EnumSkyBlock.Block;
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/world/EnumSkyBlock", "Block", "Lnet/minecraft/world/EnumSkyBlock;"));
