@@ -2,9 +2,12 @@ package coloredlightscore.src.asm;
 
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.*;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import coloredlightscore.fmlevents.ChunkDataEventHandler;
@@ -76,6 +79,20 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
         CLApi.setBlockColorRGB(Blocks.portal, 6, 3, 11);
         CLApi.setBlockColorRGB(Blocks.lit_furnace, 13, 13, 12);
         CLApi.setBlockColorRGB(Blocks.powered_repeater, 9, 6, 7);
+
+        Object thisShouldBeABlock;
+        int l;
+        Iterator blockRegistryInterator = GameData.getBlockRegistry().iterator();
+        while (blockRegistryInterator.hasNext()) {
+            thisShouldBeABlock = blockRegistryInterator.next();
+            if (thisShouldBeABlock instanceof Block) {
+                l = ((Block)thisShouldBeABlock).lightValue;
+                if ((l > 0) && (l <= 0xF)) {
+                    CLLog.info(((Block)thisShouldBeABlock).getLocalizedName() + "has light:" + l + ", but no color");
+                    ((Block)thisShouldBeABlock).lightValue = (l<<15) | (l<<10) | (l<<5) | l; //copy vanilla brightness into each color component to make it white/grey.
+                }
+            }
+        }
     }
 
     /*
