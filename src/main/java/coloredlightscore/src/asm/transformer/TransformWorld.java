@@ -49,14 +49,6 @@ public class TransformWorld extends HelperMethodTransformer {
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillBlockList", "[[I", null, null));
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillNeeded", "[[[I", null, null));
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "flag_entry", "Lnet/minecraft/world/EnumSkyBlock;", null, null));
-        /*
-        public static long[] lightAdditionBlockList = new long[32768]; // Note... this is ridiculously huge...  removed the odd backfill on skylights, and this should be something close to 29*29*29 at it's worst
-        public static int[][][] lightAdditionNeeded = new int[29][29][29];
-        public static int[] lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
-        public static int[][] lightBackfillBlockList = new int[15][4991]; // theoretical maximum... "I think"
-        public static int[][][] lightBackfillNeeded = new int[29][29][29];
-        */
-
 
         return true;
     }
@@ -99,6 +91,41 @@ public class TransformWorld extends HelperMethodTransformer {
         methodNode.instructions.insertBefore(returnNode, initSunColor);
         CLLog.info("Added clSunColor!");
 
+        InsnList initInternalLightVariables = new InsnList();
+        //public static long[] lightAdditionBlockList = new long[32768]; // Note... this is ridiculously huge...  removed the odd backfill on skylights, and this should be something close to 29*29*29 at it's worst
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new LdcInsnNode(32768));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_LONG));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightAdditionBlockList", "[J"));
+
+        //public static int[][][] lightAdditionNeeded = new int[29][29][29];
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
+        initInternalLightVariables.add(new MultiANewArrayInsnNode("[[[I", 3));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightAdditionNeeded", "[[[I"));
+
+        //public static int[] lightBackfillIndexes = new int[15]; // indexes for how many values we added at the index's brightness
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 15));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_INT));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillIndexes", "[I"));
+
+        //public static int[][] lightBackfillBlockList = new int[15][4991]; // theoretical maximum... "I think"
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 15));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.SIPUSH, 4991));
+        initInternalLightVariables.add(new MultiANewArrayInsnNode("[[I", 2));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillBlockList", "[[I"));
+
+        //public static int[][][] lightBackfillNeeded = new int[29][29][29];
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
+        initInternalLightVariables.add(new MultiANewArrayInsnNode("[[[I", 3));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillNeeded", "[[[I"));
 
         CLLog.info("Transformed World constructor!");
         return true;
