@@ -257,7 +257,7 @@ public class CLWorldHelper {
                                     neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
 
                                     lightEntry = world.lightAdditionNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
-                                    if (lightEntry != world.updateFlag) {
+                                    if (lightEntry != world.updateFlag && (lightEntry != world.updateFlag + 1 && shouldIncrement)) { // on recursive calls, ignore instances of world.updateFlag being flag + 1
 
                                         opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
 
