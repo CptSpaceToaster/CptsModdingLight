@@ -227,6 +227,7 @@ public class CLWorldHelper {
                     queue_x = ((int) (queueEntry & 0x3f) - 32 + par_x); //Get Entry X coord
                     queue_y = ((int) (queueEntry >> 6 & 0x3f) - 32 + par_y); //Get Entry Y coord
                     queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
+                    world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag + 1; // Light has been visited and processed
 
                     if (world.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) { // Light has been marked for a later update
 
@@ -234,7 +235,7 @@ public class CLWorldHelper {
                         neighborLightEntry = world.getSavedLightValue(par1Enu, queue_x, queue_y, queue_z); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
 
                         world.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag + 1; // Light has been visited and processed
-                        world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag + 1; // Light has been visited and processed
+
                         lightAdditionsSatisfied++;
 
                         if ((((0x100000 | neighborLightEntry) - queueLightEntry) & 0x84210) > 0) { // Components in queueLightEntry are brighter than in edgeLightEntry
@@ -252,7 +253,7 @@ public class CLWorldHelper {
                                     neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
 
                                     lightEntry = world.lightAdditionNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
-                                    if ((lightEntry != world.updateFlag) && (lightEntry != world.updateFlag + 1)) {
+                                    if (lightEntry != world.updateFlag) {
 
                                         opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
 
@@ -419,7 +420,7 @@ public class CLWorldHelper {
                         if (world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) {
                             CLWorldHelper.updateLightByType(world, par1Enu, queue_x, queue_y, queue_z); ///oooooOOOOoooo spoooky!
                         }
-                    }//-472 55 1006
+                    }
                 }
             }
             world.theProfiler.endSection();
