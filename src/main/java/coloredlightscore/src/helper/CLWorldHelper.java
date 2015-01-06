@@ -175,8 +175,6 @@ public class CLWorldHelper {
 
             world.theProfiler.startSection("getBrightness");
 
-            int lightSubtractionCounter = 0;
-
             int lightAdditionsSatisfied = 0;
             int lightAdditionsCalled = 0;
             int filler = 0;
@@ -410,12 +408,6 @@ public class CLWorldHelper {
                         queue_x = (getter & 0x3f) - 32 + par_x; //Get Entry X coord
                         queue_y = (getter >> 6 & 0x3f) - 32 + par_y; //Get Entry Y coord
                         queue_z = (getter >> 12 & 0x3f) - 32 + par_z; //Get Entry Z coord
-
-                        if (queue_x == -472 && queue_y == 56 && queue_z == 1006) {
-                            nop();
-                        }
-
-                        //world.setBlock(queue_x, queue_y, queue_z, Blocks.carpet, 0, 0);
 
                         if (world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) {
                             CLWorldHelper.updateLightByType(world, par1Enu, queue_x, queue_y, queue_z); ///oooooOOOOoooo spoooky!
