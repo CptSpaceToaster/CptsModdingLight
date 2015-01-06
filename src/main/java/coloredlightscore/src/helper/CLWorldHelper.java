@@ -171,6 +171,10 @@ public class CLWorldHelper {
                 // if (flag_entry == updateFlag+1) { // Light has been visited and processed, don't visit in the future generations of this algorithm
                 world.updateFlag += 2;
                 world.flagEntry = par1Enu;
+
+                world.rel_x = par_x;
+                world.rel_y = par_y;
+                world.rel_z = par_z;
             }
 
             world.theProfiler.startSection("getBrightness");
@@ -225,13 +229,13 @@ public class CLWorldHelper {
                     queue_x = ((int) (queueEntry & 0x3f) - 32 + par_x); //Get Entry X coord
                     queue_y = ((int) (queueEntry >> 6 & 0x3f) - 32 + par_y); //Get Entry Y coord
                     queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
-                    world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag + 1; // Light has been visited and processed
 
                     if (world.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) { // Light has been marked for a later update
 
                         queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
                         neighborLightEntry = world.getSavedLightValue(par1Enu, queue_x, queue_y, queue_z); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
 
+                        world.lightBackfillNeeded[queue_x - world.rel_x + 14][queue_y - world.rel_y + 14][queue_z - world.rel_z + 14] = world.updateFlag + 1; // Light has been visited and processed
                         world.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag + 1; // Light has been visited and processed
 
                         lightAdditionsSatisfied++;
@@ -286,7 +290,7 @@ public class CLWorldHelper {
                                                     ((queueLightEntry & 0x001E0) + (opacity << 5) < (neighborLightEntry & 0x001E0)) ||
                                                     ((queueLightEntry & 0x03C00) + (opacity << 10) < (neighborLightEntry & 0x03C00)) ||
                                                     ((queueLightEntry & 0x78000) + (opacity << 15) < (neighborLightEntry & 0x78000))) {
-                                                world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag; // Mark queue location to be re-processed
+                                                world.lightBackfillNeeded[queue_x - world.rel_x + 14][queue_y - world.rel_y + 14][queue_z - world.rel_z + 14] = world.updateFlag; // Mark queue location to be re-processed
                                             }
                                         }
                                     }
