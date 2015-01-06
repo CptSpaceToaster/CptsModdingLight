@@ -24,7 +24,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 public class ColoredLightsCoreDummyContainer extends DummyModContainer {
     public ChunkDataEventHandler chunkDataEventHandler;
 
-    public static final String version = "1.3.3";
+    public static final String version = "1.3.4";
 
     public ColoredLightsCoreDummyContainer() {
         super(new ModMetadata());

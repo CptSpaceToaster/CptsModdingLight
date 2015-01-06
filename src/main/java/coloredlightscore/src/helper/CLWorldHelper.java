@@ -164,7 +164,7 @@ public class CLWorldHelper {
             return false;
         } else {
 
-            if (par1Enu != world.flagEntry) {
+            if (par1Enu != world.flagEntry || world.firstTime) {
                 //Increment the updateFlag ONLY on a fresh call... This keeps the updateFlag consistent when the algorithm recurses
                 // if ((flag_entry != updateFlag) && (flag_entry != updateFlag+1)) { // Light has not been visited by the algorithm yet
                 // if (flag_entry == updateFlag) { // Light has been marked for a later update
@@ -175,6 +175,8 @@ public class CLWorldHelper {
                 world.rel_x = par_x;
                 world.rel_y = par_y;
                 world.rel_z = par_z;
+
+                world.firstTime = false;
             }
 
             world.theProfiler.startSection("getBrightness");
