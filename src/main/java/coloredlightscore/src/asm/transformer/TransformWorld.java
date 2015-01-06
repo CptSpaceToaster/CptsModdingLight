@@ -57,11 +57,6 @@ public class TransformWorld extends HelperMethodTransformer {
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "updateFlag", "I", null, null));
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "flagEntry", "Lnet/minecraft/world/EnumSkyBlock;", null, null));
 
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "rel_x", "I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "rel_y", "I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "rel_z", "I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "firstTime", "Z", null, null));
-
         return true;
     }
 
@@ -142,26 +137,6 @@ public class TransformWorld extends HelperMethodTransformer {
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/world/EnumSkyBlock", "Block", "Lnet/minecraft/world/EnumSkyBlock;"));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "flagEntry", "Lnet/minecraft/world/EnumSkyBlock;"));
-
-        //this.rel_x = 0;
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_0));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "rel_x", "I"));
-
-        //this.rel_y = 0;
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_0));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "rel_y", "I"));
-
-        //this.rel_x = 0;
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_0));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "rel_z", "I"));
-
-        //this.firstTime = true;
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_1));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "firstTime", "Z"));
 
         AbstractInsnNode returnNode = ASMUtils.findLastReturn(methodNode);
         methodNode.instructions.insertBefore(returnNode, initInternalLightVariables);

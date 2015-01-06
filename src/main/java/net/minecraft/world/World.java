@@ -23,11 +23,6 @@ public class World implements IBlockAccess {
     public int updateFlag;
     public EnumSkyBlock flagEntry;
 
-    public int rel_x;
-    public int rel_y;
-    public int rel_z;
-    public boolean firstTime;
-
     public WorldProvider provider;
     public int skylightSubtracted;
     public Profiler theProfiler;
