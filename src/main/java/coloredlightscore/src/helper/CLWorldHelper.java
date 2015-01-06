@@ -237,7 +237,7 @@ public class CLWorldHelper {
                         queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
                         neighborLightEntry = world.getSavedLightValue(par1Enu, queue_x, queue_y, queue_z); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
 
-                        if (Math.abs(queue_x - world.rel_x) > 14 && Math.abs(queue_y - world.rel_y) > 14 && Math.abs(queue_z - world.rel_z) > 14) {
+                        if (Math.abs(queue_x - world.rel_x) < 14 && Math.abs(queue_y - world.rel_y) < 14 && Math.abs(queue_z - world.rel_z) < 14) {
                             world.lightBackfillNeeded[queue_x - world.rel_x + 14][queue_y - world.rel_y + 14][queue_z - world.rel_z + 14] = world.updateFlag + 1; // Light has been visited and processed
                         }
                         world.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag + 1; // Light has been visited and processed
@@ -294,7 +294,7 @@ public class CLWorldHelper {
                                                     ((queueLightEntry & 0x001E0) + (opacity << 5) < (neighborLightEntry & 0x001E0)) ||
                                                     ((queueLightEntry & 0x03C00) + (opacity << 10) < (neighborLightEntry & 0x03C00)) ||
                                                     ((queueLightEntry & 0x78000) + (opacity << 15) < (neighborLightEntry & 0x78000))) {
-                                                if (Math.abs(queue_x - world.rel_x) > 14 && Math.abs(queue_y - world.rel_y) > 14 && Math.abs(queue_z - world.rel_z) > 14) {
+                                                if (Math.abs(queue_x - world.rel_x) < 14 && Math.abs(queue_y - world.rel_y) < 14 && Math.abs(queue_z - world.rel_z) < 14) {
                                                     world.lightBackfillNeeded[queue_x - world.rel_x + 14][queue_y - world.rel_y + 14][queue_z - world.rel_z + 14] = world.updateFlag; // Mark queue location to be re-processed
                                                 }
                                             }
