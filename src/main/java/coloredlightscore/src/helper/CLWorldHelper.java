@@ -218,7 +218,7 @@ public class CLWorldHelper {
             if ((((0x100000 | savedLightValue) - compLightValue) & 0x84210) > 0) { //compLightValue has components that are larger than savedLightValue, the block at the current position is brighter than the saved value at the current positon... it must have been made brighter somehow
                 //Light Splat/Spread
 
-                world.lightAdditionNeeded[14][14][14] = world.updateFlag;   // Light needs processing processed
+                world.lightAdditionNeeded[14][14][14] = world.updateFlag; // Light needs processing processed
                 lightAdditionsCalled++;
                 world.lightAdditionBlockList[getter++] = (0x20820L | (compLightValue << 18L));
 
@@ -283,10 +283,10 @@ public class CLWorldHelper {
                                                 world.lightAdditionNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14] = world.updateFlag; // Mark neighbor to be processed
                                                 world.lightAdditionBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((ll | rl | gl | bl) << 18L);
                                                 lightAdditionsCalled++;
-                                            } else if (((queueLightEntry & 0x0000F) < (neighborLightEntry & 0x0000F) + (opacity)) ||
-                                                    ((queueLightEntry & 0x001E0) < (neighborLightEntry & 0x001E0) + (opacity << 5)) ||
-                                                    ((queueLightEntry & 0x03C00) < (neighborLightEntry & 0x03C00) + (opacity << 10)) ||
-                                                    ((queueLightEntry & 0x78000) < (neighborLightEntry & 0x78000) + (opacity << 15))) {
+                                            } else if (((queueLightEntry & 0x0000F) + (opacity) < (neighborLightEntry & 0x0000F)) ||
+                                                    ((queueLightEntry & 0x001E0) + (opacity << 5) < (neighborLightEntry & 0x001E0)) ||
+                                                    ((queueLightEntry & 0x03C00) + (opacity << 10) < (neighborLightEntry & 0x03C00)) ||
+                                                    ((queueLightEntry & 0x78000) + (opacity << 15) < (neighborLightEntry & 0x78000))) {
                                                 world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag; // Mark queue location to be re-processed
                                             }
                                         }
@@ -410,12 +410,16 @@ public class CLWorldHelper {
                         queue_y = (getter >> 6 & 0x3f) - 32 + par_y; //Get Entry Y coord
                         queue_z = (getter >> 12 & 0x3f) - 32 + par_z; //Get Entry Z coord
 
+                        if (queue_x == -472 && queue_y == 56 && queue_z == 1006) {
+                            nop();
+                        }
+
                         //world.setBlock(queue_x, queue_y, queue_z, Blocks.carpet, 0, 0);
 
-                        //if (world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) {
+                        if (world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) {
                             CLWorldHelper.updateLightByType(world, par1Enu, queue_x, queue_y, queue_z); ///oooooOOOOoooo spoooky!
-                        //}
-                    }
+                        }
+                    }//-472 55 1006
                 }
             }
             world.theProfiler.endSection();
