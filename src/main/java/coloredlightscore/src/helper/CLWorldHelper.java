@@ -250,7 +250,8 @@ public class CLWorldHelper {
 
                             world.setLightValue(par1Enu, queue_x, queue_y, queue_z, queueLightEntry);
 
-                            if ((manhattan_distance < ((compLightValue & 0x0000F) - 1)) || (par1Enu == EnumSkyBlock.Sky && (man_x<14) && (man_y<14) && (man_z<14))) { //Limits the splat size to the initial brightness value, skylight checks bypass this, as they aren't always diamond-shaped
+                            //if ((manhattan_distance < ((compLightValue & 0x0000F) - 1)) || (par1Enu == EnumSkyBlock.Sky && (man_x<14) && (man_y<14) && (man_z<14))) { //Limits the splat size to the initial brightness value, skylight checks bypass this, as they aren't always diamond-shaped
+                            if (manhattan_distance < ((compLightValue & 0x0000F) - 1)) {
                                 for (neighborIndex = 0; neighborIndex < 6; ++neighborIndex) {
                                     neighbor_x = queue_x + Facing.offsetsXForSide[neighborIndex];
                                     neighbor_y = queue_y + Facing.offsetsYForSide[neighborIndex];
@@ -267,12 +268,14 @@ public class CLWorldHelper {
                                             //Get Saved light value from face
                                             neighborLightEntry = world.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
 
+
                                             if ((par1Enu == EnumSkyBlock.Sky) && (neighborIndex < 2) && (world.isAirBlock(neighbor_x, neighbor_y, neighbor_z))) { // if we're processing skylight, and we're looking up and down, and the adjacent block IS AIR, then avoid lightSubtraction
                                                 ll = (queueLightEntry & 0x0000F) > (neighborLightEntry & 0x0000F) ? (queueLightEntry & 0x0000F) : (neighborLightEntry & 0x0000F);
                                                 rl = (queueLightEntry & 0x001E0) > (neighborLightEntry & 0x001E0) ? (queueLightEntry & 0x001E0) : (neighborLightEntry & 0x001E0);
                                                 gl = (queueLightEntry & 0x03C00) > (neighborLightEntry & 0x03C00) ? (queueLightEntry & 0x03C00) : (neighborLightEntry & 0x03C00);
                                                 bl = (queueLightEntry & 0x78000) > (neighborLightEntry & 0x78000) ? (queueLightEntry & 0x78000) : (neighborLightEntry & 0x78000);
                                             } else {
+
                                                 //Subtract by 1, as channels diminish by one every block
                                                 //TODO: Colored Opacity
                                                 ll = (queueLightEntry & 0x0000F) > (neighborLightEntry & 0x0000F) ? Math.max(0, (queueLightEntry & 0x0000F) - (opacity)) : (neighborLightEntry & 0x0000F);
