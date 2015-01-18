@@ -12,6 +12,8 @@ Forum: http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/w
 4. Thats it ;)  Just Start your IDE and hit "Run-Client" (or whatever you named your Client RunConfig)
 
 
-The API methods **may** be inaccessible for now, but they can be implemented relativly easily.  Message on the forums, and ask questions on 
+The API methods **may** be inaccessible for now, but they can be implemented relativly easily.  If you are able to access the API, please let me know, then I can update this guide!
+
+Message on the forums, and ask questions on 
 IRC: irc.esper.net 
 Room: #ColoredLightCore
