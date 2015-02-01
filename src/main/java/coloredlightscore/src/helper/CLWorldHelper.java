@@ -268,21 +268,12 @@ public class CLWorldHelper {
                                             //Get Saved light value from face
                                             neighborLightEntry = world.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
 
-
-                                            if ((par1Enu == EnumSkyBlock.Sky) && (neighborIndex < 2) && (world.isAirBlock(neighbor_x, neighbor_y, neighbor_z))) { // if we're processing skylight, and we're looking up and down, and the adjacent block IS AIR, then avoid lightSubtraction
-                                                ll = (queueLightEntry & 0x0000F) > (neighborLightEntry & 0x0000F) ? (queueLightEntry & 0x0000F) : (neighborLightEntry & 0x0000F);
-                                                rl = (queueLightEntry & 0x001E0) > (neighborLightEntry & 0x001E0) ? (queueLightEntry & 0x001E0) : (neighborLightEntry & 0x001E0);
-                                                gl = (queueLightEntry & 0x03C00) > (neighborLightEntry & 0x03C00) ? (queueLightEntry & 0x03C00) : (neighborLightEntry & 0x03C00);
-                                                bl = (queueLightEntry & 0x78000) > (neighborLightEntry & 0x78000) ? (queueLightEntry & 0x78000) : (neighborLightEntry & 0x78000);
-                                            } else {
-
-                                                //Subtract by 1, as channels diminish by one every block
-                                                //TODO: Colored Opacity
-                                                ll = (queueLightEntry & 0x0000F) > (neighborLightEntry & 0x0000F) ? Math.max(0, (queueLightEntry & 0x0000F) - (opacity)) : (neighborLightEntry & 0x0000F);
-                                                rl = (queueLightEntry & 0x001E0) > (neighborLightEntry & 0x001E0) ? Math.max(0, (queueLightEntry & 0x001E0) - (opacity << 5)) : (neighborLightEntry & 0x001E0);
-                                                gl = (queueLightEntry & 0x03C00) > (neighborLightEntry & 0x03C00) ? Math.max(0, (queueLightEntry & 0x03C00) - (opacity << 10)) : (neighborLightEntry & 0x03C00);
-                                                bl = (queueLightEntry & 0x78000) > (neighborLightEntry & 0x78000) ? Math.max(0, (queueLightEntry & 0x78000) - (opacity << 15)) : (neighborLightEntry & 0x78000);
-                                            }
+                                            //Subtract by 1, as channels diminish by one every block
+                                            //TODO: Colored Opacity
+                                            ll = (queueLightEntry & 0x0000F) > (neighborLightEntry & 0x0000F) ? Math.max(0, (queueLightEntry & 0x0000F) - (opacity)) : (neighborLightEntry & 0x0000F);
+                                            rl = (queueLightEntry & 0x001E0) > (neighborLightEntry & 0x001E0) ? Math.max(0, (queueLightEntry & 0x001E0) - (opacity << 5)) : (neighborLightEntry & 0x001E0);
+                                            gl = (queueLightEntry & 0x03C00) > (neighborLightEntry & 0x03C00) ? Math.max(0, (queueLightEntry & 0x03C00) - (opacity << 10)) : (neighborLightEntry & 0x03C00);
+                                            bl = (queueLightEntry & 0x78000) > (neighborLightEntry & 0x78000) ? Math.max(0, (queueLightEntry & 0x78000) - (opacity << 15)) : (neighborLightEntry & 0x78000);
 
                                             if (((ll > (neighborLightEntry & 0x0000F)) ||
                                                     (rl > (neighborLightEntry & 0x001E0)) ||
@@ -419,6 +410,8 @@ public class CLWorldHelper {
                         queue_x = (getter & 0x3f) - 32 + par_x; //Get Entry X coord
                         queue_y = (getter >> 6 & 0x3f) - 32 + par_y; //Get Entry Y coord
                         queue_z = (getter >> 12 & 0x3f) - 32 + par_z; //Get Entry Z coord
+
+                        System.out.println("x: " + queue_x + ", y: " + queue_y + ", z: " + queue_z);
 
                         if (world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) {
                             CLWorldHelper.updateLightByType_withIncrement(world, par1Enu, queue_x, queue_y, queue_z, false, rel_x, rel_y, rel_z); ///oooooOOOOoooo spoooky!
