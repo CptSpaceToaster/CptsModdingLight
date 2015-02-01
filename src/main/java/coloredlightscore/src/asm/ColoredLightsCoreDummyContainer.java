@@ -70,15 +70,15 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
         }
 
         // Inject RGB values into vanilla blocks		
-        CLApi.setBlockColorRGB(Blocks.lava, 15, 11, 10);
-        CLApi.setBlockColorRGB(Blocks.flowing_lava, 15, 11, 10);
-        CLApi.setBlockColorRGB(Blocks.torch, 14, 13, 12);
-        CLApi.setBlockColorRGB(Blocks.fire, 15, 13, 11);
-        CLApi.setBlockColorRGB(Blocks.lit_redstone_ore, 9, 6, 6);
-        CLApi.setBlockColorRGB(Blocks.redstone_torch, 7, 4, 4);
+        CLApi.setBlockColorRGB(Blocks.lava, 15, 10, 0);
+        CLApi.setBlockColorRGB(Blocks.flowing_lava, 15, 10, 0);
+        CLApi.setBlockColorRGB(Blocks.torch, 14, 13, 10);
+        CLApi.setBlockColorRGB(Blocks.fire, 15, 13, 0);
+        CLApi.setBlockColorRGB(Blocks.lit_redstone_ore, 9, 0, 0);
+        CLApi.setBlockColorRGB(Blocks.redstone_torch, 7, 0, 0);
         CLApi.setBlockColorRGB(Blocks.portal, 6, 3, 11);
-        CLApi.setBlockColorRGB(Blocks.lit_furnace, 13, 13, 12);
-        CLApi.setBlockColorRGB(Blocks.powered_repeater, 9, 6, 7);
+        CLApi.setBlockColorRGB(Blocks.lit_furnace, 13, 12, 10);
+        CLApi.setBlockColorRGB(Blocks.powered_repeater, 9, 0, 0);
 
         Object thisShouldBeABlock;
         int l;
