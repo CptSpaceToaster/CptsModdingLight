@@ -160,7 +160,7 @@ public class CLWorldHelper {
     }
 
     public static boolean updateLightByType(World world, EnumSkyBlock par1Enu, int par_x, int par_y, int par_z) {
-        return updateLightByType_withIncrement(world, par1Enu, par_x, par_y, par_z, true, par_x, par_y, par_z);
+        return CLWorldHelper.updateLightByType_withIncrement(world, par1Enu, par_x, par_y, par_z, true, par_x, par_y, par_z);
     }
 
     public static boolean updateLightByType_withIncrement(World world, EnumSkyBlock par1Enu, int par_x, int par_y, int par_z, boolean shouldIncrement, int rel_x, int rel_y, int rel_z) {
@@ -258,7 +258,7 @@ public class CLWorldHelper {
                                     neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
 
                                     lightEntry = world.lightAdditionNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
-                                    if (lightEntry != world.updateFlag && (lightEntry != world.updateFlag + 1 && shouldIncrement)) { // on recursive calls, ignore instances of world.updateFlag being flag + 1
+                                    if (lightEntry != world.updateFlag && (lightEntry != world.updateFlag + 1 || !shouldIncrement)) { // on recursive calls, ignore instances of world.updateFlag being flag + 1
 
                                         opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
 
@@ -410,8 +410,6 @@ public class CLWorldHelper {
                         queue_x = (getter & 0x3f) - 32 + par_x; //Get Entry X coord
                         queue_y = (getter >> 6 & 0x3f) - 32 + par_y; //Get Entry Y coord
                         queue_z = (getter >> 12 & 0x3f) - 32 + par_z; //Get Entry Z coord
-
-                        System.out.println("x: " + queue_x + ", y: " + queue_y + ", z: " + queue_z);
 
                         if (world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) {
                             CLWorldHelper.updateLightByType_withIncrement(world, par1Enu, queue_x, queue_y, queue_z, false, rel_x, rel_y, rel_z); ///oooooOOOOoooo spoooky!
