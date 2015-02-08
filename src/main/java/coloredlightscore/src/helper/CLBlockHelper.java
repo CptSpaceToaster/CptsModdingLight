@@ -17,16 +17,20 @@ public class CLBlockHelper {
         Block block = blockAccess.getBlock(x, y, z);
         if (blockAccess instanceof World)
             l = CLWorldHelper.getLightBrightnessForSkyBlocks((World) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
-        else
+        else if(blockAccess instanceof ChunkCache)
             l = CLChunkCacheHelper.getLightBrightnessForSkyBlocks((ChunkCache) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
+        else
+            l = 0;
 
         if (l == 0 && block instanceof BlockSlab) {
             --y;
             block = blockAccess.getBlock(x, y, z);
             if (blockAccess instanceof World)
                 return CLWorldHelper.getLightBrightnessForSkyBlocks((World) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
-            else
+            else if(blockAccess instanceof ChunkCache)
                 return CLChunkCacheHelper.getLightBrightnessForSkyBlocks((ChunkCache) blockAccess, x, y, z, block.getLightValue(blockAccess, x, y, z));
+            else
+                return 0;
         } else {
             return l;
         }
