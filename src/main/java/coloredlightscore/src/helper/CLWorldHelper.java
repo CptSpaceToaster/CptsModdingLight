@@ -1,7 +1,6 @@
 package coloredlightscore.src.helper;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
@@ -303,120 +302,123 @@ public class CLWorldHelper {
                 CLLog.warn("Error in Light Addition:" + filler + (par1Enu==EnumSkyBlock.Block?" (isBlock)": " (isSky)") + " Saved:" + Integer.toBinaryString((int) savedLightValue) + " Comp:" + Integer.toBinaryString((int)compLightValue) + " isBackfill:" + " updateFlag:" + world.updateFlag + " Called:" + lightAdditionsCalled + " Satisfied:" + lightAdditionsSatisfied);
             }
 
-            world.theProfiler.endStartSection("lightSubtraction");
+            if (shouldIncrement) { // Only proceed if we are NOT in a recursive call
+                world.theProfiler.endStartSection("lightSubtraction");
 
-            //Reset indexes
-            filler = 0;
-            getter = 0;
+                //Reset indexes
+                filler = 0;
+                getter = 0;
 
-            if ((((0x100000 | compLightValue) - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
-                //Light Destruction
+                if ((((0x100000 | compLightValue) - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
+                    //Light Destruction
 
-                world.setLightValue(par1Enu, par_x, par_y, par_z, (int)compLightValue); // This kills the light
-                world.lightAdditionBlockList[getter++] = (0x20820L | (savedLightValue << 18L));
+                    world.setLightValue(par1Enu, par_x, par_y, par_z, (int) compLightValue); // This kills the light
+                    world.lightAdditionBlockList[getter++] = (0x20820L | (savedLightValue << 18L));
 
-                while (filler <= getter) {
-                    queueEntry = world.lightAdditionBlockList[filler++]; //Get Entry at l, which starts at 0
-                    queue_x = ((int) (queueEntry & 0x3f) - 32 + par_x); //Get Entry X coord
-                    queue_y = ((int) (queueEntry >> 6 & 0x3f) - 32 + par_y); //Get Entry Y coord
-                    queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
-                    queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
+                    while (filler <= getter) {
+                        queueEntry = world.lightAdditionBlockList[filler++]; //Get Entry at l, which starts at 0
+                        queue_x = ((int) (queueEntry & 0x3f) - 32 + par_x); //Get Entry X coord
+                        queue_y = ((int) (queueEntry >> 6 & 0x3f) - 32 + par_y); //Get Entry Y coord
+                        queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
+                        queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
 
-                    man_x = MathHelper.abs_int(queue_x - par_x);
-                    man_y = MathHelper.abs_int(queue_y - par_y);
-                    man_z = MathHelper.abs_int(queue_z - par_z);
-                    manhattan_distance = man_x + man_y + man_z;
+                        man_x = MathHelper.abs_int(queue_x - par_x);
+                        man_y = MathHelper.abs_int(queue_y - par_y);
+                        man_z = MathHelper.abs_int(queue_z - par_z);
+                        manhattan_distance = man_x + man_y + man_z;
 
-                    if (manhattan_distance < ((savedLightValue & 0x0000F))) { //Limits the splat size to the initial brightness value
-                        for (neighborIndex = 0; neighborIndex < 6; ++neighborIndex) {
-                            neighbor_x = queue_x + Facing.offsetsXForSide[neighborIndex];
-                            neighbor_y = queue_y + Facing.offsetsYForSide[neighborIndex];
-                            neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
+                        if (manhattan_distance < ((savedLightValue & 0x0000F))) { //Limits the splat size to the initial brightness value
+                            for (neighborIndex = 0; neighborIndex < 6; ++neighborIndex) {
+                                neighbor_x = queue_x + Facing.offsetsXForSide[neighborIndex];
+                                neighbor_y = queue_y + Facing.offsetsYForSide[neighborIndex];
+                                neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
 
-                            man_x = MathHelper.abs_int(neighbor_x - par_x);
-                            man_y = MathHelper.abs_int(neighbor_y - par_y);
-                            man_z = MathHelper.abs_int(neighbor_z - par_z);
+                                man_x = MathHelper.abs_int(neighbor_x - par_x);
+                                man_y = MathHelper.abs_int(neighbor_y - par_y);
+                                man_z = MathHelper.abs_int(neighbor_z - par_z);
 
-                            opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
-                            neighborLightEntry = world.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
+                                opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
+                                neighborLightEntry = world.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
 
-                            if (opacity < 15 || neighborLightEntry > 0) {
-                                //Get Saved light value from face
+                                if (opacity < 15 || neighborLightEntry > 0) {
+                                    //Get Saved light value from face
 
-                                //   |------------------maximum theoretical light value------------------|    |------saved light value------|
-                                ll = (Math.max((queueLightEntry & 0x0000F) - ((man_x + man_y + man_z)), 0) >= (neighborLightEntry & 0x0000F)) ? 0 : (neighborLightEntry & 0x0000F);
-                                rl = (Math.max((queueLightEntry & 0x001E0) - ((man_x + man_y + man_z) << 5), 0) >= (neighborLightEntry & 0x001E0)) ? 0 : (neighborLightEntry & 0x001E0);
-                                gl = (Math.max((queueLightEntry & 0x03C00) - ((man_x + man_y + man_z) << 10), 0) >= (neighborLightEntry & 0x03C00)) ? 0 : (neighborLightEntry & 0x03C00);
-                                bl = (Math.max((queueLightEntry & 0x78000) - ((man_x + man_y + man_z) << 15), 0) >= (neighborLightEntry & 0x78000)) ? 0 : (neighborLightEntry & 0x78000);
+                                    //   |------------------maximum theoretical light value------------------|    |------saved light value------|
+                                    ll = (Math.max((queueLightEntry & 0x0000F) - ((man_x + man_y + man_z)), 0) >= (neighborLightEntry & 0x0000F)) ? 0 : (neighborLightEntry & 0x0000F);
+                                    rl = (Math.max((queueLightEntry & 0x001E0) - ((man_x + man_y + man_z) << 5), 0) >= (neighborLightEntry & 0x001E0)) ? 0 : (neighborLightEntry & 0x001E0);
+                                    gl = (Math.max((queueLightEntry & 0x03C00) - ((man_x + man_y + man_z) << 10), 0) >= (neighborLightEntry & 0x03C00)) ? 0 : (neighborLightEntry & 0x03C00);
+                                    bl = (Math.max((queueLightEntry & 0x78000) - ((man_x + man_y + man_z) << 15), 0) >= (neighborLightEntry & 0x78000)) ? 0 : (neighborLightEntry & 0x78000);
 
-                                sortValue = 0;
-                                if (((queueLightEntry & 0x0000F) > 0) && (ll != 0)) {
-                                    sortValue = (int)ll;
-                                }
-                                if (((queueLightEntry & 0x001E0) > 0) && ((rl >> 5) > sortValue )) {
-                                    sortValue = (int)(rl >> 5);
-                                }
-                                if (((queueLightEntry & 0x03C00) > 0) && ((gl >> 10) > sortValue )) {
-                                    sortValue = (int)(gl >> 10);
-                                }
-                                if (((queueLightEntry & 0x78000) > 0) && ((bl >> 15) > sortValue )) {
-                                    sortValue = (int)(bl >> 15);
-                                }
-
-                                //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
-                                if (neighborLightEntry != (ll | rl | gl | bl)) {
-
-                                    if (sortValue != 0) {
-                                        if (ll == sortValue) {
-                                            queueLightEntry &= ~(0x0000F);
-                                        }
-                                        if ((rl>>5) == sortValue) {
-                                            queueLightEntry &= ~(0x001E0);
-                                        }
-                                        if ((gl>>10) == sortValue) {
-                                            queueLightEntry &= ~(0x03C00);
-                                        }
-                                        if ((bl>>15) == sortValue) {
-                                            queueLightEntry &= ~(0x78000);
-                                        }
-
-                                        world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag;
-                                        world.lightBackfillBlockList[sortValue-1][world.lightBackfillIndexes[sortValue-1]++] = (neighbor_x - par_x + 32) | ((neighbor_y - par_y + 32) << 6) | ((neighbor_z - par_z + 32) << 12); //record coordinates for backfill
+                                    sortValue = 0;
+                                    if (((queueLightEntry & 0x0000F) > 0) && (ll != 0)) {
+                                        sortValue = (int) ll;
+                                    }
+                                    if (((queueLightEntry & 0x001E0) > 0) && ((rl >> 5) > sortValue)) {
+                                        sortValue = (int) (rl >> 5);
+                                    }
+                                    if (((queueLightEntry & 0x03C00) > 0) && ((gl >> 10) > sortValue)) {
+                                        sortValue = (int) (gl >> 10);
+                                    }
+                                    if (((queueLightEntry & 0x78000) > 0) && ((bl >> 15) > sortValue)) {
+                                        sortValue = (int) (bl >> 15);
                                     }
 
-                                    world.setLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z, (int) (ll | rl | gl | bl)); // This kills the light
-                                    world.lightAdditionBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((long) queueLightEntry << 18L); //this array keeps the algorithm going, don't touch
-                                } else {
-                                    if (sortValue != 0) {
-                                        world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag;
-                                        world.lightBackfillBlockList[sortValue-1][world.lightBackfillIndexes[sortValue-1]++] = (queue_x - par_x + 32) | ((queue_y - par_y + 32) << 6) | ((queue_z - par_z + 32) << 12); //record coordinates for backfill
+                                    //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
+                                    if (neighborLightEntry != (ll | rl | gl | bl)) {
+
+                                        if (sortValue != 0) {
+                                            if (ll == sortValue) {
+                                                queueLightEntry &= ~(0x0000F);
+                                            }
+                                            if ((rl >> 5) == sortValue) {
+                                                queueLightEntry &= ~(0x001E0);
+                                            }
+                                            if ((gl >> 10) == sortValue) {
+                                                queueLightEntry &= ~(0x03C00);
+                                            }
+                                            if ((bl >> 15) == sortValue) {
+                                                queueLightEntry &= ~(0x78000);
+                                            }
+
+                                            world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag;
+                                            world.lightBackfillBlockList[sortValue - 1][world.lightBackfillIndexes[sortValue - 1]++] = (neighbor_x - par_x + 32) | ((neighbor_y - par_y + 32) << 6) | ((neighbor_z - par_z + 32) << 12); //record coordinates for backfill
+                                        }
+
+                                        world.setLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z, (int) (ll | rl | gl | bl)); // This kills the light
+                                        world.lightAdditionBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((long) queueLightEntry << 18L); //this array keeps the algorithm going, don't touch
+                                    } else {
+                                        if (sortValue != 0) {
+                                            world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.updateFlag;
+                                            world.lightBackfillBlockList[sortValue - 1][world.lightBackfillIndexes[sortValue - 1]++] = (queue_x - par_x + 32) | ((queue_y - par_y + 32) << 6) | ((queue_z - par_z + 32) << 12); //record coordinates for backfill
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                if (filler > 4097) {
-                    CLLog.warn("Light Subtraction Overfilled:" + filler + (par1Enu==EnumSkyBlock.Block?" (isBlock)": " (isSky)") + " Saved:" + Integer.toBinaryString((int) savedLightValue) + " Comp:" + Integer.toBinaryString((int)compLightValue) + " isBackfill:" + " updateFlag:" + world.updateFlag + " Called:" + lightAdditionsCalled + " Satisfied:" + lightAdditionsSatisfied);
-                }
+                    if (filler > 4097) {
+                        CLLog.warn("Light Subtraction Overfilled:" + filler + (par1Enu == EnumSkyBlock.Block ? " (isBlock)" : " (isSky)") + " Saved:" + Integer.toBinaryString((int) savedLightValue) + " Comp:" + Integer.toBinaryString((int) compLightValue) + " isBackfill:" + " updateFlag:" + world.updateFlag + " Called:" + lightAdditionsCalled + " Satisfied:" + lightAdditionsSatisfied);
+                    }
 
-                world.theProfiler.endStartSection("lightBackfill");
+                    world.theProfiler.endStartSection("lightBackfill");
 
-                //Backfill
-                for (filler=world.lightBackfillIndexes.length - 1; filler >= 0; filler--) {
-                    while (world.lightBackfillIndexes[filler] > 0) {
-                        getter = world.lightBackfillBlockList[filler][--world.lightBackfillIndexes[filler]];
-                        queue_x = (getter & 0x3f) - 32 + par_x; //Get Entry X coord
-                        queue_y = (getter >> 6 & 0x3f) - 32 + par_y; //Get Entry Y coord
-                        queue_z = (getter >> 12 & 0x3f) - 32 + par_z; //Get Entry Z coord
+                    //Backfill
+                    for (filler = world.lightBackfillIndexes.length - 1; filler >= 0; filler--) {
+                        while (world.lightBackfillIndexes[filler] > 0) {
+                            getter = world.lightBackfillBlockList[filler][--world.lightBackfillIndexes[filler]];
+                            queue_x = (getter & 0x3f) - 32 + par_x; //Get Entry X coord
+                            queue_y = (getter >> 6 & 0x3f) - 32 + par_y; //Get Entry Y coord
+                            queue_z = (getter >> 12 & 0x3f) - 32 + par_z; //Get Entry Z coord
 
-                        if (world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) {
-                            CLWorldHelper.updateLightByType_withIncrement(world, par1Enu, queue_x, queue_y, queue_z, false, rel_x, rel_y, rel_z); ///oooooOOOOoooo spoooky!
+                            if (world.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) {
+                                CLWorldHelper.updateLightByType_withIncrement(world, par1Enu, queue_x, queue_y, queue_z, false, rel_x, rel_y, rel_z); ///oooooOOOOoooo spoooky!
+                            }
                         }
                     }
                 }
             }
+
             world.theProfiler.endSection();
             return true;
         }
