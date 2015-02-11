@@ -255,6 +255,8 @@ public class CLWorldHelper {
                                     neighbor_x = queue_x + Facing.offsetsXForSide[neighborIndex];
                                     neighbor_y = queue_y + Facing.offsetsYForSide[neighborIndex];
                                     neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
+                                    if (neighbor_y < 0 || neighbor_y > 255)
+                                        continue;
 
                                     lightEntry = world.lightAdditionNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
                                     if (lightEntry != world.updateFlag && (lightEntry != world.updateFlag + 1 || !shouldIncrement)) { // on recursive calls, ignore instances of world.updateFlag being flag + 1
@@ -332,6 +334,8 @@ public class CLWorldHelper {
                                 neighbor_x = queue_x + Facing.offsetsXForSide[neighborIndex];
                                 neighbor_y = queue_y + Facing.offsetsYForSide[neighborIndex];
                                 neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
+                                if (neighbor_y < 0 || neighbor_y > 255)
+                                    continue;
 
                                 man_x = MathHelper.abs_int(neighbor_x - par_x);
                                 man_y = MathHelper.abs_int(neighbor_y - par_y);
