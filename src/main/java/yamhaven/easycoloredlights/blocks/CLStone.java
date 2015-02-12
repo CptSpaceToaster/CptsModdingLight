@@ -9,6 +9,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import yamhaven.easycoloredlights.CLMaterialsController;
 import yamhaven.easycoloredlights.lib.BlockInfo;
 import yamhaven.easycoloredlights.lib.ModInfo;
@@ -56,17 +57,28 @@ public class CLStone extends CLBlock {
             par3List.add(new ItemStack(par1, 1, i));
         }
     }
-    
+
+    /**
+     * Returns the usual quantity dropped by the block plus a bonus of 1 to 'i' (inclusive).
+     */
+    public int quantityDroppedWithBonus(int p_149679_1_, Random p_149679_2_)
+    {
+        return MathHelper.clamp_int(this.quantityDropped(p_149679_2_) + p_149679_2_.nextInt(p_149679_1_ + 1), 1, 4);
+    }
+
+    /**
+     * Returns the quantity of items to drop on block destruction.
+     */
+    public int quantityDropped(Random p_149745_1_)
+    {
+        return 2 + p_149745_1_.nextInt(3);
+    }
+
     @Override
     public Item getItemDropped(int par1, Random par2Random, int par3) {
         return CLMaterialsController.CLDust;
     }
 
-    @Override
-    public int quantityDropped(Random rand) {
-        return 2 + rand.nextInt(3);
-    }
-    
     @Override
     public int getColorLightValue(int meta) {
         if (meta == 0) {

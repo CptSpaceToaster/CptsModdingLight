@@ -14,7 +14,8 @@ import net.minecraft.util.IIcon;
 
 public class CLDust extends Item {
     public CLDust() {
-        super();
+        this.setHasSubtypes(true);
+        this.setMaxDamage(0);
         setCreativeTab(CreativeTabs.tabMaterials);
     }
     

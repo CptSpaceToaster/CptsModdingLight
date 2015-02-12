@@ -28,8 +28,8 @@ public class CLMaterialsController {
 
     public static void registerMaterials() {
         GameRegistry.registerBlock(CLBlockIdle, ItemCLBlock.class, ModInfo.ID + BlockInfo.CLLamp);
-        GameRegistry.registerBlock(CLBlockOn,   ItemCLBlock.class, ModInfo.ID + BlockInfo.CLLamp + "On");
-        GameRegistry.registerBlock(CLStone,     ItemCLBlock.class, ModInfo.ID + BlockInfo.CLStone);
+        GameRegistry.registerBlock(CLBlockOn, ItemCLBlock.class, ModInfo.ID + BlockInfo.CLLamp + "On");
+        GameRegistry.registerBlock(CLStone, ItemCLBlock.class, ModInfo.ID + BlockInfo.CLStone);
         GameRegistry.registerItem(CLDust, ModInfo.ID + BlockInfo.CLDust);
     }
 
@@ -39,12 +39,9 @@ public class CLMaterialsController {
                     's', Items.glowstone_dust,
                     'd', new ItemStack(Items.dye, 1, i)
             );
-            
-            GameRegistry.addShapelessRecipe(new ItemStack(CLStone, 1, i),
-                    new ItemStack(CLDust, 1, i),
-                    new ItemStack(CLDust, 1, i),
-                    new ItemStack(CLDust, 1, i),
-                    new ItemStack(CLDust, 1, i)
+
+            GameRegistry.addRecipe(new ItemStack(CLStone, 1, i), "cc", "cc",
+                    'c', new ItemStack(CLDust, 1, i)
             );
             
             GameRegistry.addRecipe(new ItemStack(CLBlockIdle, 8, i), " r ", "rsr", " r ",
