@@ -1,6 +1,8 @@
 package yamhaven.easycoloredlights;
 
+import net.minecraft.block.Block;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import yamhaven.easycoloredlights.blocks.CLLamp;
 import yamhaven.easycoloredlights.blocks.CLStone;
@@ -13,14 +15,14 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public class CLMaterialsController {
     public static CLLamp CLBlockIdle;
     public static CLLamp CLBlockOn;
-    public static CLStone CLStone;
-    public static CLDust CLDust;
+    public static Block CLStone;
+    public static Item CLDust;
     
     public static void init() {
         CLBlockIdle = (CLLamp) new CLLamp(false).setBlockName(BlockInfo.CLLamp);
         CLBlockOn = (CLLamp) new CLLamp(true).setBlockName(BlockInfo.CLLamp + "On");
-        CLStone = (CLStone) new CLStone().setBlockName(BlockInfo.CLStone);
-        CLDust = (CLDust) new CLDust().setUnlocalizedName(BlockInfo.CLDust);
+        CLStone = new CLStone().setBlockName(BlockInfo.CLStone);
+        CLDust = new CLDust().setUnlocalizedName(BlockInfo.CLDust);
         
         CLBlockIdle.setSwitchBlock(CLBlockOn);
         CLBlockOn.setSwitchBlock(CLBlockIdle);
