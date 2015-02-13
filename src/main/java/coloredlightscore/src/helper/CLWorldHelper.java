@@ -52,7 +52,7 @@ public class CLWorldHelper {
 
                 //int cx = x >> 4;
                 //int cz = z >> 4;
-                Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+                Chunk chunk = world.pipe.getChunkFromChunkCoords(x >> 4, z >> 4);
                 x &= 0xf;
                 z &= 0xf;
 
@@ -68,8 +68,8 @@ public class CLWorldHelper {
     //Use this one if you want color
     @SideOnly(Side.CLIENT)
     public static int getLightBrightnessForSkyBlocks(World world, int x, int y, int z, int lightValue) {
-        int skyBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
-        int blockBrightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
+        int skyBrightness = world.pipe.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
+        int blockBrightness = world.pipe.getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
 
         lightValue = ((lightValue & 0xf) | ((lightValue & 0x1e0) >> 1) | ((lightValue & 0x3c00) >> 2) | ((lightValue & 0x78000) >> 3));
 
@@ -91,7 +91,7 @@ public class CLWorldHelper {
     }
 
     public static int computeLightValue(World world, int parX, int parY, int parZ, EnumSkyBlock par1Enu) {
-        if (par1Enu == EnumSkyBlock.Sky && world.canBlockSeeTheSky(parX, parY, parZ)) {
+        if (par1Enu == EnumSkyBlock.Sky && world.pipe.canBlockSeeTheSky(parX, parY, parZ)) {
             return 15;
         } else {
             Block block = world.getBlock(parX, parY, parZ);
@@ -122,7 +122,7 @@ public class CLWorldHelper {
                     int i2 = parY + Facing.offsetsYForSide[faceIndex];
                     int j2 = parZ + Facing.offsetsZForSide[faceIndex];
 
-                    int neighborLight = world.getSavedLightValue(par1Enu, l1, i2, j2);
+                    int neighborLight = world.pipe.getSavedLightValue(par1Enu, l1, i2, j2);
                     int ll = neighborLight & 0x0000F;
                     int rl = neighborLight & 0x001E0;
                     int gl = neighborLight & 0x03C00;
@@ -163,7 +163,7 @@ public class CLWorldHelper {
     }
 
     public static boolean updateLightByType_withIncrement(World world, EnumSkyBlock par1Enu, int par_x, int par_y, int par_z, boolean shouldIncrement, int rel_x, int rel_y, int rel_z) {
-        if (!world.doChunksNearChunkExist(par_x, par_y, par_z, 17)) {
+        if (!world.pipe.doChunksNearChunkExist(par_x, par_y, par_z, 17)) {
             return false;
         } else {
 
@@ -184,7 +184,7 @@ public class CLWorldHelper {
             int getter = 0;
             int lightEntry;
 
-            long savedLightValue = world.getSavedLightValue(par1Enu, par_x, par_y, par_z);
+            long savedLightValue = world.pipe.getSavedLightValue(par1Enu, par_x, par_y, par_z);
             long compLightValue = CLWorldHelper.computeLightValue(world, par_x, par_y, par_z, par1Enu);
             long queueEntry;
             int queue_x;
@@ -232,7 +232,7 @@ public class CLWorldHelper {
                     if (world.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.updateFlag) { // Light has been marked for a later update
 
                         queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
-                        neighborLightEntry = world.getSavedLightValue(par1Enu, queue_x, queue_y, queue_z); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
+                        neighborLightEntry = world.pipe.getSavedLightValue(par1Enu, queue_x, queue_y, queue_z); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
 
                         if (Math.abs(queue_x - rel_x) < 14 && Math.abs(queue_y - rel_y) < 14 && Math.abs(queue_z - rel_z) < 14) {
                             world.lightBackfillNeeded[queue_x - rel_x + 14][queue_y - rel_y + 14][queue_z - rel_z + 14] = world.updateFlag + 1; // Light has been visited and processed
@@ -247,7 +247,7 @@ public class CLWorldHelper {
                             man_z = MathHelper.abs_int(queue_z - par_z);
                             manhattan_distance = man_x + man_y + man_z;
 
-                            world.setLightValue(par1Enu, queue_x, queue_y, queue_z, queueLightEntry);
+                            world.pipe.setLightValue(par1Enu, queue_x, queue_y, queue_z, queueLightEntry);
 
                             //if ((manhattan_distance < ((compLightValue & 0x0000F) - 1)) || (par1Enu == EnumSkyBlock.Sky && (man_x<14) && (man_y<14) && (man_z<14))) { //Limits the splat size to the initial brightness value, skylight checks bypass this, as they aren't always diamond-shaped
                             if (manhattan_distance < ((compLightValue & 0x0000F) - 1)) {
@@ -267,7 +267,7 @@ public class CLWorldHelper {
                                         if (opacity < 15) {
 
                                             //Get Saved light value from face
-                                            neighborLightEntry = world.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
+                                            neighborLightEntry = world.pipe.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
 
                                             //Subtract by 1, as channels diminish by one every block
                                             //TODO: Colored Opacity
@@ -314,7 +314,7 @@ public class CLWorldHelper {
                 if ((((0x100000 | compLightValue) - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
                     //Light Destruction
 
-                    world.setLightValue(par1Enu, par_x, par_y, par_z, (int) compLightValue); // This kills the light
+                    world.pipe.setLightValue(par1Enu, par_x, par_y, par_z, (int) compLightValue); // This kills the light
                     world.lightAdditionBlockList[getter++] = (0x20820L | (savedLightValue << 18L));
 
                     while (filler <= getter) {
@@ -342,7 +342,7 @@ public class CLWorldHelper {
                                 man_z = MathHelper.abs_int(neighbor_z - par_z);
 
                                 opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
-                                neighborLightEntry = world.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
+                                neighborLightEntry = world.pipe.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
 
                                 if (opacity < 15 || neighborLightEntry > 0) {
                                     //Get Saved light value from face
@@ -388,7 +388,7 @@ public class CLWorldHelper {
                                             world.lightBackfillBlockList[sortValue - 1][world.lightBackfillIndexes[sortValue - 1]++] = (neighbor_x - par_x + 32) | ((neighbor_y - par_y + 32) << 6) | ((neighbor_z - par_z + 32) << 12); //record coordinates for backfill
                                         }
 
-                                        world.setLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z, (int) (ll | rl | gl | bl)); // This kills the light
+                                        world.pipe.setLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z, (int) (ll | rl | gl | bl)); // This kills the light
                                         world.lightAdditionBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((long) queueLightEntry << 18L); //this array keeps the algorithm going, don't touch
                                     } else {
                                         if (sortValue != 0) {

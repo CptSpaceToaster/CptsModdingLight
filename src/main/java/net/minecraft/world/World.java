@@ -1,12 +1,12 @@
 package net.minecraft.world;
 
+import coloredlightscore.src.api.CLWorldPipe;
 import net.minecraft.block.Block;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.ForgeDirection;
-import yamhaven.easycoloredlights.blocks.CLLamp;
 
 /**
  * Created by Murray on 11/30/2014.
@@ -14,13 +14,14 @@ import yamhaven.easycoloredlights.blocks.CLLamp;
 public class World implements IBlockAccess {
     // Added by TransformWorld
     public float[] clSunColor;
-
     public long[] lightAdditionBlockList;
     public int[][][] lightAdditionNeeded;
     public int[] lightBackfillIndexes;
     public int[][] lightBackfillBlockList;
     public int[][][] lightBackfillNeeded;
     public int updateFlag;
+    public CLWorldPipe pipe;
+
     public EnumSkyBlock flagEntry;
 
     public WorldProvider provider;
@@ -30,6 +31,9 @@ public class World implements IBlockAccess {
     public boolean isRemote;
 
     public int getBlockLightValue(int par1, int par2, int par3) {
+        System.out.println("1");
+        pipe = new CLWorldPipe(this);
+        System.out.println("2");
         return 0;
     }
 
