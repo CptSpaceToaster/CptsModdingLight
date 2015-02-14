@@ -48,14 +48,6 @@ public class TransformWorld extends HelperMethodTransformer {
     @Override
     protected boolean preTransformClass(ClassNode clazz) {
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "clSunColor", "[F", null, null));
-
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightAdditionBlockList", "[J", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightAdditionNeeded", "[[[I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillIndexes", "[I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillBlockList", "[[I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "lightBackfillNeeded", "[[[I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "updateFlag", "I", null, null));
-        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "flagEntry", "Lnet/minecraft/world/EnumSkyBlock;", null, null));
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "pipe", "Lcoloredlightscore/src/api/CLWorldPipe;", null, null));
 
         return true;
@@ -94,51 +86,6 @@ public class TransformWorld extends HelperMethodTransformer {
         initInternalLightVariables.add(new InsnNode(Opcodes.FASTORE));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "clSunColor", "[F"));
 
-        //this.lightAdditionBlockList = new long[32768];
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new LdcInsnNode(32768));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_LONG));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightAdditionBlockList", "[J"));
-
-        //this.lightAdditionNeeded = new int[29][29][29];
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
-        initInternalLightVariables.add(new MultiANewArrayInsnNode("[[[I", 3));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightAdditionNeeded", "[[[I"));
-
-        //this.lightBackfillIndexes = new int[15];
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 15));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_INT));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillIndexes", "[I"));
-
-        //this.lightBackfillBlockList = new int[15][4991];
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 15));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.SIPUSH, 4991));
-        initInternalLightVariables.add(new MultiANewArrayInsnNode("[[I", 2));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillBlockList", "[[I"));
-
-        //this.lightBackfillNeeded = new int[29][29][29];
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
-        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 29));
-        initInternalLightVariables.add(new MultiANewArrayInsnNode("[[[I", 3));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "lightBackfillNeeded", "[[[I"));
-
-        //this.updateFlag = 1;
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_1)); // started at one, because the array is full of zeros
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "updateFlag", "I"));
-
-        //this.flagEntry = EnumSkyBlock.Block;
-        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/world/EnumSkyBlock", "Block", "Lnet/minecraft/world/EnumSkyBlock;"));
-        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "flagEntry", "Lnet/minecraft/world/EnumSkyBlock;"));
-
         //this.pipe = new CLWorldPipe(this);
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new TypeInsnNode(Opcodes.NEW, "coloredlightscore/src/api/CLWorldPipe"));
@@ -146,7 +93,7 @@ public class TransformWorld extends HelperMethodTransformer {
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
         initInternalLightVariables.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "coloredlightscore/src/api/CLWorldPipe", "<init>", "(Lnet/minecraft/world/World;)V", false));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "pipe", "Lcoloredlightscore/src/api/CLWorldPipe;"));
-        
+
 
         AbstractInsnNode returnNode = ASMUtils.findLastReturn(methodNode);
         methodNode.instructions.insertBefore(returnNode, initInternalLightVariables);

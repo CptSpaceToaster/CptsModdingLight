@@ -12,8 +12,24 @@ import net.minecraft.world.chunk.Chunk;
 public class CLWorldPipe {
     public World world;
 
+    public long[] lightAdditionBlockList;
+    public int[][][] lightAdditionNeeded;
+    public int[] lightBackfillIndexes;
+    public int[][] lightBackfillBlockList;
+    public int[][][] lightBackfillNeeded;
+    public int updateFlag;
+    public EnumSkyBlock flagEntry;
+
     public CLWorldPipe(World par_world) {
         world = par_world;
+
+        this.lightAdditionBlockList = new long[32768];
+        this.lightAdditionNeeded = new int[29][29][29];
+        this.lightBackfillIndexes = new int[15];
+        this.lightBackfillBlockList = new int[15][4991];
+        this.lightBackfillNeeded = new int[29][29][29];
+        this.updateFlag = 1;
+        this.flagEntry = EnumSkyBlock.Block;
     }
 
     public Block getBlock(int x, int y, int z) {

@@ -14,15 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class World implements IBlockAccess {
     // Added by TransformWorld
     public float[] clSunColor;
-    public long[] lightAdditionBlockList;
-    public int[][][] lightAdditionNeeded;
-    public int[] lightBackfillIndexes;
-    public int[][] lightBackfillBlockList;
-    public int[][][] lightBackfillNeeded;
-    public int updateFlag;
     public CLWorldPipe pipe;
-
-    public EnumSkyBlock flagEntry;
 
     public WorldProvider provider;
     public int skylightSubtracted;
