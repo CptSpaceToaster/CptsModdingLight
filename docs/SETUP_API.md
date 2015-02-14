@@ -3,7 +3,7 @@ Forum: http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/w
 
 ######Installing the Colored Lights API (for Devs)######
 
-1. Download codeChickenCore(CCC) from here: http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1279956-chickenbones-mods  Be sure to take a dev-version (it may work with src too, we Haven't tested that) AND make sure to take the right CCC-Version for your Minecraft-Version.
+1. Download codeChickenCore(CCC) from here: http://chickenbones.net/Pages/links.html  Be sure to take a dev-version (it may work with src too, we Haven't tested that) AND make sure to take the right CCC-Version for your Minecraft-Version.
 
 2. Download coloredLightsCore(CLC) here: http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/wip-mods/1445251-1-7-10-beta-wip-colored-light-progress-and  You **DON'T** need the coloredLightsAPI, you need the normal mod!
 
