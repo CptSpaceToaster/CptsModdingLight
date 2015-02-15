@@ -3,5 +3,6 @@
 !/src/
 !.gitignore
 !build.gradle
+!gradle.properties
 !/gradle/
 !gradlew*
