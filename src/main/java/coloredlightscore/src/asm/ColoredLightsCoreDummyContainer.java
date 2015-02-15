@@ -24,7 +24,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 public class ColoredLightsCoreDummyContainer extends DummyModContainer {
     public ChunkDataEventHandler chunkDataEventHandler;
 
-    public static final String version = "1.3.7";
+    // This is picked up and replaced by the build.gradle
+    public static final String version = "@VERSION@";
 
     public ColoredLightsCoreDummyContainer() {
         super(new ModMetadata());
