@@ -81,7 +81,7 @@ task deobfJar(type: Jar) {
 task apiJar(type: Jar) {
     from sourceSets.main.allSource
     from sourceSets.main.output
-    //include 'coloredlightscore/src/api/**/*'
+    include 'coloredlightscore/src/api/**/*'
     classifier = 'api'
 }
 
