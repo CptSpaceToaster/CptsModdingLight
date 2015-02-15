@@ -25,7 +25,7 @@ import org.ajoberstar.grgit.Grgit
 def repo = Grgit.open(project.file('.'))
 project.ext.gitHash = repo.log().find().abbreviatedId
 
-boolean dev = project.hasProperty('clc_dev') && project.chisel_dev.equalsIgnoreCase('true')
+boolean dev = project.hasProperty('clc_dev') && project.clc_dev.equalsIgnoreCase('true')
 
 ext.buildnumber = 0
 project.buildnumber = !dev && System.getenv('BUILD_NUMBER') != null ? System.getenv('BUILD_NUMBER') : project.ext.gitHash
@@ -109,7 +109,7 @@ publishing {
     }
 
     repositories {
-        String prop = dev ? "chisel_dev_mavendir" : "chisel_mavendir"
+        String prop = dev ? "clc_dev_mavendir" : "clc_mavendir"
         if (project.hasProperty(prop)) {
             maven { url project.getProperty(prop) }
         }
