@@ -4,5 +4,6 @@
 !.gitignore
 !build.gradle
 !gradle.properties
+!settings.gradle
 !/gradle/
 !gradlew*
