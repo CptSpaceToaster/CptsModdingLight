@@ -1,7 +1,5 @@
 package coloredlightscore.src.api;
 
-import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
-
 import java.util.Random;
 
 import net.minecraft.block.Block;
