@@ -1,5 +1,7 @@
 package coloredlightscore.src.api;
 
+import net.minecraft.block.Block;
+
 /**
  * Public API for ColoredLightsCore
  * 
@@ -80,6 +82,8 @@ public class CLApi {
     }
 
     /**
+     * It is not recommended that you mess with lightValue yourself
+     *
      * Computes a 20-bit lighting word, containing red, green, blue, and brightness settings.
      * Allows overriding of the Minecraft brightness value.
      * This value can be used directly for Block.lightValue
@@ -117,6 +121,8 @@ public class CLApi {
     }
 
     /**
+     * It is not recommended that you mess with lightValue yourself
+     *
      * Computes a 20-bit lighting word, containing red, green, blue, and brightness settings.
      * Allows overriding of the Minecraft brightness value.
      * This value can be used directly for Block.lightValue
@@ -151,4 +157,69 @@ public class CLApi {
 
         return brightness | ((b << 15) + (g << 10) + (r << 5));
     }
+
+    /**
+     * Sets the lighting colors for a given block. Vanilla brightness is recomputed.
+     *
+     * @param block The block to set color on
+     * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @param b Blue intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @return Reference to the block passed in.
+     */
+    public static Block setBlockColorRGB(Block block, int r, int g, int b) {
+        block.setLightLevel(((float)makeRGBLightValue(r, g, b))/15F);
+        return block;
+    }
+
+    /**
+     * Sets the lighting colors for a given block. Vanilla brightness is recomputed.
+     *
+     * @param block The block to set color on
+     * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @param b Blue intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @return Reference to the block passed in.
+     */
+    public static Block setBlockColorRGB(Block block, float r, float g, float b) {
+        block.setLightLevel(((float)makeRGBLightValue(r, g, b))/15F);
+        return block;
+    }
+
+    /**
+     * It is not recommended that you mess with lightValue yourself
+     *
+     * Sets the lighting colors for a given block.
+     *
+     * @param block The block to set color on
+     * @param r Red intensity, 0 to 15. Resolution is 4 bits.
+     * @param g Green intensity, 0 to 15. Resolution is 4 bits.
+     * @param b Blue intensity, 0 to 15. Resolution is 4 bits.
+     * @param lightValue The Minecraft brightness to set for the block, 0 to 15.
+     * @return Reference to the block passed in.
+     */
+    @Deprecated
+    public static Block setBlockColorRGB(Block block, int r, int g, int b, int lightValue) {
+        block.setLightLevel(((float)makeRGBLightValue(r, g, b, lightValue))/15F);
+        return block;
+    }
+
+    /**
+     * It is not recommended that you mess with lightValue yourself
+     *
+     * Sets the lighting colors for a given block.
+     *
+     * @param block The block to set color on
+     * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @param b Blue intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @param lightValue The Minecraft brightness to set for the block, 0.0f to 1.0f.
+     * @return Reference to the block passed in.
+     */
+    @Deprecated
+    public static Block setBlockColorRGB(Block block, float r, float g, float b, float lightValue) {
+        block.setLightLevel(((float)makeRGBLightValue(r, g, b, lightValue))/15F);
+        return block;
+    }
+
 }
