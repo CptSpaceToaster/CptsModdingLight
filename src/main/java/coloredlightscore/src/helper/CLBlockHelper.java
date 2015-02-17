@@ -9,7 +9,20 @@ import coloredlightscore.src.api.CLApi;
 
 public class CLBlockHelper {
     public static Block setLightLevel(Block interceptedReturnValue, Block instance, float par1) {
-        instance.lightValue = CLApi.makeRGBLightValue(par1, par1, par1);
+        // Clamp negative values
+        if (par1 < 0.0F) {
+            par1 = 0.0F;
+        }
+
+
+        if (par1 < 1.0F) {
+            // If the incoming light value is a plain white call, then "color" the light value white
+            instance.lightValue = CLApi.makeRGBLightValue(par1, par1, par1);
+        } else {
+            // Otherwise, let whatever it is through
+            instance.lightValue = (int) (15.0F * par1);
+        }
+
         return instance;
     }
 
