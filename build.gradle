@@ -43,6 +43,20 @@ minecraft {
     replace "@VERSION@", project.version
 }
 
+repositories {
+    maven {
+        name 'Chicken Bones Repo'
+        url "http://chickenbones.net/maven/"
+    }
+}
+
+dependencies {
+    compile "codechicken:CodeChickenLib:${minecraft_version}-${ccl_version}:dev"
+    compile "codechicken:CodeChickenCore:${minecraft_version}-${ccc_version}:dev"
+    //compile "codechicken:NotEnoughItems:${minecraft_version}-${nei_version}:dev"
+    //compile "codechicken:ForgeMultipart:${minecraft_version}-${fmp_version}:dev"
+}
+
 jar {
   manifest {
     attributes('FMLCorePlugin': 'coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin')

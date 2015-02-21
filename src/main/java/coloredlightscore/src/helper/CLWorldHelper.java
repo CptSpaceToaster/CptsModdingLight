@@ -1,5 +1,6 @@
 package coloredlightscore.src.helper;
 
+import cpw.mods.fml.common.Loader;
 import net.minecraft.block.Block;
 import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;
@@ -90,17 +91,17 @@ public class CLWorldHelper {
         return skyBrightness << 20 | blockBrightness << 4;
     }
 
-    public static int computeLightValue(World world, int parX, int parY, int parZ, EnumSkyBlock par1Enu) {
-        if (par1Enu == EnumSkyBlock.Sky && world.pipe.canBlockSeeTheSky(parX, parY, parZ)) {
+    public static int computeLightValue(World world, int par_x, int par_y, int par_z, EnumSkyBlock par1Enu) {
+        if (par1Enu == EnumSkyBlock.Sky && world.pipe.canBlockSeeTheSky(par_x, par_y, par_z)) {
             return 15;
         } else {
-            Block block = world.getBlock(parX, parY, parZ);
+            Block block = world.getBlock(par_x, par_y, par_z);
 
             int currentLight = 0;
             if (par1Enu != EnumSkyBlock.Sky) {
-                currentLight = (block == null ? 0 : block.getLightValue(world, parX, parY, parZ));
+                currentLight = (block == null ? 0 : block.getLightValue(world, par_x, par_y, par_z));
             }
-            int opacity = (block == null ? 0 : block.getLightOpacity(world, parX, parY, parZ));
+            int opacity = (block == null ? 0 : block.getLightOpacity(world, par_x, par_y, par_z));
 
             if (opacity >= 15 && currentLight > 0) {
                 opacity = 1;
@@ -118,11 +119,14 @@ public class CLWorldHelper {
             }
             else {
                 for (int faceIndex = 0; faceIndex < 6; ++faceIndex) {
-                    int l1 = parX + Facing.offsetsXForSide[faceIndex];
-                    int i2 = parY + Facing.offsetsYForSide[faceIndex];
-                    int j2 = parZ + Facing.offsetsZForSide[faceIndex];
+                    int l1 = par_x + Facing.offsetsXForSide[faceIndex];
+                    int i2 = par_y + Facing.offsetsYForSide[faceIndex];
+                    int j2 = par_z + Facing.offsetsZForSide[faceIndex];
 
-                    int neighborLight = world.pipe.getSavedLightValue(par1Enu, l1, i2, j2);
+                    int neighborLight = getSavedLightSomehow(world, par_x, par_y, par_z, par1Enu);
+
+                    //TODO:
+
                     int ll = neighborLight & 0x0000F;
                     int rl = neighborLight & 0x001E0;
                     int gl = neighborLight & 0x03C00;
@@ -184,7 +188,7 @@ public class CLWorldHelper {
             int getter = 0;
             int lightEntry;
 
-            long savedLightValue = world.pipe.getSavedLightValue(par1Enu, par_x, par_y, par_z);
+            long savedLightValue = getSavedLightSomehow(world, par_x, par_y, par_z, par1Enu);
             long compLightValue = CLWorldHelper.computeLightValue(world, par_x, par_y, par_z, par1Enu);
             long queueEntry;
             int queue_x;
@@ -232,7 +236,7 @@ public class CLWorldHelper {
                     if (world.pipe.lightAdditionNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] == world.pipe.updateFlag) { // Light has been marked for a later update
 
                         queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
-                        neighborLightEntry = world.pipe.getSavedLightValue(par1Enu, queue_x, queue_y, queue_z); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
+                        neighborLightEntry = getSavedLightSomehow(world, queue_x, queue_y, queue_z, par1Enu); //Get the saved Light Level at the entry's location - Instead of comparing against the value saved on disk every iteration, and checking to see if it's been updated already... Consider storing values in a temp 3D array as they are gathered and applying changes all at once
 
                         if (Math.abs(queue_x - rel_x) < 14 && Math.abs(queue_y - rel_y) < 14 && Math.abs(queue_z - rel_z) < 14) {
                             world.pipe.lightBackfillNeeded[queue_x - rel_x + 14][queue_y - rel_y + 14][queue_z - rel_z + 14] = world.pipe.updateFlag + 1; // Light has been visited and processed
@@ -267,7 +271,7 @@ public class CLWorldHelper {
                                         if (opacity < 15) {
 
                                             //Get Saved light value from face
-                                            neighborLightEntry = world.pipe.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
+                                            neighborLightEntry =  getSavedLightSomehow(world, neighbor_x, neighbor_y, neighbor_z, par1Enu);
 
                                             //Subtract by 1, as channels diminish by one every block
                                             //TODO: Colored Opacity
@@ -342,7 +346,7 @@ public class CLWorldHelper {
                                 man_z = MathHelper.abs_int(neighbor_z - par_z);
 
                                 opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
-                                neighborLightEntry = world.pipe.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
+                                neighborLightEntry = getSavedLightSomehow(world, neighbor_x, neighbor_y, neighbor_z, par1Enu);
 
                                 if (opacity < 15 || neighborLightEntry > 0) {
                                     //Get Saved light value from face
@@ -425,6 +429,18 @@ public class CLWorldHelper {
 
             world.theProfiler.endSection();
             return true;
+        }
+    }
+
+    /**
+     * Patching in Dynamic Lights Compatibility
+     */
+    private static int getSavedLightSomehow(World world, int par_x, int par_y, int par_z, EnumSkyBlock par1Enu) {
+        if (Loader.isModLoaded("DynamicLights") && par1Enu == EnumSkyBlock.Block && world.isRemote) {
+            // This may ruin the optimizations with Player's Fastcraft, as we're not using the world.pipe
+            return atomicstryker.dynamiclights.client.DynamicLights.getLightValue(world, world.getBlock(par_x, par_y, par_z), par_x, par_y, par_z);
+        } else {
+            return world.pipe.getSavedLightValue(par1Enu, par_x, par_y, par_z);
         }
     }
 
