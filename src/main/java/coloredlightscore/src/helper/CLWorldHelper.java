@@ -438,9 +438,12 @@ public class CLWorldHelper {
      * Patching in Dynamic Lights Compatibility
      */
     private static int getSavedLightSomehow(World world, int par_x, int par_y, int par_z, EnumSkyBlock par1Enu) {
-        if (ColoredLightsCoreDummyContainer.getDynamicLight != null && par1Enu == EnumSkyBlock.Block && world.isRemote) {
+        if (ColoredLightsCoreDummyContainer.getDynamicLight != null) {
             try {
-                return (Integer)ColoredLightsCoreDummyContainer.getDynamicLight.invoke(ColoredLightsCoreDummyContainer.dynamicLights, world, world.getBlock(par_x, par_y, par_z), par_x, par_y, par_z);
+                int a = (Integer)ColoredLightsCoreDummyContainer.getDynamicLight.invoke(ColoredLightsCoreDummyContainer.dynamicLights, world, world.getBlock(par_x, par_y, par_z), par_x, par_y, par_z);
+                CLLog.info("got :" + a);
+                return a;
+
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {

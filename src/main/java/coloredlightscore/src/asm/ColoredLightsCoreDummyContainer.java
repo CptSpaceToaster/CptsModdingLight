@@ -2,6 +2,7 @@ package coloredlightscore.src.asm;
 
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -11,6 +12,7 @@ import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 import coloredlightscore.fmlevents.ChunkDataEventHandler;
 import coloredlightscore.network.PacketHandler;
@@ -29,7 +31,7 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
     // This is picked up and replaced by the build.gradle
     public static final String version = "@VERSION@";
 
-    @Mod.Instance("DynamicLights")
+    //Reference to atomicstryker.dynamiclights.client.DynamicLights
     public static Object dynamicLights;
 
     //Reference to atomicstryker.dynamiclights.client.DynamicLights.getLightValue
@@ -104,15 +106,30 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
             }
         }
 
-        CLLog.info(" ######################################################################################################################## looking for the thing");
-        if (dynamicLights != null) {
-            CLLog.info("DL Was not null");
-            for (Method m : dynamicLights.getClass().getDeclaredMethods()) {
-                if (m.getName().equals("getLightValue")) {
-                    getDynamicLight = m;
-                    CLLog.info("FOUND IT #########################################################################################################################################");
-                    break;
-                }
+        Class<?> DynamicLightsClazz = null;
+        try {
+            DynamicLightsClazz = Class.forName("atomicstryker.dynamiclights.client.DynamicLights");
+            Field instanceField = DynamicLightsClazz.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            dynamicLights = instanceField.get(null);
+        } catch (ClassNotFoundException e) {
+            CLLog.info("Dynamic Lights not found");
+        } catch (NoSuchFieldException e) {
+            CLLog.error("Missing field named \"instance\" in DynamicLights. Did versions change?");
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            CLLog.error("We were denied access to the field \"instance\" in DynamicLights :(  Did versions change?");
+            e.printStackTrace();
+        }
+
+        if (DynamicLightsClazz != null && dynamicLights != null) {
+            CLLog.info("Hey DynamicLights... What's the plan?");
+
+            try {
+                getDynamicLight = DynamicLightsClazz.getDeclaredMethod("getLightValue", IBlockAccess.class, Block.class, Integer.TYPE, Integer.TYPE, Integer.TYPE);
+            } catch (NoSuchMethodException e) {
+                CLLog.error("Missing field named \"getLightValue\" in DynamicLightsClazz. Did versions change?");
+                e.printStackTrace();
             }
         }
     }
