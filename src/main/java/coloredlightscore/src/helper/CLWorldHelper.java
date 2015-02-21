@@ -10,6 +10,8 @@ import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import atomicstryker.dynamiclights.client.DynamicLights;
+
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
 public class CLWorldHelper {
@@ -438,7 +440,7 @@ public class CLWorldHelper {
     private static int getSavedLightSomehow(World world, int par_x, int par_y, int par_z, EnumSkyBlock par1Enu) {
         if (Loader.isModLoaded("DynamicLights") && par1Enu == EnumSkyBlock.Block && world.isRemote) {
             // This may ruin the optimizations with Player's Fastcraft, as we're not using the world.pipe
-            return atomicstryker.dynamiclights.client.DynamicLights.getLightValue(world, world.getBlock(par_x, par_y, par_z), par_x, par_y, par_z);
+            return DynamicLights.getLightValue(world, world.getBlock(par_x, par_y, par_z), par_x, par_y, par_z);
         } else {
             return world.pipe.getSavedLightValue(par1Enu, par_x, par_y, par_z);
         }
