@@ -1,6 +1,6 @@
 package coloredlightscore.src.helper;
 
-import cpw.mods.fml.common.Loader;
+import coloredlightscore.src.asm.ColoredLightsCoreDummyContainer;
 import net.minecraft.block.Block;
 import net.minecraft.util.Facing;
 import net.minecraft.util.MathHelper;
@@ -10,7 +10,7 @@ import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import atomicstryker.dynamiclights.client.DynamicLights;
+import java.lang.reflect.InvocationTargetException;
 
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
@@ -438,9 +438,16 @@ public class CLWorldHelper {
      * Patching in Dynamic Lights Compatibility
      */
     private static int getSavedLightSomehow(World world, int par_x, int par_y, int par_z, EnumSkyBlock par1Enu) {
-        if (Loader.isModLoaded("DynamicLights") && par1Enu == EnumSkyBlock.Block && world.isRemote) {
-            // This may ruin the optimizations with Player's Fastcraft, as we're not using the world.pipe
-            return DynamicLights.getLightValue(world, world.getBlock(par_x, par_y, par_z), par_x, par_y, par_z);
+        if (ColoredLightsCoreDummyContainer.getDynamicLight != null && par1Enu == EnumSkyBlock.Block && world.isRemote) {
+            try {
+                return (Integer)ColoredLightsCoreDummyContainer.getDynamicLight.invoke(ColoredLightsCoreDummyContainer.dynamicLights, world, world.getBlock(par_x, par_y, par_z), par_x, par_y, par_z);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } finally {
+                return 0;
+            }
         } else {
             return world.pipe.getSavedLightValue(par1Enu, par_x, par_y, par_z);
         }

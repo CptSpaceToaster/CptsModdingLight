@@ -1,6 +1,8 @@
 package coloredlightscore.src.asm;
 
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
+
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -26,6 +28,12 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
 
     // This is picked up and replaced by the build.gradle
     public static final String version = "@VERSION@";
+
+    @Mod.Instance("DynamicLights")
+    public static Object dynamicLights;
+
+    //Reference to atomicstryker.dynamiclights.client.DynamicLights.getLightValue
+    public static Method getDynamicLight = null;
 
     public ColoredLightsCoreDummyContainer() {
         super(new ModMetadata());
@@ -95,17 +103,17 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
                 }
             }
         }
+
+        CLLog.info(" ######################################################################################################################## looking for the thing");
+        if (dynamicLights != null) {
+            CLLog.info("DL Was not null");
+            for (Method m : dynamicLights.getClass().getDeclaredMethods()) {
+                if (m.getName().equals("getLightValue")) {
+                    getDynamicLight = m;
+                    CLLog.info("FOUND IT #########################################################################################################################################");
+                    break;
+                }
+            }
+        }
     }
-
-    /*
-    @SubscribeEvent
-    public void onRender(TickEvent.RenderTickEvent event) {
-
-    	if (event.phase == Phase.END)
-    	{
-    		CLEntityRendererHelper.debugLightmap();
-    	}
-    }
-    */
-
 }
