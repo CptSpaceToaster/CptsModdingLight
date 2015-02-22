@@ -81,31 +81,5 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
         Blocks.portal.lightValue = CLApi.makeRGBLightValue(6, 3, 11);
         Blocks.lit_furnace.lightValue = CLApi.makeRGBLightValue(13, 12, 10);
         Blocks.powered_repeater.lightValue = CLApi.makeRGBLightValue(9, 0, 0);
-
-        Object thisShouldBeABlock;
-        int l;
-        Iterator blockRegistryInterator = GameData.getBlockRegistry().iterator();
-        while (blockRegistryInterator.hasNext()) {
-            thisShouldBeABlock = blockRegistryInterator.next();
-            if (thisShouldBeABlock instanceof Block) {
-                l = ((Block)thisShouldBeABlock).lightValue;
-                if ((l > 0) && (l <= 0xF)) {
-                    CLLog.info(((Block)thisShouldBeABlock).getLocalizedName() + "has light:" + l + ", but no color");
-                    ((Block)thisShouldBeABlock).lightValue = (l<<15) | (l<<10) | (l<<5) | l; //copy vanilla brightness into each color component to make it white/grey.
-                }
-            }
-        }
     }
-
-    /*
-    @SubscribeEvent
-    public void onRender(TickEvent.RenderTickEvent event) {
-
-    	if (event.phase == Phase.END)
-    	{
-    		CLEntityRendererHelper.debugLightmap();
-    	}
-    }
-    */
-
 }

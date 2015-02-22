@@ -99,6 +99,9 @@ public class CLWorldHelper {
             int currentLight = 0;
             if (par1Enu != EnumSkyBlock.Sky) {
                 currentLight = (block == null ? 0 : block.getLightValue(world, parX, parY, parZ));
+                if ((currentLight > 0) && (currentLight <= 0xF)) {
+                    currentLight = (currentLight<<15) | (currentLight<<10) | (currentLight<<5) | currentLight; //copy vanilla brightness into each color component to make it white/grey if it is uncolored.
+                }
             }
             int opacity = (block == null ? 0 : block.getLightOpacity(world, parX, parY, parZ));
 
