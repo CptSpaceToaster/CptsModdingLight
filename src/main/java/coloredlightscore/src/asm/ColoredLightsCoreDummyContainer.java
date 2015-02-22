@@ -84,7 +84,7 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
         Blocks.lava.lightValue = CLApi.makeRGBLightValue(15, 10, 0);
 
         Blocks.flowing_lava.lightValue = CLApi.makeRGBLightValue(15, 10, 0);
-        Blocks.torch.lightValue = CLApi.makeRGBLightValue(14, 13, 10);
+            Blocks.torch.lightValue = CLApi.makeRGBLightValue(14, 13, 10);
         Blocks.fire.lightValue = CLApi.makeRGBLightValue(15, 13, 0);
         Blocks.lit_redstone_ore.lightValue = CLApi.makeRGBLightValue(9, 0, 0);
         Blocks.redstone_torch.lightValue = CLApi.makeRGBLightValue(7, 0, 0);
@@ -128,7 +128,7 @@ public class ColoredLightsCoreDummyContainer extends DummyModContainer {
             try {
                 getDynamicLight = DynamicLightsClazz.getDeclaredMethod("getLightValue", IBlockAccess.class, Block.class, Integer.TYPE, Integer.TYPE, Integer.TYPE);
             } catch (NoSuchMethodException e) {
-                CLLog.error("Missing field named \"getLightValue\" in DynamicLightsClazz. Did versions change?");
+                CLLog.error("Missing method named \"getLightValue\" in DynamicLightsClazz. Did versions change?");
                 e.printStackTrace();
             }
         }
