@@ -128,9 +128,7 @@ public class CLWorldHelper {
                     int i2 = par_y + Facing.offsetsYForSide[faceIndex];
                     int j2 = par_z + Facing.offsetsZForSide[faceIndex];
 
-                    int neighborLight = world.pipe.getSavedLightValue(par1Enu, par_x, par_y, par_z);
-
-                    //TODO:
+                    int neighborLight = world.pipe.getSavedLightValue(par1Enu, l1, i2, j2);
 
                     int ll = neighborLight & 0x0000F;
                     int rl = neighborLight & 0x001E0;
