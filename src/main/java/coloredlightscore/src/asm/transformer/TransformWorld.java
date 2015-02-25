@@ -3,6 +3,8 @@ package coloredlightscore.src.asm.transformer;
 import static coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin.CLLog;
 
 import coloredlightscore.src.asm.transformer.core.ASMUtils;
+import org.objectweb.asm.util.CheckClassAdapter;
+import org.objectweb.asm.ClassVisitor;
 import net.minecraft.world.EnumSkyBlock;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -18,14 +20,9 @@ public class TransformWorld extends HelperMethodTransformer {
                                   "computeLightValue (IIILnet/minecraft/world/EnumSkyBlock;)I",
                                   "updateLightByType (Lnet/minecraft/world/EnumSkyBlock;III)Z" };
 
-    EnumSkyBlock pants;
-    int dance;
-
     public TransformWorld() {
         // Inform HelperMethodTransformer which class we are interested in
         super("net.minecraft.world.World");
-        pants = EnumSkyBlock.Sky;
-        dance = 0;
     }
 
     @Override
@@ -95,8 +92,17 @@ public class TransformWorld extends HelperMethodTransformer {
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "pipe", "Lcoloredlightscore/src/api/CLWorldPipe;"));
 
 
-        AbstractInsnNode returnNode = ASMUtils.findLastReturn(methodNode);
-        methodNode.instructions.insertBefore(returnNode, initInternalLightVariables);
+        AbstractInsnNode firstInvokeSpecial = null;
+        for (int i = 0; i < methodNode.instructions.size(); i++) {
+            AbstractInsnNode insn = methodNode.instructions.get(i);
+            if (insn.getOpcode() == Opcodes.INVOKESPECIAL) {
+                firstInvokeSpecial = insn;
+                break;
+            }
+        }
+
+
+        methodNode.instructions.insert(firstInvokeSpecial, initInternalLightVariables);
         CLLog.info("Transformed World constructor!");
         return true;
     }
