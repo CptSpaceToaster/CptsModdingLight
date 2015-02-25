@@ -16,7 +16,7 @@ public class CLApi {
     public static int b[] = new int[] { 0, 0, 0, 0, 15, 15, 15, 10, 5, 13, 0, 0, 15, 15, 10, 15 };
 
     /**
-     * Computes a 20-bit lighting word, containing red, green, blue settings, and brightness settings.
+     * Computes a 20-bit lighting word, containing red, green, blue values.
      * Automatically computes the Minecraft brightness value using the brightest of the r, g and b channels.
      * This value can be used directly for Block.lightValue 
      * 
@@ -25,7 +25,7 @@ public class CLApi {
      * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
      * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
      * @param b Blue intensity, 0.0f to 1.0f. Resolution is 4 bits.
-     * @return Integer describing RGB color for a block
+     * @return Integer describing RGBL value for a block
      */
     public static int makeRGBLightValue(float r, float g, float b) {
         // Clamp color channels
@@ -49,7 +49,7 @@ public class CLApi {
     }
 
     /**
-     * Computes a 20-bit lighting word, containing red, green, blue settings, and brightness settings.
+     * Computes a 20-bit lighting word, containing red, green, blue values.
      * Automatically computes the Minecraft brightness value using the brightest of the r, g and b channels.
      * This value can be used directly for Block.lightValue 
      * 
@@ -58,7 +58,7 @@ public class CLApi {
      * @param r Red intensity, 0 to 15. Resolution is 4 bits.
      * @param g Green intensity, 0 to 15. Resolution is 4 bits.
      * @param b Blue intensity, 0 to 15. Resolution is 4 bits.
-     * @return Integer describing RGB color for a block
+     * @return Integer describing RGBL value for a block
      */
     public static int makeRGBLightValue(int r, int g, int b) {
         // Clamp color channels
@@ -84,8 +84,8 @@ public class CLApi {
     /**
      * It is not recommended that you mess with lightValue yourself
      *
-     * Computes a 20-bit lighting word, containing red, green, blue, and brightness settings.
-     * Allows overriding of the Minecraft brightness value.
+     * Computes a 20-bit lighting word, containing red, green, blue, and brightness values.
+     * Allows overriding of the Minecraft brightness value, This may cause unexpected behavior.
      * This value can be used directly for Block.lightValue
      *
      * Word format: 0RRRR 0GGGG 0BBBB 0LLLL
@@ -93,11 +93,11 @@ public class CLApi {
      * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
      * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
      * @param b Blue intensity, 0.0f to 1.0f. Resolution is 4 bits.
-     * @param currentLightValue The existing lightValue of a block. Only the lower-most 4 bits of this parameter are used.
-     * @return Integer describing RGBL color for a block
+     * @param brightness The new lightValue of a block. Only the lower-most 4 bits of this parameter are used.
+     * @return Integer describing RGBL value for a block
      */
     @Deprecated
-    public static int makeRGBLightValue(float r, float g, float b, float currentLightValue) {
+    public static int makeRGBLightValue(float r, float g, float b, float brightness) {
         // Clamp color channels
         if (r < 0.0f)
             r = 0.0f;
@@ -114,17 +114,17 @@ public class CLApi {
         else if (b > 1.0f)
             b = 1.0f;
 
-        int brightness = (int) (currentLightValue * 15.0f);
-        brightness &= 0xf;
+        int vanilla_brightness = (int) (brightness * 15.0f);
+        vanilla_brightness &= 0xf;
 
-        return brightness | ((((int) (15.0F * b)) << 15) + (((int) (15.0F * g)) << 10) + (((int) (15.0F * r)) << 5));
+        return vanilla_brightness | ((((int) (15.0F * b)) << 15) + (((int) (15.0F * g)) << 10) + (((int) (15.0F * r)) << 5));
     }
 
     /**
      * It is not recommended that you mess with lightValue yourself
      *
-     * Computes a 20-bit lighting word, containing red, green, blue, and brightness settings.
-     * Allows overriding of the Minecraft brightness value.
+     * Computes a 20-bit lighting word, containing red, green, blue, and brightness values.
+     * Allows overriding of the Minecraft brightness value, This may cause unexpected behavior.
      * This value can be used directly for Block.lightValue
      *
      * Word format: 0RRRR 0GGGG 0BBBB 0LLLL
@@ -132,8 +132,8 @@ public class CLApi {
      * @param r Red intensity, 0 to 15. Resolution is 4 bits.
      * @param g Green intensity, 0 to 15. Resolution is 4 bits.
      * @param b Blue intensity, 0 to 15. Resolution is 4 bits.
-     * @param brightness The existing lightValue of a block. Only the lower-most 4 bits of this parameter are used.
-     * @return Integer describing RGBL color for a block
+     * @param brightness The new lightValue of a block. Only the lower-most 4 bits of this parameter are used.
+     * @return Integer describing RGBL value for a block
      */
     @Deprecated
     public static int makeRGBLightValue(int r, int g, int b, int brightness) {
@@ -162,12 +162,13 @@ public class CLApi {
      * Sets the lighting colors for a given block. Vanilla brightness is recomputed.
      *
      * @param block The block to set color on
-     * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
-     * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
-     * @param b Blue intensity, 0.0f to 1.0f. Resolution is 4 bits.
+     * @param r Red intensity, 0 to 15. Resolution is 4 bits.
+     * @param g Green intensity, 0 to 15. Resolution is 4 bits.
+     * @param b Blue intensity, 0 to 15. Resolution is 4 bits.
      * @return Reference to the block passed in.
      */
     public static Block setBlockColorRGB(Block block, int r, int g, int b) {
+        // The default vanilla method will just multiply by 15. So we reverse it here.
         block.setLightLevel(((float)makeRGBLightValue(r, g, b))/15F);
         return block;
     }
@@ -182,12 +183,13 @@ public class CLApi {
      * @return Reference to the block passed in.
      */
     public static Block setBlockColorRGB(Block block, float r, float g, float b) {
+        // The default vanilla method will just multiply by 15. So we reverse it here.
         block.setLightLevel(((float)makeRGBLightValue(r, g, b))/15F);
         return block;
     }
 
     /**
-     * It is not recommended that you mess with lightValue yourself
+     * It is not recommended that you mess with brightness yourself
      *
      * Sets the lighting colors for a given block.
      *
@@ -195,17 +197,18 @@ public class CLApi {
      * @param r Red intensity, 0 to 15. Resolution is 4 bits.
      * @param g Green intensity, 0 to 15. Resolution is 4 bits.
      * @param b Blue intensity, 0 to 15. Resolution is 4 bits.
-     * @param lightValue The Minecraft brightness to set for the block, 0 to 15.
+     * @param brightness The Minecraft brightness to set for the block, 0 to 15.
      * @return Reference to the block passed in.
      */
     @Deprecated
-    public static Block setBlockColorRGB(Block block, int r, int g, int b, int lightValue) {
-        block.setLightLevel(((float)makeRGBLightValue(r, g, b, lightValue))/15F);
+    public static Block setBlockColorRGB(Block block, int r, int g, int b, int brightness) {
+        // The default vanilla method will just multiply by 15. So we reverse it here.
+        block.setLightLevel(((float)makeRGBLightValue(r, g, b, brightness))/15F);
         return block;
     }
 
     /**
-     * It is not recommended that you mess with lightValue yourself
+     * It is not recommended that you mess with brightness yourself
      *
      * Sets the lighting colors for a given block.
      *
@@ -213,12 +216,13 @@ public class CLApi {
      * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
      * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
      * @param b Blue intensity, 0.0f to 1.0f. Resolution is 4 bits.
-     * @param lightValue The Minecraft brightness to set for the block, 0.0f to 1.0f.
+     * @param brightness The Minecraft brightness to set for the block, 0.0f to 1.0f.
      * @return Reference to the block passed in.
      */
     @Deprecated
-    public static Block setBlockColorRGB(Block block, float r, float g, float b, float lightValue) {
-        block.setLightLevel(((float)makeRGBLightValue(r, g, b, lightValue))/15F);
+    public static Block setBlockColorRGB(Block block, float r, float g, float b, float brightness) {
+        // The default vanilla method will just multiply by 15. So we reverse it here.
+        block.setLightLevel(((float)makeRGBLightValue(r, g, b, brightness))/15F);
         return block;
     }
 

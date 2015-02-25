@@ -119,7 +119,7 @@ public class CLWorldHelper {
             if (opacity >= 15) {
                 return 0;
             }
-            else if ((currentLight&15) >= 14) {
+            else if (currentLight == 507375) {
                 return currentLight;
             }
             else {
