@@ -1,6 +1,5 @@
 package coloredlightscore.src.helper;
 
-import coloredlightscore.src.api.CLApi;
 import coloredlightscore.src.asm.ColoredLightsCoreDummyContainer;
 import net.minecraft.block.Block;
 import net.minecraft.util.Facing;
@@ -170,6 +169,24 @@ public class CLWorldHelper {
         return CLWorldHelper.updateLightByType_withIncrement(world, par1Enu, par_x, par_y, par_z, true, par_x, par_y, par_z);
     }
 
+
+    /**
+     * A brand new light computation algorithm!  Watch out for gremlins, bugs, and general hackery and nonsense!
+     *
+     * Please feel free to submit a git issue, or ask about my comments and documentation... Obviously this is hard
+     * to read and understand, but if you can tell me what's confusing, I can document it!
+     *
+     * @param world the world we're running in, comes in server and client flavors
+     * @param par1Enu whether or not we're working on Skylight, or Blocklight
+     * @param par_x x coordinate of the block we're targeting
+     * @param par_y y coordinate of the block we're targeting
+     * @param par_z x coordinate of the block we're targeting
+     * @param shouldIncrement This is true on the first call, and false on recursive calls spawned by this routine
+     * @param rel_x the x coordinate of the functions original invocation.  This is different from par_x in a recursive call
+     * @param rel_y the y coordinate of the functions original invocation.  This is different from par_y in a recursive call
+     * @param rel_z the z coordinate of the functions original invocation.  This is different from par_z in a recursive call
+     * @return true if the function succeeded, false of it wasn't able to be run completely
+     */
     public static boolean updateLightByType_withIncrement(World world, EnumSkyBlock par1Enu, int par_x, int par_y, int par_z, boolean shouldIncrement, int rel_x, int rel_y, int rel_z) {
         if (!world.pipe.doChunksNearChunkExist(par_x, par_y, par_z, 17)) {
             return false;
@@ -333,10 +350,6 @@ public class CLWorldHelper {
                         queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
                         queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
 
-                        if (queue_x == -1121 && queue_y == 56 && queue_z == 612) {
-                            nop();
-                        }
-
                         man_x = MathHelper.abs_int(queue_x - par_x);
                         man_y = MathHelper.abs_int(queue_y - par_y);
                         man_z = MathHelper.abs_int(queue_z - par_z);
@@ -347,8 +360,16 @@ public class CLWorldHelper {
                                 neighbor_x = queue_x + Facing.offsetsXForSide[neighborIndex];
                                 neighbor_y = queue_y + Facing.offsetsYForSide[neighborIndex];
                                 neighbor_z = queue_z + Facing.offsetsZForSide[neighborIndex];
-                                if (neighbor_y < 0 || neighbor_y > 255)
+
+                                // If we've been here before, then skip
+                                if (Math.abs(neighbor_x - rel_x) < 14 && Math.abs(neighbor_y - rel_y) < 14 && Math.abs(neighbor_z - rel_z) < 14 &&
+                                        (world.pipe.lightBackfillNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14] == world.pipe.updateFlag)) {
                                     continue;
+                                }
+                                // If we're going to go out of bounds, then skip
+                                if (neighbor_y < 0 || neighbor_y > 255) {
+                                    continue;
+                                }
 
                                 man_x = MathHelper.abs_int(neighbor_x - par_x);
                                 man_y = MathHelper.abs_int(neighbor_y - par_y);
@@ -358,7 +379,13 @@ public class CLWorldHelper {
 
                                 opacity = Math.max(1, block.getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
 
+                                lightEntry = getLightValueSomehow(block, world, neighbor_x, neighbor_y, neighbor_z);
                                 neighborLightEntry = world.pipe.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
+
+                                if (lightEntry > 0) {
+                                    world.pipe.lightBackfillNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14] = world.pipe.updateFlag;
+                                    world.pipe.lightBackfillBlockList[lightEntry&0xF - 1][world.pipe.lightBackfillIndexes[lightEntry&0xF - 1]++] = (neighbor_x - par_x + 32) | ((neighbor_y - par_y + 32) << 6) | ((neighbor_z - par_z + 32) << 12); //record coordinates for backfill
+                                }
 
                                 if (opacity < 15 || neighborLightEntry > 0) {
                                     //Get Saved light value from face
@@ -369,6 +396,8 @@ public class CLWorldHelper {
                                     gl = (Math.max((queueLightEntry & 0x03C00) - ((man_x + man_y + man_z) << 10), 0) >= (neighborLightEntry & 0x03C00)) ? 0 : (neighborLightEntry & 0x03C00);
                                     bl = (Math.max((queueLightEntry & 0x78000) - ((man_x + man_y + man_z) << 15), 0) >= (neighborLightEntry & 0x78000)) ? 0 : (neighborLightEntry & 0x78000);
 
+                                    // SortValue is calculated and used when the light subtraction "bumps into" a brighter light than it was expecting.  If we bumped into a light that was r=14, then we should mark it for
+                                    // a backfill with greater priority than a light that has r=12.  Chances are, by updating the r=14 source first, then we don't have to update the r=12 collision!
                                     sortValue = 0;
                                     if (((queueLightEntry & 0x0000F) > 0) && (ll > 0)) {
                                         sortValue = (int) ll;
@@ -403,8 +432,8 @@ public class CLWorldHelper {
                                             world.pipe.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.pipe.updateFlag;
                                             world.pipe.lightBackfillBlockList[sortValue - 1][world.pipe.lightBackfillIndexes[sortValue - 1]++] = (queue_x - par_x + 32) | ((queue_y - par_y + 32) << 6) | ((queue_z - par_z + 32) << 12); //record coordinates for backfill
                                         }
-
-                                        world.pipe.setLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z, (int) (ll | rl | gl | bl)); // This kills the light
+                                        // This kills the light
+                                        world.pipe.setLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z, (int) (ll | rl | gl | bl));
                                         world.pipe.lightAdditionBlockList[getter++] = ((long) neighbor_x - (long) par_x + 32L) | (((long) neighbor_y - (long) par_y + 32L) << 6L) | (((long) neighbor_z - (long) par_z + 32L) << 12L) | ((long) queueLightEntry << 18L); //this array keeps the algorithm going, don't touch
                                     } else {
                                         if (sortValue != 0) {
@@ -449,11 +478,8 @@ public class CLWorldHelper {
      */
     private static int getLightValueSomehow(Block block, World world, int par_x, int par_y, int par_z) {
         if (ColoredLightsCoreDummyContainer.getDynamicLight != null && world.isRemote) {
-                nop();
             try {
-                int a = (Integer)ColoredLightsCoreDummyContainer.getDynamicLight.invoke(null, world, block, par_x, par_y, par_z);
-                if (a != 0) CLLog.info("got :" + a);
-                return a;
+                return (Integer)ColoredLightsCoreDummyContainer.getDynamicLight.invoke(null, world, block, par_x, par_y, par_z);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
