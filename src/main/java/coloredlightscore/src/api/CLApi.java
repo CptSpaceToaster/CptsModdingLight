@@ -226,4 +226,23 @@ public class CLApi {
         return block;
     }
 
+    /**
+     * Combine two lighting words, by choosing the brightest component for each color channel
+     * @param a Light A
+     * @param b Light B
+     * @return The combined light from A and B
+     */
+    public static int combine(int a, int b) {
+        int a_lgh = a & 0x0000F;
+        int a_red = a & 0x001E0;
+        int a_grn = a & 0x03C00;
+        int a_blu = a & 0x78000;
+
+        int b_lgh = b & 0x0000F;
+        int b_red = b & 0x001E0;
+        int b_grn = b & 0x03C00;
+        int b_blu = b & 0x78000;
+
+        return (Math.max(a_blu, b_blu) | Math.max(a_grn, b_grn) | Math.max(a_red, b_red) | Math.max(a_lgh, b_lgh));
+    }
 }

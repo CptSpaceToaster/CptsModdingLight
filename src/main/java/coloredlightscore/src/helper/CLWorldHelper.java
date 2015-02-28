@@ -1,5 +1,6 @@
 package coloredlightscore.src.helper;
 
+import coloredlightscore.src.api.CLApi;
 import coloredlightscore.src.asm.ColoredLightsCoreDummyContainer;
 import net.minecraft.block.Block;
 import net.minecraft.util.Facing;
@@ -19,8 +20,8 @@ public class CLWorldHelper {
     //Added the parameter 'World world, ' and then replaces all instances of world, with WORLD
     public static int getBlockLightValue_do(World world, int x, int y, int z, boolean par4) {
         if (x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000) {
-            if (par4 && world.getBlock(x, y, z).getUseNeighborBrightness()) {
-                // heaton84 - should be world.getBlockLightValue_do,
+            if (par4 && world.pipe.getBlock(x, y, z).getUseNeighborBrightness()) {
+                // heaton84 - should be world.pipe.getBlockLightValue_do,
                 // switched to CLWorldHelper.getBlockLightValue_do
                 // This will save an extra invoke
                 int l1 = CLWorldHelper.getBlockLightValue_do(world, x, y + 1, z, false);
@@ -97,7 +98,7 @@ public class CLWorldHelper {
         if (par1Enu == EnumSkyBlock.Sky && world.pipe.canBlockSeeTheSky(par_x, par_y, par_z)) {
             return 15;
         } else {
-            Block block = world.getBlock(par_x, par_y, par_z);
+            Block block = world.pipe.getBlock(par_x, par_y, par_z);
 
             int currentLight = 0;
             if (par1Enu != EnumSkyBlock.Sky) {
@@ -218,7 +219,7 @@ public class CLWorldHelper {
             int neighborIndex;
             int neighborLightEntry;
 
-            world.theProfiler.endStartSection("lightAddition");
+                world.theProfiler.endStartSection("lightAddition");
 
             // Format of lightAdditionBlockList word:
             // rrrr.gggg.bbbb.LLLLzzzzzzyyyyyyxxxxxx
@@ -268,7 +269,8 @@ public class CLWorldHelper {
                                     lightEntry = world.pipe.lightAdditionNeeded[neighbor_x - par_x + 14][neighbor_y - par_y + 14][neighbor_z - par_z + 14];
                                     if (lightEntry != world.pipe.updateFlag && (lightEntry != world.pipe.updateFlag + 1 || !shouldIncrement)) { // on recursive calls, ignore instances of world.pipe.updateFlag being flag + 1
 
-                                        opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
+                                        Block block = world.pipe.getBlock(neighbor_x, neighbor_y, neighbor_z);
+                                        opacity = Math.max(1, block.getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
 
                                         //Proceed only if the block is non-solid
                                         if (opacity < 15) {
@@ -331,6 +333,10 @@ public class CLWorldHelper {
                         queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
                         queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
 
+                        if (queue_x == -1121 && queue_y == 56 && queue_z == 612) {
+                            nop();
+                        }
+
                         man_x = MathHelper.abs_int(queue_x - par_x);
                         man_y = MathHelper.abs_int(queue_y - par_y);
                         man_z = MathHelper.abs_int(queue_z - par_z);
@@ -348,7 +354,10 @@ public class CLWorldHelper {
                                 man_y = MathHelper.abs_int(neighbor_y - par_y);
                                 man_z = MathHelper.abs_int(neighbor_z - par_z);
 
-                                opacity = Math.max(1, world.getBlock(neighbor_x, neighbor_y, neighbor_z).getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
+                                Block block = world.pipe.getBlock(neighbor_x, neighbor_y, neighbor_z);
+
+                                opacity = Math.max(1, block.getLightOpacity(world, neighbor_x, neighbor_y, neighbor_z));
+
                                 neighborLightEntry = world.pipe.getSavedLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z);
 
                                 if (opacity < 15 || neighborLightEntry > 0) {
@@ -361,7 +370,7 @@ public class CLWorldHelper {
                                     bl = (Math.max((queueLightEntry & 0x78000) - ((man_x + man_y + man_z) << 15), 0) >= (neighborLightEntry & 0x78000)) ? 0 : (neighborLightEntry & 0x78000);
 
                                     sortValue = 0;
-                                    if (((queueLightEntry & 0x0000F) > 0) && (ll != 0)) {
+                                    if (((queueLightEntry & 0x0000F) > 0) && (ll > 0)) {
                                         sortValue = (int) ll;
                                     }
                                     if (((queueLightEntry & 0x001E0) > 0) && ((rl >> 5) > sortValue)) {
@@ -374,10 +383,10 @@ public class CLWorldHelper {
                                         sortValue = (int) (bl >> 15);
                                     }
 
-                                    //If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
+                                    // If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
                                     if (neighborLightEntry != (ll | rl | gl | bl)) {
 
-                                        if (sortValue != 0) {
+                                        if (sortValue > 0) {
                                             if (ll == sortValue) {
                                                 queueLightEntry &= ~(0x0000F);
                                             }
@@ -390,9 +399,9 @@ public class CLWorldHelper {
                                             if ((bl >> 15) == sortValue) {
                                                 queueLightEntry &= ~(0x78000);
                                             }
-
+                                            // Also, mark the light we bumped into as needing Backfill
                                             world.pipe.lightBackfillNeeded[queue_x - par_x + 14][queue_y - par_y + 14][queue_z - par_z + 14] = world.pipe.updateFlag;
-                                            world.pipe.lightBackfillBlockList[sortValue - 1][world.pipe.lightBackfillIndexes[sortValue - 1]++] = (neighbor_x - par_x + 32) | ((neighbor_y - par_y + 32) << 6) | ((neighbor_z - par_z + 32) << 12); //record coordinates for backfill
+                                            world.pipe.lightBackfillBlockList[sortValue - 1][world.pipe.lightBackfillIndexes[sortValue - 1]++] = (queue_x - par_x + 32) | ((queue_y - par_y + 32) << 6) | ((queue_z - par_z + 32) << 12); //record coordinates for backfill
                                         }
 
                                         world.pipe.setLightValue(par1Enu, neighbor_x, neighbor_y, neighbor_z, (int) (ll | rl | gl | bl)); // This kills the light
@@ -415,7 +424,7 @@ public class CLWorldHelper {
                     world.theProfiler.endStartSection("lightBackfill");
 
                     //Backfill
-                    for (filler = world.pipe.lightBackfillIndexes.length - 1; filler >= 0; filler--) {
+                    for (filler = world.pipe.lightBackfillIndexes.length-1; filler >= 0; filler--) {
                         while (world.pipe.lightBackfillIndexes[filler] > 0) {
                             getter = world.pipe.lightBackfillBlockList[filler][--world.pipe.lightBackfillIndexes[filler]];
                             queue_x = (getter & 0x3f) - 32 + par_x; //Get Entry X coord
