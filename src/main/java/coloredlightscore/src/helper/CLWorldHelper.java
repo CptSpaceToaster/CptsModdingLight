@@ -380,6 +380,7 @@ public class CLWorldHelper {
                                 man_x = MathHelper.abs_int(neighbor_x - par_x);
                                 man_y = MathHelper.abs_int(neighbor_y - par_y);
                                 man_z = MathHelper.abs_int(neighbor_z - par_z);
+                                manhattan_distance = man_x + man_y + man_z;
 
                                 Block block = world.pipe.getBlock(neighbor_x, neighbor_y, neighbor_z);
 
@@ -398,11 +399,11 @@ public class CLWorldHelper {
                                     // Get Saved light value from face
                                     // If the light value from the neighbor is AT or SMALLER than the maximum theoretical light value at that coordinate, then
                                     // set the color component to zero.
-                                    //   |------------------maximum theoretical light value------------------|    |------saved light value------|
-                                    ll = (Math.max((queueLightEntry & 0x0000F) - ((man_x + man_y + man_z)), 0) >= (neighborLightEntry & 0x0000F)) ? 0 : (neighborLightEntry & 0x0000F);
-                                    rl = (Math.max((queueLightEntry & 0x001E0) - ((man_x + man_y + man_z) << 5), 0) >= (neighborLightEntry & 0x001E0)) ? 0 : (neighborLightEntry & 0x001E0);
-                                    gl = (Math.max((queueLightEntry & 0x03C00) - ((man_x + man_y + man_z) << 10), 0) >= (neighborLightEntry & 0x03C00)) ? 0 : (neighborLightEntry & 0x03C00);
-                                    bl = (Math.max((queueLightEntry & 0x78000) - ((man_x + man_y + man_z) << 15), 0) >= (neighborLightEntry & 0x78000)) ? 0 : (neighborLightEntry & 0x78000);
+                                    //   |------------------maximum theoretical light value-------------|    |------saved light value------|
+                                    ll = (Math.max((queueLightEntry & 0x0000F) - (manhattan_distance), 0) >= (neighborLightEntry & 0x0000F)) ? 0 : (neighborLightEntry & 0x0000F);
+                                    rl = (Math.max((queueLightEntry & 0x001E0) - (manhattan_distance << 5), 0) >= (neighborLightEntry & 0x001E0)) ? 0 : (neighborLightEntry & 0x001E0);
+                                    gl = (Math.max((queueLightEntry & 0x03C00) - (manhattan_distance << 10), 0) >= (neighborLightEntry & 0x03C00)) ? 0 : (neighborLightEntry & 0x03C00);
+                                    bl = (Math.max((queueLightEntry & 0x78000) - (manhattan_distance << 15), 0) >= (neighborLightEntry & 0x78000)) ? 0 : (neighborLightEntry & 0x78000);
 
                                     // SortValue is calculated and used when the light subtraction "bumps into" a brighter light than it was expecting.  If we bumped into a light that was r=14, then we should mark it for
                                     // a backfill with greater priority than a light that has r=12.  Chances are, by updating the r=14 source first, then we don't have to update the r=12 collision!
@@ -420,10 +421,10 @@ public class CLWorldHelper {
                                         if (sort_l != 0) {
                                             queueLightEntry &= ~(0x0000F);
                                         }
-                                        if (sort_l != 0) {
+                                        if (sort_r != 0) {
                                             queueLightEntry &= ~(0x001E0);
                                         }
-                                        if (sort_b != 0) {
+                                        if (sort_g != 0) {
                                             queueLightEntry &= ~(0x03C00);
                                         }
                                         if (sort_b != 0) {
