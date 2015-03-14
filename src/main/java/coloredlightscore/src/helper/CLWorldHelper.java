@@ -354,7 +354,6 @@ public class CLWorldHelper {
                         queue_x = ((int) (queueEntry & 0x3f) - 32 + par_x); //Get Entry X coord
                         queue_y = ((int) (queueEntry >> 6 & 0x3f) - 32 + par_y); //Get Entry Y coord
                         queue_z = ((int) (queueEntry >> 12 & 0x3f) - 32 + par_z); //Get Entry Z coord
-                        queueLightEntry = ((int) ((queueEntry >>> 18) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
 
                         man_x = MathHelper.abs_int(queue_x - par_x);
                         man_y = MathHelper.abs_int(queue_y - par_y);
@@ -395,6 +394,7 @@ public class CLWorldHelper {
                                 }
                                 */
                                 if (opacity < 15 || neighborLightEntry > 0) {
+                                    queueLightEntry = ((int) ((queueEntry >>> 18L) & 0x7bdef)); //Get Entry's saved Light (0111 1011 1101 1110 1111)
                                     // Get Saved light value from face
                                     // If the light value from the neighbor is AT or SMALLER than the maximum theoretical light value at that coordinate, then
                                     // set the color component to zero.
@@ -406,7 +406,6 @@ public class CLWorldHelper {
 
                                     // SortValue is calculated and used when the light subtraction "bumps into" a brighter light than it was expecting.  If we bumped into a light that was r=14, then we should mark it for
                                     // a backfill with greater priority than a light that has r=12.  Chances are, by updating the r=14 source first, then we don't have to update the r=12 collision!
-                                    // TODO: Split sort values up into 4 ints
                                     // Check if queueLightEntry's color component
                                     sort_l = ((queueLightEntry & 0x0000F) > 0) && (ll > 0) ? (int)ll : 0;
                                     sort_r = ((queueLightEntry & 0x001E0) > 0) && ((rl >> 5) > 0)  ? (int)(rl >> 5) : 0;
@@ -414,7 +413,6 @@ public class CLWorldHelper {
                                     sort_b = ((queueLightEntry & 0x78000) > 0) && ((bl >> 15) > 0) ? (int)(bl >> 15) : 0;
 
                                     // If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
-                                    // TODO: If the any of the sort value color components are NOT zero, then go here.
 
                                     sortValue = Math.max(Math.max(sort_l, sort_r), Math.max(sort_g, sort_b));
 
