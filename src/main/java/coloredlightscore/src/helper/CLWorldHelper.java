@@ -339,7 +339,6 @@ public class CLWorldHelper {
 
                 if ((((0x100000 | compLightValue) - savedLightValue) & 0x84210) > 0) { //savedLightValue has components that are larger than compLightValue
                     //Light Destruction
-
                     world.pipe.setLightValue(par1Enu, par_x, par_y, par_z, (int) compLightValue); // This kills the light
                     world.pipe.lightAdditionBlockList[getter++] = (0x20820L | (savedLightValue << 18L));
 
@@ -398,6 +397,7 @@ public class CLWorldHelper {
 
                                     // SortValue is calculated and used when the light subtraction "bumps into" a brighter light than it was expecting.  If we bumped into a light that was r=14, then we should mark it for
                                     // a backfill with greater priority than a light that has r=12.  Chances are, by updating the r=14 source first, then we don't have to update the r=12 collision!
+                                    // TODO: Split sort values up into 4 ints
                                     sortValue = 0;
                                     if (((queueLightEntry & 0x0000F) > 0) && (ll > 0)) {
                                         sortValue = (int) ll;
@@ -413,6 +413,7 @@ public class CLWorldHelper {
                                     }
 
                                     // If the light we are looking at on the edge is brighter or equal to the current light in any way, then there must be a light over there that's doing it, so we'll stop eating colors and lights in that direction
+                                    // TODO: If the any of the sort value color components are NOT zero, then go here.
                                     if (neighborLightEntry != (ll | rl | gl | bl)) {
 
                                         if (sortValue > 0) {
