@@ -20,7 +20,7 @@ public class CLApi {
      * Automatically computes the Minecraft brightness value using the brightest of the r, g and b channels.
      * This value can be used directly for Block.lightValue 
      * 
-     * Word format: 0RRRR 0GGGG 0BBBB 0LLLL
+     * Word format: 0BBBB 0GGGG 0RRRR 0LLLL
      * 
      * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
      * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
@@ -53,7 +53,7 @@ public class CLApi {
      * Automatically computes the Minecraft brightness value using the brightest of the r, g and b channels.
      * This value can be used directly for Block.lightValue 
      * 
-     * Word format: 0RRRR 0GGGG 0BBBB 0LLLL
+     * Word format: 0BBBB 0GGGG 0RRRR 0LLLL
      * 
      * @param r Red intensity, 0 to 15. Resolution is 4 bits.
      * @param g Green intensity, 0 to 15. Resolution is 4 bits.
@@ -88,7 +88,7 @@ public class CLApi {
      * Allows overriding of the Minecraft brightness value, This may cause unexpected behavior.
      * This value can be used directly for Block.lightValue
      *
-     * Word format: 0RRRR 0GGGG 0BBBB 0LLLL
+     * Word format: 0BBBB 0GGGG 0RRRR 0LLLL
      *
      * @param r Red intensity, 0.0f to 1.0f. Resolution is 4 bits.
      * @param g Green intensity, 0.0f to 1.0f. Resolution is 4 bits.
@@ -127,7 +127,7 @@ public class CLApi {
      * Allows overriding of the Minecraft brightness value, This may cause unexpected behavior.
      * This value can be used directly for Block.lightValue
      *
-     * Word format: 0RRRR 0GGGG 0BBBB 0LLLL
+     * Word format: 0BBBB 0GGGG 0RRRR 0LLLL
      *
      * @param r Red intensity, 0 to 15. Resolution is 4 bits.
      * @param g Green intensity, 0 to 15. Resolution is 4 bits.
