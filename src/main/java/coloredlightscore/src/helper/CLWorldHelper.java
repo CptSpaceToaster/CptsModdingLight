@@ -345,7 +345,7 @@ public class CLWorldHelper {
                     //Light Destruction
                     nop();
 
-                    world.pipe.setLightValue(par1Enu, par_x, par_y, par_z, (int) compLightValue); // This kills the light
+                    world.pipe.setLightValue(par1Enu, par_x, par_y, par_z, 0); // This kills the light
                     world.pipe.lightAdditionBlockList[getter++] = (0x20820L | (savedLightValue << 18L));
                     world.pipe.lightBackfillNeeded[14][14][14] = world.pipe.updateFlag + 1;
 
