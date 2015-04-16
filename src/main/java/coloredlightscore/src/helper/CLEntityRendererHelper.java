@@ -14,15 +14,38 @@ public class CLEntityRendererHelper {
     public static final float t = 8.0f;
     public static final float nightVisionMinBrightness = 0.7f;
     private static boolean ignoreNextEnableLightmap;
+    private static float[] trueBlackLightBrightnessTable;
 
     public static void Initialize() {
+        trueBlackLightBrightnessTable = new float[]
+                {
+                        0.0f,
+                        0.066f,
+                        0.132f,
+                        0.198f,
+                        0.264f,
+                        0.330f,
+                        0.396f,
+                        0.462f,
+                        0.528f,
+                        0.594f,
+                        0.660f,
+                        0.726f,
+                        0.792f,
+                        0.858f,
+                        0.924f,
+                        1.0f
+                };
+
+        // Make it a blood moon!
     }
     
     public static void updateLightmap(EntityRenderer instance, float partialTickTime) {
         WorldClient worldclient = instance.mc.theWorld;
         
-        float min = 0.05F;
+        float min = 0.00F;   // TODO: This is the new light level of unlit caves. Vanilla is 0.05
         float max = 1.0F;
+
         if (instance.mc.thePlayer.isPotionActive(Potion.nightVision)) {
             float nightVisionWeight = instance.getNightVisionBrightness(instance.mc.thePlayer, partialTickTime);
             min = min * (1.0f - nightVisionWeight) + nightVisionMinBrightness * nightVisionWeight;
@@ -35,23 +58,28 @@ public class CLEntityRendererHelper {
 
             gamma = instance.mc.gameSettings.gammaSetting;
             for (int s = 0; s < 16; s++) {
-                sunlight = sunlightBase * worldclient.provider.lightBrightnessTable[s];
+                sunlight = sunlightBase * trueBlackLightBrightnessTable[s];
                 if (worldclient.lastLightningBolt > 0) {
-                    sunlight = worldclient.provider.lightBrightnessTable[s];
+                    sunlight = trueBlackLightBrightnessTable[s];
                 }
-                rSunlight = sunlight * worldclient.clSunColor[0];
-                gSunlight = sunlight * worldclient.clSunColor[1];
-                bSunlight = sunlight * worldclient.clSunColor[2];
-                
+
+                rSunlight = sunlight * Math.min(1, worldclient.clSunColor[0] - worldclient.clMoonColor[0]) + worldclient.clMoonColor[0];
+                gSunlight = sunlight * Math.min(1, worldclient.clSunColor[1] - worldclient.clMoonColor[1]) + worldclient.clMoonColor[1];
+                bSunlight = sunlight * Math.min(1, worldclient.clSunColor[2] - worldclient.clMoonColor[2]) + worldclient.clMoonColor[2];
+
+
                 for (int b = 0; b < 16; b++) {
-                    bLight = worldclient.provider.lightBrightnessTable[b] + bSunlight;
+                    bLight = trueBlackLightBrightnessTable[b] + bSunlight;
                     bLight = applyGamma(bLight, gamma) * (max - min) + min;
+
                     for (int g = 0; g < 16; g++) {
-                        gLight = worldclient.provider.lightBrightnessTable[g] + gSunlight;
+                        gLight = trueBlackLightBrightnessTable[g] + gSunlight;
                         gLight = applyGamma(gLight, gamma) * (max - min) + min;
+
                         for (int r = 0; r < 16; r++) {
-                            rLight = worldclient.provider.lightBrightnessTable[r] + rSunlight;
+                            rLight = trueBlackLightBrightnessTable[r] + rSunlight;
                             rLight = applyGamma(rLight, gamma) * (max - min) + min;
+
                             map[g << 12 | s << 8 | r << 4 | b] = 255 << 24 | (int) (rLight * 255) << 16 | (int) (gLight * 255) << 8 | (int) (bLight * 255);
                         }
                     }

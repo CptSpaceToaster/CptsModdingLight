@@ -45,6 +45,7 @@ public class TransformWorld extends HelperMethodTransformer {
     @Override
     protected boolean preTransformClass(ClassNode clazz) {
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "clSunColor", "[F", null, null));
+        clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "clMoonColor", "[F", null, null));
         clazz.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "pipe", "Lcoloredlightscore/src/api/CLWorldPipe;", null, null));
 
         return true;
@@ -82,6 +83,28 @@ public class TransformWorld extends HelperMethodTransformer {
         initInternalLightVariables.add(new InsnNode(Opcodes.FCONST_1));
         initInternalLightVariables.add(new InsnNode(Opcodes.FASTORE));
         initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "clSunColor", "[F"));
+
+        // this.clMoonColor = new float[]{0.05f, 0.05f, 0.05f};
+        initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.BIPUSH, 3));
+        initInternalLightVariables.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_FLOAT));
+        initInternalLightVariables.add(new InsnNode(Opcodes.DUP));
+        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_0));
+        //initInternalLightVariables.add(new InsnNode(Opcodes.FCONST_1));
+        initInternalLightVariables.add(new LdcInsnNode(0.05f));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FASTORE));
+        initInternalLightVariables.add(new InsnNode(Opcodes.DUP));
+        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_1));
+        //initInternalLightVariables.add(new InsnNode(Opcodes.FCONST_1));
+        initInternalLightVariables.add(new LdcInsnNode(0.05f));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FASTORE));
+        initInternalLightVariables.add(new InsnNode(Opcodes.DUP));
+        initInternalLightVariables.add(new InsnNode(Opcodes.ICONST_2));
+        //initInternalLightVariables.add(new InsnNode(Opcodes.FCONST_1));
+        initInternalLightVariables.add(new LdcInsnNode(0.05f));
+        initInternalLightVariables.add(new InsnNode(Opcodes.FASTORE));
+        initInternalLightVariables.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/world/World", "clMoonColor", "[F"));
+
 
         //this.pipe = new CLWorldPipe(this);
         initInternalLightVariables.add(new VarInsnNode(Opcodes.ALOAD, 0));

@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class World implements IBlockAccess {
     // Added by TransformWorld
     public float[] clSunColor;
+    public float[] clMoonColor;
     public CLWorldPipe pipe;
 
     public WorldProvider provider;
