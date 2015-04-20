@@ -16,7 +16,19 @@ public class CLEntityRendererHelper {
     private static boolean ignoreNextEnableLightmap;
     private static float[] trueBlackLightBrightnessTable;
 
+    // Begin programmable lighting engine parameters
+
+    public static float minLightLevel = 0.05f;
+    public static float maxLightLevel = 1.0f;
+
+    // End light engine params
+
     public static void Initialize() {
+
+        // This table allows us to achieve true blackness at the low-end of the color spectrum.
+        // The vanilla brightness tables bottom out too bright, preventing mods such as
+        // "Hardcore Darkness" from working properly with this mod.
+
         trueBlackLightBrightnessTable = new float[]
                 {
                         0.0f,
@@ -36,15 +48,13 @@ public class CLEntityRendererHelper {
                         0.924f,
                         1.0f
                 };
-
-        // Make it a blood moon!
     }
     
     public static void updateLightmap(EntityRenderer instance, float partialTickTime) {
         WorldClient worldclient = instance.mc.theWorld;
         
-        float min = 0.00F;   // TODO: This is the new light level of unlit caves. Vanilla is 0.05
-        float max = 1.0F;
+        float min = minLightLevel;
+        float max = maxLightLevel;
 
         if (instance.mc.thePlayer.isPotionActive(Potion.nightVision)) {
             float nightVisionWeight = instance.getNightVisionBrightness(instance.mc.thePlayer, partialTickTime);

@@ -1,5 +1,6 @@
 package yamhaven.easycoloredlights;
 
+import coloredlightscore.src.api.CLApi;
 import cpw.mods.fml.common.registry.GameRegistry;
 import yamhaven.easycoloredlights.lib.ModInfo;
 import yamhaven.easycoloredlights.proxy.CommonProxy;
@@ -27,6 +28,9 @@ public class EasyColoredLights {
     public static void init(FMLInitializationEvent event) {
         CLMaterialsController.addRecipes();
         GameRegistry.registerWorldGenerator(wg, 10000);
+
+        // Make caves dark
+        CLApi.setWorldMinimumBrightness(0.0f);
     }
 
     @EventHandler

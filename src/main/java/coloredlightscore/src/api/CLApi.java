@@ -1,6 +1,11 @@
 package coloredlightscore.src.api;
 
+import coloredlightscore.src.helper.CLEntityRendererHelper;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.world.World;
 
 /**
  * Public API for ColoredLightsCore
@@ -244,5 +249,84 @@ public class CLApi {
         int b_blu = b & 0x78000;
 
         return (Math.max(a_blu, b_blu) | Math.max(a_grn, b_grn) | Math.max(a_red, b_red) | Math.max(a_lgh, b_lgh));
+    }
+
+    /**
+     * Sets the minimum brightness value for the world. This is best observed within
+     * a completely dark cave... higher values mean brighter caves.
+     *
+     * @param brightness A value between 0.0 and 1.0 for the brightness. Vanilla uses 0.05.
+     */
+    public static void setWorldMinimumBrightness(float brightness) {
+
+        if (brightness < 0.0f)
+            brightness = 0.0f;
+        else if (brightness >= 1.0f)
+            brightness = 1.0f;
+
+        CLEntityRendererHelper.minLightLevel = brightness;
+    }
+
+    /**
+     * Sets the maximum brightness value for the world. i.e. broad daylight.
+     *
+     * @param brightness A value between 0.0 and 1.0 for the brightness. Vanilla uses 1.0.
+     */
+    public static void setWorldMaximumBrightness(float brightness) {
+
+        if (brightness < 0.0f)
+            brightness = 0.0f;
+        else if (brightness >= 1.0f)
+            brightness = 1.0f;
+
+        CLEntityRendererHelper.maxLightLevel = brightness;
+    }
+
+    /**
+     * Sets the color of moonlight. This really should be dimmer than sunlight, or
+     * weird things may happen. A lightmap update will be required after setting this.
+     *
+     * @param r Amount of red, 0.0 - 1.0
+     * @param g Amount of green, 0.0 - 1.0
+     * @param b Amount of blue, 0.0 - 1.0
+     */
+    public static boolean setWorldMoonlightColor(float r, float g, float b) {
+
+        WorldClient worldclient = Minecraft.getMinecraft().theWorld;
+
+        if (worldclient != null) {
+
+            // Clamp RGB values to 0.0-1.0
+            worldclient.clMoonColor[0] = Math.min(Math.max(r, 0.0f), 1.0f);
+            worldclient.clMoonColor[1] = Math.min(Math.max(g, 0.0f), 1.0f);
+            worldclient.clMoonColor[2] = Math.min(Math.max(b, 0.0f), 1.0f);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Sets the color of normal daylight
+     *
+     * @param r Amount of red, 0.0 - 1.0
+     * @param g Amount of green, 0.0 - 1.0
+     * @param b Amount of blue, 0.0 - 1.0
+     */
+    public static boolean setWorldDaylightColor(float r, float g, float b) {
+
+        WorldClient worldclient = Minecraft.getMinecraft().theWorld;
+
+        if (worldclient != null) {
+            // Clamp RGB values to 0.0-1.0
+            worldclient.clSunColor[0] = Math.min(Math.max(r, 0.0f), 1.0f);
+            worldclient.clSunColor[1] = Math.min(Math.max(g, 0.0f), 1.0f);
+            worldclient.clSunColor[2] = Math.min(Math.max(b, 0.0f), 1.0f);
+
+            return true;
+        }
+
+        return false;
     }
 }
