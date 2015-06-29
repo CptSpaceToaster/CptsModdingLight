@@ -4,6 +4,7 @@ package net.minecraft.client.renderer;
  * Dummy class to enable access to runtime-added methods
  */
 public class Tessellator {
+    public boolean isDrawing;
     public static Tessellator instance;
     public boolean hasBrightness;
     public int brightness;

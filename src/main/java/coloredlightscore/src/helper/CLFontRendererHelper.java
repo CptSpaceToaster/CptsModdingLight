@@ -14,7 +14,14 @@ public class CLFontRendererHelper {
         float tx = (float)(c % 16 * 8);
         float ty = (float)(c / 16 * 8);
         float slant = italics ? 1.0F : 0.0F;
-        instance.renderEngine.bindTexture(instance.locationFontTexture);
+
+        // Assuming that if the RenderEngine is null, we are in the loading screen
+        if(instance.renderEngine == null) {
+            instance.bindTexture(instance.locationFontTexture); // created by Forge since version 1339
+        } else {
+            instance.renderEngine.bindTexture(instance.locationFontTexture); // Avoid using previous method for compatibility
+        }
+
         float width;
         if (optifineUpInThisFontRenderer) {
             width = instance.d[c] - 0.01F;
@@ -22,12 +29,17 @@ public class CLFontRendererHelper {
             width = (float)instance.charWidth[c] - 0.01F;
         }
         Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawing(GL11.GL_TRIANGLE_STRIP);
-        tessellator.addVertexWithUV(instance.posX + slant, instance.posY, 0.0F, tx / 128.0F, ty / 128.0F);
-        tessellator.addVertexWithUV(instance.posX - slant, instance.posY + 7.99F, 0.0F, tx / 128.0F, (ty + 7.99F) / 128.0F);
-        tessellator.addVertexWithUV(instance.posX + width - 1.0F + slant, instance.posY, 0.0F, (tx + width - 1.0F) / 128.0F, ty / 128.0F);
-        tessellator.addVertexWithUV(instance.posX + width - 1.0F - slant, instance.posY + 7.99F, 0.0F, (tx + width - 1.0F) / 128.0F, (ty + 7.99F) / 128.0F);
-        tessellator.draw();
+
+        // Safe check to avoid exception during LoadingScreen <=> Main Menu transition
+        if(!tessellator.isDrawing) {
+            tessellator.startDrawing(GL11.GL_TRIANGLE_STRIP);
+            tessellator.addVertexWithUV(instance.posX + slant, instance.posY, 0.0F, tx / 128.0F, ty / 128.0F);
+            tessellator.addVertexWithUV(instance.posX - slant, instance.posY + 7.99F, 0.0F, tx / 128.0F, (ty + 7.99F) / 128.0F);
+            tessellator.addVertexWithUV(instance.posX + width - 1.0F + slant, instance.posY, 0.0F, (tx + width - 1.0F) / 128.0F, ty / 128.0F);
+            tessellator.addVertexWithUV(instance.posX + width - 1.0F - slant, instance.posY + 7.99F, 0.0F, (tx + width - 1.0F) / 128.0F, (ty + 7.99F) / 128.0F);
+            tessellator.draw();
+        }
+
         return optifineUpInThisFontRenderer ? instance.d[c] : (float)instance.charWidth[c];
     }
 
