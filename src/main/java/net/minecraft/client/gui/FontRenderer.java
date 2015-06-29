@@ -18,4 +18,8 @@ public class FontRenderer {
     public void loadGlyphTexture(int i) {
 
     }
+
+    public void bindTexture(ResourceLocation location) {
+
+    }
 }
